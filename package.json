@@ -10,10 +10,13 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "axios": "^1.7.9",
+    "clsx": "^2.1.1",
     "next": "15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

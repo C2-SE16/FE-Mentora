@@ -46,22 +46,24 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <LessonHeader 
-        courseTitle={course.title} 
-        lessonTitle={currentLesson.title}
-        progress={progress}
-      />
+        <LessonHeader 
+          courseTitle={course.title} 
+          lessonTitle={currentLesson.title}
+          progress={progress}
+        />
       
-      <LessonContent
-        courseId={courseId}
-        lessonId={lessonId}
-        lesson={currentLesson}
-        module={currentModule}
-        modules={modules}
-        instructor={course.instructor}
-        rating={course.rating}
-        ratingCount={course.ratingCount}
-      />
+      <div className="px-[95px]">
+        <LessonContent
+          courseId={courseId}
+          lessonId={lessonId}
+          lesson={currentLesson}
+          module={currentModule}
+          modules={modules}
+          instructor={course.instructor}
+          rating={course.rating}
+          ratingCount={course.ratingCount}
+        />
+      </div>
     </div>
   );
 } 

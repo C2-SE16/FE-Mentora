@@ -146,7 +146,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               </Link>
               
               <button className="block w-full border border-blue-600 text-blue-600 text-center px-6 py-3 rounded-md font-medium mb-6 hover:bg-blue-50">
-                Thêm vào giỏ hàng
+                Thêm vào giỏ hàng 
               </button>
               
               <div className="space-y-4">

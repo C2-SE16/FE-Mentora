@@ -20,7 +20,7 @@ export default function ModuleNavigation({
         ? prev.filter(id => id !== moduleId)
         : [...prev, moduleId]
     );
-  };
+  }; 
 
   return (
     <div>

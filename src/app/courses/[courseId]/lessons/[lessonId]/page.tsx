@@ -15,7 +15,7 @@ export async function generateMetadata({
   params,
 }: LessonPageProps): Promise<Metadata> {
   try {
-    // Trong thực tế, bạn sẽ lấy dữ liệu bài học từ database
+    // Trong thực tế, bạn sẽ lấy dữ liệu bài học từ database 
     return {
       title: "Chi tiết bài học",
       description: "Xem chi tiết bài học và học ngay",

@@ -1,5 +1,4 @@
-'use client';
-export default function DefaultLayout({
+export default function CreateLayout({
   children,
 }: {
   children: React.ReactNode;

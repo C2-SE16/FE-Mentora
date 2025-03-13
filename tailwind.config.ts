@@ -7,11 +7,17 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
+  	extend: {
+  		fontFamily: {
+  			oswald: [
+  				'Oswald',
+  				'sans-serif'
+  			],
+  			robotoCondensed: [
+  				'Roboto Condensed',
+  				'sans-serif'
+  			]
+  		},
     },
   },
   plugins: [],

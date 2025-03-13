@@ -19,8 +19,8 @@ export const CategoryService = {
    */
   async getAllCategories(): Promise<Category[]> {
     try {
-      // Sử dụng URL đầy đủ thay vì đường dẫn tương đối
-      const response = await axiosInstance.get<ApiResponse<Category[]>>("http://localhost:9090/categories");
+      // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
+      const response = await axiosInstance.get<ApiResponse<Category[]>>("/categories");
       
       console.log("API Response:", response.data);
       
@@ -42,7 +42,7 @@ export const CategoryService = {
    */
   async getCategoryById(categoryId: string): Promise<Category | null> {
     try {
-      const response = await axiosInstance.get<ApiResponse<Category>>(`http://localhost:9090/categories/${categoryId}`);
+      const response = await axiosInstance.get<ApiResponse<Category>>(`/categories/${categoryId}`);
       
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
@@ -60,7 +60,7 @@ export const CategoryService = {
    */
   async getCoursesByCategory(categoryId: string): Promise<CourseWithCategories[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<CourseWithCategories[]>>(`http://localhost:9090/categories/${categoryId}/courses`);
+      const response = await axiosInstance.get<ApiResponse<CourseWithCategories[]>>(`/categories/${categoryId}/courses`);
       
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
@@ -78,7 +78,7 @@ export const CategoryService = {
    */
   async getCategoriesByCourse(courseId: string): Promise<Category[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<CourseWithCategories>>(`http://localhost:9090/courses/${courseId}/categories`);
+      const response = await axiosInstance.get<ApiResponse<CourseWithCategories>>(`/courses/${courseId}/categories`);
       
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data.categories || [];

@@ -1,4 +1,5 @@
 import { Course, Module, Lesson } from './courses';
+import { Instructor } from './instructors';
 
 export interface LessonHeaderProps {
   courseTitle: string;
@@ -12,7 +13,7 @@ export interface LessonContentProps {
   lesson: Lesson;
   module: Module;
   modules: Module[];
-  instructor: string;
+  instructor: string | Instructor;
   rating?: number;
   ratingCount?: number;
 }

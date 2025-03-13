@@ -13,26 +13,24 @@ const descriptions = [
 ];
 const CourseContent = () => {
   return (
-    <div>
-      <div className="col-span-2">
-        <h1 className="text-[20px] font-normal font-oswald mb-2">Yêu cầu</h1>
-        <ul className="list-disc pl-5 space-y-1 text-[15px] font-normal font-robotoCondensed w-full max-w-full">
-          {requirements.map((item, index) => (
-            <li key={index} className="w-full max-w-full break-words">
-              {item}
-            </li>
-          ))}
-        </ul>
+    <div className="col-span-2">
+      <h1 className="text-[20px] font-normal font-oswald mb-2">Yêu cầu</h1>
+      <ul className="list-disc pl-5 space-y-1 text-[15px] font-normal font-robotoCondensed w-full max-w-full">
+        {requirements.map((item, index) => (
+          <li key={index} className="w-full max-w-full break-words">
+            {item}
+          </li>
+        ))}
+      </ul>
 
-        <h1 className="text-[20px] font-normal font-oswald mb-2 mt-7">Mô tả</h1>
-        <ul className="list-disc pl-5 space-y-1 text-[15px] font-normal font-robotoCondensed w-full max-w-full">
-          {descriptions.map((item, index) => (
-            <li key={index} className="w-full max-w-full break-words">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <h1 className="text-[20px] font-normal font-oswald mb-2 mt-7">Mô tả</h1>
+      <ul className="list-disc pl-5 space-y-1 text-[15px] font-normal font-robotoCondensed w-full max-w-full">
+        {descriptions.map((item, index) => (
+          <li key={index} className="w-full max-w-full break-words">
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

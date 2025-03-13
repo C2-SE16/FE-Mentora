@@ -17,18 +17,10 @@ export default {
       boxShadow: {
         custom: '0 2px 4px #00000014, 0 4px 12px #00000014',
       },
-      fontFamily: [
-        {
-          oswald: [
-            'Oswald',
-            'sans-serif'
-          ],
-          robotoCondensed: [
-            'Roboto Condensed',
-            'sans-serif'
-          ]
-  		  },
-      ].
+      fontFamily: {
+        oswald: ['Oswald', 'sans-serif'],
+        robotoCondensed: ['Roboto Condensed', 'sans-serif'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

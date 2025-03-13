@@ -2,12 +2,12 @@
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Star } from 'lucide-react';
 import Link from 'next/link';
-import CourseDescription from '@/components/module/course-detail/components/CourseDescription';
-import CourseSidebar from '@/components/module/course-detail/components/CourseSidebar';
-import CourseSectionMenu from '@/components/module/course-detail/components/CourseSectionMenu';
-import CommentInput from '@/components/module/course-detail/components/CommentInput';
-import CommentCard from '@/components/module/course-detail/components/CommentCard';
-import CourseContent from '@/components/module/course-detail/components/CourseContent';
+import CourseDescription from '@/components/modules/course-detail/components/CourseDescription';
+import CourseSidebar from '@/components/modules/course-detail/components/CourseSidebar';
+import CourseSectionMenu from '@/components/modules/course-detail/components/CourseSectionMenu';
+import CommentInput from '@/components/modules/course-detail/components/CommentInput';
+import CommentCard from '@/components/modules/course-detail/components/CommentCard';
+import CourseContent from '@/components/modules/course-detail/components/CourseContent';
 
 export default function DetailCourse() {
   return (

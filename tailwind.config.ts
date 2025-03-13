@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 export default {
+  darkMode: ['class'],
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -16,9 +17,18 @@ export default {
       boxShadow: {
         custom: '0 2px 4px #00000014, 0 4px 12px #00000014',
       },
-      fontFamily: {
-        'roboto-condensed': ['var(--font-roboto-condensed)'],
-      },
+      fontFamily: [
+        {
+          oswald: [
+            'Oswald',
+            'sans-serif'
+          ],
+          robotoCondensed: [
+            'Roboto Condensed',
+            'sans-serif'
+          ]
+  		  },
+      ].
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

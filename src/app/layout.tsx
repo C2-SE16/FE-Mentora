@@ -1,16 +1,26 @@
+import { Geist, Geist_Mono, Roboto_Condensed } from 'next/font/google';
 import './globals.css';
-import { FC, ReactNode } from 'react';
+import Header from '@/layouts/Header';
+import Footer from '@/layouts/Footer';
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
+const robotoCondensed = Roboto_Condensed({
+  subsets: ['latin'],
+  weight: ['300', '400', '700'],
+  variable: '--font-roboto-condensed',
+});
 
-const RootLayout: FC<RootLayoutProps> = ({ children }) => {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="vi">
-      <body className="bg-gray-50">{children}</body>
+    <html lang="en" className={robotoCondensed.variable}>
+      <body className="font-roboto-condensed">
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
-};
-
-export default RootLayout;
+}

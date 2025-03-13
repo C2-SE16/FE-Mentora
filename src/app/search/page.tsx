@@ -5,7 +5,7 @@ const SearchPage: FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 max-w-6xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6">10.000 kết quả cho &ldquo;python&rdquo;</h1>
+        <h1 className="text-2xl font-bold mb-6">10.000 kết quả cho &ldquo;Python&rdquo;</h1>
         
         <div className="flex justify-between items-center mb-4">
           <div className="flex space-x-2">

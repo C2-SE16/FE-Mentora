@@ -12,7 +12,7 @@ const Header = () => {
             alt="logo"
             width={120}
             height={120}
-            className=""
+            className="cursor-pointer"
           />
         </div>
         <div className="relative mx-0 my-3 cursor-pointer group">
@@ -22,7 +22,7 @@ const Header = () => {
               <li>
                 <Link
                   href="#!"
-                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#26b871]"
+                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
                 >
                   CNTT
                 </Link>
@@ -30,7 +30,7 @@ const Header = () => {
               <li>
                 <Link
                   href="#!"
-                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#26b871]"
+                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
                 >
                   Kế toán
                 </Link>
@@ -38,7 +38,7 @@ const Header = () => {
               <li>
                 <Link
                   href="#!"
-                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#26b871]"
+                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
                 >
                   Thể thao
                 </Link>
@@ -46,7 +46,7 @@ const Header = () => {
               <li>
                 <Link
                   href="#!"
-                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#26b871]"
+                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
                 >
                   Thiết kế đồ họa
                 </Link>
@@ -54,7 +54,7 @@ const Header = () => {
               <li>
                 <Link
                   href="#!"
-                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#26b871]"
+                  className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
                 >
                   AI
                 </Link>
@@ -134,7 +134,7 @@ const Header = () => {
               <Image src="/bell.svg" alt="bell" width={24} height={24} />
             </Link>
           </li>
-          <li className="mx-0 my-3 cursor-pointer">
+          <li className="relative mx-0 my-3 cursor-pointer group">
             <Image
               src="/avatar.jpg"
               alt="avatar"
@@ -142,6 +142,150 @@ const Header = () => {
               height={32}
               className="w-[32px] h-[32px] rounded-full object-cover"
             />
+            <div className="absolute right-0 top-[22px] pt-[30px] pb-[30px] z-10 hidden group-hover:block">
+              <ul className="bg-white border border-gray-200 shadow-custom">
+                <li>
+                  <Link
+                    href="#!"
+                    className="flex items-center gap-x-3 px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black"
+                  >
+                    <Image
+                      src="/avatar.jpg"
+                      alt="avatar"
+                      width={50}
+                      height={50}
+                      className="w-[50px] h-[50px] rounded-full object-cover"
+                    />
+                    <div>
+                      <h3 className="text-base font-bold hover:text-[#1dbe70]">
+                        Elliot Senpai
+                      </h3>
+                      <p className="text-[10px] truncate max-w-[150px]">
+                        justAboutEmail@gmail.com
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+                <li className="py-3">
+                  <div className="h-[1px] w-full bg-gray-200"></div>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Khóa học của tôi
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Giảng dạy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Giỏ hàng
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Danh sách yêu thích
+                  </Link>
+                </li>
+                <li className="py-3">
+                  <div className="h-[1px] w-full bg-gray-200"></div>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Hồ sơ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Ảnh
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Xem hồ sơ công khai
+                  </Link>
+                </li>
+
+                <li className="py-3">
+                  <div className="h-[1px] w-full bg-gray-200"></div>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Bảo mật tài khoản
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Gói đăng ký
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Phương thức thanh toán
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Quyền riêng tư
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Cài đặt thông báo
+                  </Link>
+                </li>
+
+                <li className="pt-3">
+                  <div className="h-[1px] w-full bg-gray-200"></div>
+                </li>
+                <li>
+                  <Link
+                    href="#!"
+                    className="block px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-[#B11212] hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                  >
+                    Đăng xuất
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </li>
         </ul>
       </nav>

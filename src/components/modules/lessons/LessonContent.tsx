@@ -4,6 +4,7 @@ import { useState } from "react";
 import VideoPlayer from "./components/VideoPlayer";
 import ModuleNavigation from "./components/ModuleNavigation";
 import { LessonContentProps } from '@/types/lessons';
+import { LessonType } from '@/types/courses';
 
 export default function LessonContent({ 
   courseId, 
@@ -30,7 +31,7 @@ export default function LessonContent({
       <div className="w-full md:w-3/4 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
           <VideoPlayer 
-            videoUrl={lesson?.contentUrl} 
+            videoUrl={lesson?.contentUrl || undefined} 
             lessonId={lessonId}
             onProgress={handleProgress}
           />
@@ -56,7 +57,7 @@ export default function LessonContent({
                   </span>
                 </div>
               </div>
-              {lesson?.type === 'VIDEO' && (
+              {lesson?.contentType === LessonType.VIDEO && (
                 <p className="text-sm text-gray-500 mt-1">
                   Thời lượng: {lesson.duration ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}` : 'N/A'}
                 </p>
@@ -170,7 +171,11 @@ export default function LessonContent({
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
             <div>
-              <p className="font-medium">{instructor}</p>
+              <p className="font-medium">
+                {typeof instructor === 'string' 
+                  ? instructor 
+                  : (instructor.instructorId || 'Giảng viên')}
+              </p>
               <p className="text-sm text-gray-600">Giảng viên</p>
             </div>
           </div>

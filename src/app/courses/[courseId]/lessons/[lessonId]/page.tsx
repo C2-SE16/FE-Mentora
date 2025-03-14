@@ -47,8 +47,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
         <LessonHeader 
-          courseTitle={course.title} 
-          lessonTitle={currentLesson.title}
+          courseTitle={course.title || ""} 
+          lessonTitle={currentLesson.title || ""}
           progress={progress}
         />
       
@@ -59,9 +59,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
           lesson={currentLesson}
           module={currentModule}
           modules={modules}
-          instructor={course.instructor}
-          rating={course.rating}
-          ratingCount={course.ratingCount}
+          instructor={typeof course.instructor === 'string' ? course.instructor : course.instructor?.instructorId || ""}
+          rating={course.rating || 0}
+          ratingCount={course.ratingCount || 0}
         />
       </div>
     </div>

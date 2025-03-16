@@ -39,9 +39,7 @@ export default function DetailCourse() {
               Your Step-by-Step Guide to Becoming a Professional Software Tester
             </h2>
             <div className="flex flex-row items-center space-x-2 pt-3">
-              <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed">
-                4.5
-              </h2>
+              <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed">4.5</h2>
               <Star className="w-4 h-4 stroke-white fill-transparent stroke-[1.5]" />
               <h2 className="text-[15px] text-[#00FF84] font-normal font-robotoCondensed">
                 (2.000.000 đánh giá)
@@ -82,9 +80,7 @@ export default function DetailCourse() {
           <CommentInput />
           {/* comments */}
           <div className="col-span-2">
-            <h1 className="text-[20px] font-normal font-oswald mb-2">
-              Toàn bộ review
-            </h1>
+            <h1 className="text-[20px] font-normal font-oswald mb-2">Toàn bộ review</h1>
             <div className="grid grid-cols-2 gap-8">
               <CommentCard />
               <CommentCard />

@@ -30,9 +30,7 @@ const CourseSidebar = () => {
           Mua ngay
         </Button>
       </div>
-      <h2 className="text-[16px] font-normal font-oswald pt-3">
-        Nội dung khóa học
-      </h2>
+      <h2 className="text-[16px] font-normal font-oswald pt-3">Nội dung khóa học</h2>
       <div>
         <ul className="list-disc pl-5  text-[15px] font-normal font-robotoCondensed w-full max-w-full">
           {contents.map((item, index) => (

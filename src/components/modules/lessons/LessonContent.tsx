@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import VideoPlayer from "./components/VideoPlayer";
-import ModuleNavigation from "./components/ModuleNavigation";
+import { useState } from 'react';
+import VideoPlayer from './components/VideoPlayer';
+import ModuleNavigation from './components/ModuleNavigation';
 import { LessonContentProps } from '@/types/lessons';
 import { LessonType } from '@/types/courses';
 
-export default function LessonContent({ 
-  courseId, 
+export default function LessonContent({
+  courseId,
   lessonId,
   lesson,
   module,
   modules,
   instructor,
   rating,
-  ratingCount
+  ratingCount,
 }: LessonContentProps) {
   const [progress, setProgress] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'questions'>('content');
@@ -30,15 +30,15 @@ export default function LessonContent({
       {/* Video Player và Nội dung bài học */}
       <div className="w-full md:w-3/4 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
-          <VideoPlayer 
-            videoUrl={lesson?.contentUrl || undefined} 
+          <VideoPlayer
+            videoUrl={lesson?.contentUrl || undefined}
             lessonId={lessonId}
             onProgress={handleProgress}
           />
-          
+
           <div className="p-4 border-b">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold">{lesson?.title || "Chọn một bài học"}</h2>
+              <h2 className="text-xl font-semibold">{lesson?.title || 'Chọn một bài học'}</h2>
               <div className="flex items-center mt-1">
                 <div className="flex items-center">
                   <span className="text-yellow-500 text-sm">
@@ -47,37 +47,40 @@ export default function LessonContent({
                     ))}
                     {(rating || 0) % 1 !== 0 && <span>★</span>}
                     {Array.from({ length: 5 - Math.ceil(rating || 0) }).map((_, i) => (
-                      <span key={i} className="text-gray-300">★</span>
+                      <span key={i} className="text-gray-300">
+                        ★
+                      </span>
                     ))}
                   </span>
                   <span className="ml-1 text-sm">{rating}</span>
                   <span className="mx-2 text-gray-400 text-sm">|</span>
-                  <span className="text-green-500 text-sm">
-                    ({ratingCount} đánh giá )
-                  </span>
+                  <span className="text-green-500 text-sm">({ratingCount} đánh giá )</span>
                 </div>
               </div>
               {lesson?.contentType === LessonType.VIDEO && (
                 <p className="text-sm text-gray-500 mt-1">
-                  Thời lượng: {lesson.duration ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}` : 'N/A'}
+                  Thời lượng:{' '}
+                  {lesson.duration
+                    ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}`
+                    : 'N/A'}
                 </p>
               )}
             </div>
-            
+
             <div className="flex border-b">
-              <button 
+              <button
                 className={`px-4 py-2 font-medium ${activeTab === 'content' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
                 onClick={() => setActiveTab('content')}
               >
                 Tổng quan
               </button>
-              <button 
+              <button
                 className={`px-4 py-2 font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
                 onClick={() => setActiveTab('notes')}
               >
                 Ghi chú
               </button>
-              <button 
+              <button
                 className={`px-4 py-2 font-medium ${activeTab === 'questions' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
                 onClick={() => setActiveTab('questions')}
               >
@@ -85,13 +88,15 @@ export default function LessonContent({
               </button>
             </div>
           </div>
-          
+
           <div className="p-4">
             {activeTab === 'content' && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Mô tả bài học</h3>
                 <p className="text-gray-700">
-                  Trong bài học này, bạn sẽ được hướng dẫn chi tiết về cách sử dụng AI để tạo nội dung video hấp dẫn cho kênh YouTube của mình. Chúng ta sẽ tìm hiểu các công cụ AI phổ biến và cách áp dụng chúng vào quy trình sản xuất nội dung.
+                  Trong bài học này, bạn sẽ được hướng dẫn chi tiết về cách sử dụng AI để tạo nội
+                  dung video hấp dẫn cho kênh YouTube của mình. Chúng ta sẽ tìm hiểu các công cụ AI
+                  phổ biến và cách áp dụng chúng vào quy trình sản xuất nội dung.
                 </p>
                 <div className="mt-4">
                   <h4 className="font-medium mb-2">Nội dung chính:</h4>
@@ -106,21 +111,25 @@ export default function LessonContent({
                   <h4 className="font-medium mb-2">Tài liệu bổ sung:</h4>
                   <ul className="list-disc pl-5 space-y-1">
                     <li>
-                      <a href="#" className="text-blue-600 hover:underline">Hướng dẫn sử dụng ChatGPT cho nội dung YouTube</a>
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Hướng dẫn sử dụng ChatGPT cho nội dung YouTube
+                      </a>
                     </li>
                     <li>
-                      <a href="#" className="text-blue-600 hover:underline">Danh sách các công cụ AI miễn phí cho người sáng tạo nội dung</a>
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Danh sách các công cụ AI miễn phí cho người sáng tạo nội dung
+                      </a>
                     </li>
                   </ul>
                 </div>
               </div>
             )}
-            
+
             {activeTab === 'notes' && (
               <div>
                 <h3 className="text-lg font-semibold mb-4">Ghi chú của bạn</h3>
-                <textarea 
-                  className="w-full border rounded-md p-3 h-40" 
+                <textarea
+                  className="w-full border rounded-md p-3 h-40"
                   placeholder="Thêm ghi chú của bạn về bài học này..."
                 ></textarea>
                 <button className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
@@ -128,13 +137,13 @@ export default function LessonContent({
                 </button>
               </div>
             )}
-            
+
             {activeTab === 'questions' && (
               <div>
                 <h3 className="text-lg font-semibold mb-4">Hỏi đáp</h3>
                 <div className="mb-4">
-                  <textarea 
-                    className="w-full border rounded-md p-3 h-24" 
+                  <textarea
+                    className="w-full border rounded-md p-3 h-24"
                     placeholder="Đặt câu hỏi của bạn về bài học này..."
                   ></textarea>
                   <button className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
@@ -149,7 +158,7 @@ export default function LessonContent({
           </div>
         </div>
       </div>
-      
+
       {/* Danh sách bài học */}
       <div className="w-full md:w-1/4 bg-gray-100 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
@@ -157,14 +166,10 @@ export default function LessonContent({
             <h3 className="font-medium">Nội dung module</h3>
             <p className="text-sm mt-1">{module.title}</p>
           </div>
-          
-          <ModuleNavigation
-            courseId={courseId}
-            modules={modules}
-            currentLessonId={lessonId}
-          />
+
+          <ModuleNavigation courseId={courseId} modules={modules} currentLessonId={lessonId} />
         </div>
-        
+
         {/* Thông tin giảng viên */}
         <div className="mt-4 bg-white shadow-md rounded-md p-4">
           <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
@@ -172,9 +177,9 @@ export default function LessonContent({
             <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
             <div>
               <p className="font-medium">
-                {typeof instructor === 'string' 
-                  ? instructor 
-                  : (instructor.instructorId || 'Giảng viên')}
+                {typeof instructor === 'string'
+                  ? instructor
+                  : instructor.instructorId || 'Giảng viên'}
               </p>
               <p className="text-sm text-gray-600">Giảng viên</p>
             </div>
@@ -186,4 +191,4 @@ export default function LessonContent({
       </div>
     </div>
   );
-} 
+}

@@ -33,12 +33,8 @@ const CourseSectionMenu = () => {
     >
       {/* Tiêu đề khóa học */}
       <div className="col-span-3">
-        <h2 className="text-xl font-bold text-gray-900 pt-5">
-          Nội dung khóa học
-        </h2>
-        <p className="text-sm text-gray-600">
-          35 phần - 349 bài giảng - 37h30ph
-        </p>
+        <h2 className="text-xl font-bold text-gray-900 pt-5">Nội dung khóa học</h2>
+        <p className="text-sm text-gray-600">35 phần - 349 bài giảng - 37h30ph</p>
       </div>
 
       {/* Accordion nội dung khóa học */}
@@ -52,9 +48,7 @@ const CourseSectionMenu = () => {
             >
               <AccordionTrigger className="bg-gray-200 py-3 flex justify-between font-bold text-gray-900 px-3">
                 {section.title}
-                <span className="text-sm text-gray-700">
-                  4 bài giảng - 30 phút
-                </span>
+                <span className="text-sm text-gray-700">4 bài giảng - 30 phút</span>
               </AccordionTrigger>
               <AccordionContent className="bg-white px-4 py-2 space-y-2">
                 {section.lessons.length > 0 ? (
@@ -71,15 +65,11 @@ const CourseSectionMenu = () => {
                         )}
                         {lesson.title}
                         {lesson.preview && (
-                          <span className="text-green-600 text-xs ml-2">
-                            Preview
-                          </span>
+                          <span className="text-green-600 text-xs ml-2">Preview</span>
                         )}
                       </div>
                       <span className="text-gray-600">
-                        {lesson.questions
-                          ? `${lesson.questions} câu hỏi`
-                          : lesson.duration}
+                        {lesson.questions ? `${lesson.questions} câu hỏi` : lesson.duration}
                       </span>
                     </div>
                   ))

@@ -7,7 +7,7 @@ import { Favorite } from './favorites';
 export enum ApprovalStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
 }
 
 export interface Course {
@@ -24,7 +24,7 @@ export interface Course {
   comment: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   instructor?: Instructor;
   modules?: Module[];
@@ -45,7 +45,7 @@ export interface Module {
   description: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   course?: Course;
   lessons?: Lesson[];
@@ -54,7 +54,7 @@ export interface Module {
 export enum LessonType {
   VIDEO = 'VIDEO',
   ARTICLE = 'ARTICLE',
-  QUIZ = 'QUIZ'
+  QUIZ = 'QUIZ',
 }
 
 export interface Lesson {
@@ -69,7 +69,7 @@ export interface Lesson {
   isFree: boolean | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   module?: Module;
   progress?: LessonProgress[];
@@ -78,7 +78,7 @@ export interface Lesson {
 export enum LessonProgressStatus {
   NOT_STARTED = 'NOT_STARTED',
   IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED'
+  COMPLETED = 'COMPLETED',
 }
 
 export interface LessonProgress {
@@ -89,7 +89,7 @@ export interface LessonProgress {
   progressPercentage: number | null;
   lastWatchPosition: number | null;
   completedAt: Date | null;
-  
+
   // Relationships
   lesson?: Lesson;
   user?: any; // Tham chiếu đến User
@@ -100,7 +100,7 @@ export interface CourseEnrollment {
   courseId: string | null;
   userId: string | null;
   enrolledAt: Date | null;
-  
+
   // Relationships
   course?: Course;
   user?: any; // Tham chiếu đến User
@@ -114,7 +114,7 @@ export interface CourseReview {
   comment: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   course?: Course;
   user?: any; // Tham chiếu đến User
@@ -129,4 +129,4 @@ export interface CourseInfoProps {
   enrollments: number;
   language: string;
   features: string[];
-} 
+}

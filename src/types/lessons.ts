@@ -28,4 +28,4 @@ export interface ModuleNavigationProps {
   courseId: string;
   modules: Module[];
   currentLessonId: string;
-} 
+}

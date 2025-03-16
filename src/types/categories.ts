@@ -5,7 +5,7 @@ export enum CategoryType {
   INFORMATION_TECHNOLOGY = 'INFORMATION_TECHNOLOGY',
   MARKETING = 'MARKETING',
   FINANCE = 'FINANCE',
-  BUSSINESS = 'BUSSINESS'
+  BUSSINESS = 'BUSSINESS',
 }
 
 // Interface cho bảng tbl_categories
@@ -42,5 +42,5 @@ export const categoryTypeToVietnamese: Record<CategoryType, string> = {
   [CategoryType.INFORMATION_TECHNOLOGY]: 'IT & Phần mềm',
   [CategoryType.MARKETING]: 'Marketing',
   [CategoryType.FINANCE]: 'Tài chính',
-  [CategoryType.BUSSINESS]: 'Kinh doanh'
-}; 
+  [CategoryType.BUSSINESS]: 'Kinh doanh',
+};

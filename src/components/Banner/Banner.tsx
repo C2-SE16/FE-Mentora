@@ -31,18 +31,9 @@ const Banner = () => {
         <div className="flex flex-wrap w-full md-lg:gap-8">
           <div className="w-full">
             <div className="my-8">
-              <Carousel
-                autoPlay={true}
-                infinite={true}
-                arrows={true}
-                responsive={responsive}
-              >
+              <Carousel autoPlay={true} infinite={true} arrows={true} responsive={responsive}>
                 {[1, 2, 3, 4, 5].map((img, i) => (
-                  <Link
-                    href="#!"
-                    key={i}
-                    className="flex justify-center items-center"
-                  >
+                  <Link href="#!" key={i} className="flex justify-center items-center">
                     <Image
                       src={`/banner/${img}.jpg`}
                       alt="banner"

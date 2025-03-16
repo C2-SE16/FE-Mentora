@@ -20,14 +20,14 @@ export const CategoryService = {
   async getAllCategories(): Promise<Category[]> {
     try {
       // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
-      const response = await axiosInstance.get<ApiResponse<Category[]>>("/categories");
-      
-      console.log("API Response:", response.data);
-      
+      const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories');
+
+      console.log('API Response:', response.data);
+
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
-      
+
       console.warn('API trả về thành công nhưng dữ liệu không hợp lệ, sử dụng dữ liệu mẫu');
       return this.getMockCategories();
     } catch (error) {
@@ -43,11 +43,11 @@ export const CategoryService = {
   async getCategoryById(categoryId: string): Promise<Category | null> {
     try {
       const response = await axiosInstance.get<ApiResponse<Category>>(`/categories/${categoryId}`);
-      
+
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
-      
+
       throw new Error(response.data.data.message || `Lỗi khi lấy danh mục ID ${categoryId}`);
     } catch (error) {
       console.error(`Lỗi khi lấy danh mục ID ${categoryId}:`, error);
@@ -60,13 +60,17 @@ export const CategoryService = {
    */
   async getCoursesByCategory(categoryId: string): Promise<CourseWithCategories[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<CourseWithCategories[]>>(`/categories/${categoryId}/courses`);
-      
+      const response = await axiosInstance.get<ApiResponse<CourseWithCategories[]>>(
+        `/categories/${categoryId}/courses`
+      );
+
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
-      
-      throw new Error(response.data.data.message || `Lỗi khi lấy khóa học theo danh mục ID ${categoryId}`);
+
+      throw new Error(
+        response.data.data.message || `Lỗi khi lấy khóa học theo danh mục ID ${categoryId}`
+      );
     } catch (error) {
       console.error(`Lỗi khi lấy khóa học theo danh mục ID ${categoryId}:`, error);
       return []; // Trả về mảng rỗng trong trường hợp lỗi
@@ -78,13 +82,17 @@ export const CategoryService = {
    */
   async getCategoriesByCourse(courseId: string): Promise<Category[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<CourseWithCategories>>(`/courses/${courseId}/categories`);
-      
+      const response = await axiosInstance.get<ApiResponse<CourseWithCategories>>(
+        `/courses/${courseId}/categories`
+      );
+
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data.categories || [];
       }
-      
-      throw new Error(response.data.data.message || `Lỗi khi lấy danh mục cho khóa học ID ${courseId}`);
+
+      throw new Error(
+        response.data.data.message || `Lỗi khi lấy danh mục cho khóa học ID ${courseId}`
+      );
     } catch (error) {
       console.error(`Lỗi khi lấy danh mục cho khóa học ID ${courseId}:`, error);
       return [];
@@ -98,22 +106,22 @@ export const CategoryService = {
     return [
       {
         categoryId: 'f0134fd0-e5aa-4d5d-86cb-a82111e39254',
-        categoryType: CategoryType.INFORMATION_TECHNOLOGY
+        categoryType: CategoryType.INFORMATION_TECHNOLOGY,
       },
       {
         categoryId: 'f16dc2b2-7e8b-4006-b736-ad1f83c073a2',
-        categoryType: CategoryType.MARKETING
+        categoryType: CategoryType.MARKETING,
       },
       {
         categoryId: '3',
-        categoryType: CategoryType.FINANCE
+        categoryType: CategoryType.FINANCE,
       },
       {
         categoryId: '4',
-        categoryType: CategoryType.BUSSINESS
-      }
+        categoryType: CategoryType.BUSSINESS,
+      },
     ];
-  }
+  },
 };
 
-export default CategoryService; 
+export default CategoryService;

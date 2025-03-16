@@ -10,7 +10,7 @@ export enum UserRole {
   STUDENT = 'STUDENT',
   INSTRUCTOR = 'INSTRUCTOR',
   SUPPORT_STAFF = 'SUPPORT_STAFF',
-  ANONYMOUS = 'ANONYMOUS'
+  ANONYMOUS = 'ANONYMOUS',
 }
 
 export interface User {
@@ -23,7 +23,7 @@ export interface User {
   role: UserRole | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   cart?: Cart[];
   courseEnrollments?: CourseEnrollment[];
@@ -33,4 +33,4 @@ export interface User {
   lessonProgress?: LessonProgress[];
   payments?: Payment[];
   voucherUsageHistory?: VoucherUsageHistory[];
-} 
+}

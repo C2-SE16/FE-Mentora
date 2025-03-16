@@ -16,7 +16,9 @@ const Header = () => {
           />
         </div>
         <div className="relative mx-0 my-3 cursor-pointer group">
-          <span>Danh mục</span>
+          <span className="p-2 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#64f7b0] hover:rounded-xl">
+            Danh mục
+          </span>
           <div className="absolute left-[-20px] pt-[30px] pb-[30px] z-10 hidden group-hover:block">
             <ul className="bg-white border border-gray-200 shadow-custom">
               <li>
@@ -75,14 +77,16 @@ const Header = () => {
           </form>
         </div>
 
-        <ul className="flex items-center gap-4">
+        <ul className="flex items-center">
           <li className="relative mx-0 my-3 cursor-pointer group">
-            <span>Giảng dạy</span>
+            <span className="py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+              Giảng dạy
+            </span>
             <div className="absolute right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block">
               <div className="bg-white min-w-[300px] p-5 shadow-custom">
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptate nisi, repellendus deleniti.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
+                  repellendus deleniti.
                 </p>
                 <div>
                   <Link
@@ -96,12 +100,14 @@ const Header = () => {
             </div>
           </li>
           <li className="relative mx-0 my-3 cursor-pointer group">
-            <span>Khoá học của tôi</span>
+            <span className="py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+              Khoá học của tôi
+            </span>
             <div className="absolute right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block">
               <div className="bg-white min-w-[300px] p-5 shadow-custom">
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptate nisi, repellendus deleniti.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
+                  repellendus deleniti.
                 </p>
                 <div>
                   <Link
@@ -114,27 +120,22 @@ const Header = () => {
               </div>
             </div>
           </li>
-          <li className="mx-0 my-3 cursor-pointer">
+          <li className="mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
             <Link href="#!">
               <Image src="/heart.svg" alt="heart" width={24} height={24} />
             </Link>
           </li>
-          <li className="mx-0 my-3 cursor-pointer">
+          <li className="mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
             <Link href="#!">
-              <Image
-                src="/shopping-cart.svg"
-                alt="shopping-cart"
-                width={24}
-                height={24}
-              />
+              <Image src="/shopping-cart.svg" alt="shopping-cart" width={24} height={24} />
             </Link>
           </li>
-          <li className="mx-0 my-3 cursor-pointer">
+          <li className="mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
             <Link href="#!">
               <Image src="/bell.svg" alt="bell" width={24} height={24} />
             </Link>
           </li>
-          <li className="relative mx-0 my-3 cursor-pointer group">
+          <li className="relative mx-0 my-3 cursor-pointer group py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md ">
             <Image
               src="/avatar.jpg"
               alt="avatar"
@@ -157,12 +158,8 @@ const Header = () => {
                       className="w-[50px] h-[50px] rounded-full object-cover"
                     />
                     <div>
-                      <h3 className="text-base font-bold hover:text-[#1dbe70]">
-                        Elliot Senpai
-                      </h3>
-                      <p className="text-[10px] truncate max-w-[150px]">
-                        justAboutEmail@gmail.com
-                      </p>
+                      <h3 className="text-base font-bold hover:text-[#1dbe70]">Elliot Senpai</h3>
+                      <p className="text-[10px] truncate max-w-[150px]">justAboutEmail@gmail.com</p>
                     </div>
                   </Link>
                 </li>

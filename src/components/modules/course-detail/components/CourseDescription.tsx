@@ -15,14 +15,12 @@ const CourseDescription = () => {
       <CardContent className="py-6">
         <h2 className="text-lg font-bold mb-4">Bạn sẽ học được những gì?</h2>
         <ul className="space-y-3">
-          {learnItems
-            .slice(0, showMore ? learnItems.length : 2)
-            .map((item, index) => (
-              <li key={index} className="flex items-start text-sm">
-                <Check className="w-5 h-5 text-black stroke-[1.5]" />
-                {item}
-              </li>
-            ))}
+          {learnItems.slice(0, showMore ? learnItems.length : 2).map((item, index) => (
+            <li key={index} className="flex items-start text-sm">
+              <Check className="w-5 h-5 text-black stroke-[1.5]" />
+              {item}
+            </li>
+          ))}
         </ul>
         <Button
           variant="link"

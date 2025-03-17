@@ -6,10 +6,7 @@ import React from 'react';
 const CommentInput = () => {
   return (
     <div className="col-span-2 p-5 border border-black rounded-sm">
-      <Textarea
-        placeholder="Type your message here."
-        className="border border-black"
-      />
+      <Textarea placeholder="Type your message here." className="border border-black" />
       <div className="flex flex-row justify-between pt-4">
         <div className="grid grid-cols-5 gap-4 items-center justify-center">
           <Button variant="ghost" size="icon">

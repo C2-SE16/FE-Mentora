@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CategoryService from '@/apis/categoryService';
 import { Category, CategoryType, categoryTypeToVietnamese } from '@/types/categories';
+import { toast } from 'react-hot-toast';
 
 export default function Step2() {
   const router = useRouter();
@@ -12,6 +13,8 @@ export default function Step2() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [courseTitle, setCourseTitle] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // Lấy danh sách categories từ API khi component mount
   useEffect(() => {
@@ -31,6 +34,14 @@ export default function Step2() {
       }
     };
 
+    // Lấy tiêu đề khóa học từ localStorage
+    const savedTitle = localStorage.getItem('courseTitle');
+    if (savedTitle) {
+      setCourseTitle(savedTitle);
+    } else {
+      setValidationError('Vui lòng nhập tiêu đề khóa học ở bước 1');
+    }
+
     fetchCategories();
   }, []);
 
@@ -38,6 +49,7 @@ export default function Step2() {
     setSelectedCategoryId(categoryId);
     setSelectedCategory(categoryTypeToVietnamese[categoryType]);
     setIsDropdownOpen(false);
+    setValidationError(null); // Xóa lỗi khi người dùng đã chọn category
   };
 
   return (
@@ -50,9 +62,27 @@ export default function Step2() {
           Thể loại phù hợp với khóa học của bạn là?
         </h1>
         <p className="text-gray-600 font-robotoCondensed">
-          Oke! bạn không thể đề một cái thể loại phù hợp ngay được. Bạn có thể chỉnh nó sau
+          Bạn có thể chọn thể loại hoặc để trống. Bạn có thể chỉnh sửa sau.
         </p>
       </div>
+
+      {/* Chỉ hiển thị thông báo lỗi khi thiếu tiêu đề */}
+      {validationError && !courseTitle && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd"></path>
+            </svg>
+            <span className="font-medium">{validationError}</span>
+          </div>
+          <button 
+            onClick={() => router.push('/courses/create/step1')}
+            className="mt-2 text-sm text-red-700 underline"
+          >
+            Quay lại bước 1
+          </button>
+        </div>
+      )}
 
       <div className="mb-8">
         {isLoading ? (
@@ -74,7 +104,8 @@ export default function Step2() {
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full flex items-center justify-between border border-gray-300 rounded-md py-3 px-4 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 font-robotoCondensed"
+              className={`w-full flex items-center justify-between border rounded-md py-3 px-4 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 font-robotoCondensed ${!selectedCategory && !courseTitle ? 'border-red-300' : 'border-gray-300'}`}
+              data-selected-category-id={selectedCategoryId}
             >
               <span className={selectedCategory ? 'text-black' : 'text-gray-400'}>
                 {selectedCategory || 'Chọn thể loại khóa học'}

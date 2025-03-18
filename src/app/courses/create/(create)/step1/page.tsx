@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Step1() {
@@ -8,11 +8,23 @@ export default function Step1() {
   const [charCount, setCharCount] = useState(0);
   const maxChars = 60;
 
+  // Lấy tiêu đề từ localStorage nếu có
+  useEffect(() => {
+    const savedTitle = localStorage.getItem('courseTitle');
+    if (savedTitle) {
+      setTitle(savedTitle);
+      setCharCount(savedTitle.length);
+    }
+  }, []);
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     if (newTitle.length <= maxChars) {
       setTitle(newTitle);
       setCharCount(newTitle.length);
+      
+      // Lưu tiêu đề vào localStorage
+      localStorage.setItem('courseTitle', newTitle);
     }
   };
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import CreateCourseHeader from '@/layouts/CreateCourseHeader';
-import CreateCourseFooter from '@/layouts/CreateCourseFooter';
+import CreateCourseHeader from '@/layouts/CreateCourse/CreateCourseHeader';
+import CreateCourseFooter from '@/layouts/CreateCourse/CreateCourseFooter';
 
 export default function CreateLayout({
   children,

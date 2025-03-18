@@ -22,7 +22,6 @@ export const CategoryService = {
       // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
       const response = await axiosInstance.get<ApiResponse<Category[]>>("/categories");
       
-      console.log("API Response:", response.data);
       
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
@@ -31,7 +30,6 @@ export const CategoryService = {
       console.warn('API trả về thành công nhưng dữ liệu không hợp lệ, sử dụng dữ liệu mẫu');
       return this.getMockCategories();
     } catch (error) {
-      console.error('Lỗi khi lấy danh mục:', error);
       console.warn('Sử dụng dữ liệu mẫu do lỗi API');
       return this.getMockCategories();
     }

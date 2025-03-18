@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isDifferentLayout =
-    pathname?.startsWith('/courses/create') || pathname?.startsWith('/register');
+    pathname?.startsWith('/courses/create') || pathname?.startsWith('/register') || pathname?.startsWith('/instructor');
   return (
     <html lang="en">
       <body className="font-roboto-condensed">{isDifferentLayout ? children : <Layout>{children}</Layout>}</body>

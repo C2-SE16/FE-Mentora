@@ -1,12 +1,13 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import SearchResults from '@/components/modules/searchs/SearchResult';
 import { searchCourses, SearchCourseParams, SearchCoursesResponse, SortOrder } from '@/apis/searchService';
 
 const SearchPage: FC = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [searchResults, setSearchResults] = useState<SearchCoursesResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +16,40 @@ const SearchPage: FC = () => {
   const query = searchParams?.get('q') || '';
   const page = parseInt(searchParams?.get('page') || '1');
   const categoryId = searchParams?.get('category') || undefined;
-  const minRating = searchParams?.get('rating') ? parseFloat(searchParams?.get('rating') || '0') : undefined;
+  const minRating = searchParams?.get('rating') ? parseFloat(searchParams.get('rating') || '0') : undefined;
+  
+  // Function to update URL with new search parameters
+  const updateSearchParams = (params: Record<string, string | null>) => {
+    const urlSearchParams = new URLSearchParams(searchParams?.toString());
+    
+    // Update or remove parameters
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === null) {
+        urlSearchParams.delete(key);
+      } else {
+        urlSearchParams.set(key, value);
+      }
+    });
+    
+    // Reset to page 1 when filters change
+    if (!('page' in params)) {
+      urlSearchParams.set('page', '1');
+    }
+    
+    // Build the new URL
+    const newUrl = `${window.location.pathname}?${urlSearchParams.toString()}`;
+    router.push(newUrl);
+  };
+  
+  // Handle rating filter change
+  const handleRatingChange = (rating: number) => {
+    // If the same rating is clicked again, remove the filter
+    if (minRating === rating) {
+      updateSearchParams({ rating: null });
+    } else {
+      updateSearchParams({ rating: rating.toString() });
+    }
+  };
   
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -70,7 +104,7 @@ const SearchPage: FC = () => {
         <h1 className="text-2xl font-bold mb-6">
           {isLoading ? 'Đang tìm kiếm...' : 
            query ? `${searchResults?.pagination?.total || 0} kết quả cho "${query}"` : 
-           'Kết quả tim kiếm'}
+           'Kết quả tìm kiếm'}
         </h1>
         
         <div className="flex justify-between items-center mb-4">
@@ -96,18 +130,15 @@ const SearchPage: FC = () => {
         <div className="flex flex-col md:flex-row gap-4 md:gap-8">
           <div className="w-full md:w-1/4">
             <div className="bg-white rounded-lg p-4 shadow">
-            <h2 className="font-semibold mb-4">Đánh giá</h2>
+              <h2 className="font-semibold mb-4">Đánh giá</h2>
               <div className="flex flex-col gap-3">
                 {[4.5, 4.0, 3.5, 3.0].map((rating) => (
-                  <label key={rating} className="flex items-center gap-2 whitespace-nowrap">
+                  <label key={rating} className="flex items-center gap-2 whitespace-nowrap cursor-pointer">
                     <input 
                       type="checkbox" 
                       className="form-checkbox h-4 w-4 flex-shrink-0"
                       checked={minRating === rating}
-                      onChange={() => {
-                        // Handle rating filter change
-                        // You would typically update the URL here
-                      }}
+                      onChange={() => handleRatingChange(rating)}
                     />
                     <div className="flex items-center">
                       <span className="w-6 text-right">{rating}</span>

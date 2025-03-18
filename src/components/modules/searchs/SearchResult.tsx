@@ -55,8 +55,9 @@ const SearchResults: FC<SearchResultsProps> = ({ courses }) => {
               <span>⭐</span>
               <span className="text-gray-600">({course.ratingCount} đánh giá)</span>
             </div>
+            {/* Removed the reference to totalDuration since it doesn't exist in CourseResult */}
             <p className="text-sm text-gray-500 mt-1">
-              {typeof course.totalDuration === 'string' ? course.totalDuration : ''}
+              {course.description ? course.description.substring(0, 100) + '...' : ''}
             </p>
           </div>
         </div>

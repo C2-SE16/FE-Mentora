@@ -21,42 +21,30 @@ export interface SearchCourseParams {
   maxPrice?: number;
 }
 
-// Interface for course data returned from the API
 export interface CourseResult {
-    id: string;
-    title: string;
-    description: string;
-    price: number;
-    discountPrice?: number;
-    thumbnail?: string;
-    instructor: string;
-    instructorAvatar?: string;
-    rating: number;
-    ratingCount: number;
-    categories: { id: string; name: string }[];
-    // You can add a more specific index signature if needed
-    [key: string]: string | number | boolean | { id: string; name: string }[] | undefined;
-  }
-
-// Interface for pagination data
-export interface PaginationData {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  discountPrice: number;
+  thumbnail: string;
+  instructor: string;
+  instructorAvatar: string;
+  rating: number;
+  ratingCount: number;
+  categories: { id: string; name: string }[];
 }
 
-// Interface for search response
 export interface SearchCoursesResponse {
   courses: CourseResult[];
-  pagination: PaginationData;
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
-/**
- * Search for courses using the backend API
- * @param params Search parameters
- * @returns Promise with search results
- */
 export const searchCourses = async (params: SearchCourseParams): Promise<SearchCoursesResponse> => {
   try {
     const response = await axiosInstance.get('/courses/search', { params });

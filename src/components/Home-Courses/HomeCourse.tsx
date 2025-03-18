@@ -1,9 +1,21 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../Button/Button';
+import { CourseItemSkeleton, MentorSkeleton, TopicSkeleton } from './HomeCourseLoading';
 
 const HomeCourse = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const setTime = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(setTime);
+  }, []);
+
   const recommendedCourses = [
     {
       id: 1,
@@ -315,14 +327,22 @@ const HomeCourse = () => {
     <div className="mt-5">
       {/* Course list 1 */}
       <div className="flex gap-x-6">
-        {recommendedCourses.map((course, index) => (
-          <CourseItem
-            key={course.id}
-            course={course}
-            index={index}
-            totalItems={recommendedCourses.length}
-          />
-        ))}
+        {isLoading ? (
+          <>
+            {[1, 2, 3, 4].map((item, index) => (
+              <CourseItemSkeleton key={index} />
+            ))}
+          </>
+        ) : (
+          recommendedCourses.map((course, index) => (
+            <CourseItem
+              key={course.id}
+              course={course}
+              index={index}
+              totalItems={recommendedCourses.length}
+            />
+          ))
+        )}
       </div>
 
       {/* Course list 2 */}
@@ -335,14 +355,22 @@ const HomeCourse = () => {
       </div>
 
       <div className="flex gap-x-6 mt-5">
-        {bestSellerCourses.map((course, index) => (
-          <CourseItem
-            key={course.id}
-            course={course}
-            index={index}
-            totalItems={bestSellerCourses.length}
-          />
-        ))}
+        {isLoading ? (
+          <>
+            {[1, 2, 3, 4].map((item, index) => (
+              <CourseItemSkeleton key={index} />
+            ))}
+          </>
+        ) : (
+          bestSellerCourses.map((course, index) => (
+            <CourseItem
+              key={course.id}
+              course={course}
+              index={index}
+              totalItems={bestSellerCourses.length}
+            />
+          ))
+        )}
       </div>
 
       {/* Course list 3 */}
@@ -354,14 +382,22 @@ const HomeCourse = () => {
         </Link>
       </div>
       <div className="flex gap-x-6 mt-5">
-        {bestSellerCourses.map((course, index) => (
-          <CourseItem
-            key={course.id}
-            course={course}
-            index={index}
-            totalItems={bestSellerCourses.length}
-          />
-        ))}
+        {isLoading ? (
+          <>
+            {[1, 2, 3, 4].map((item, index) => (
+              <CourseItemSkeleton key={index} />
+            ))}
+          </>
+        ) : (
+          bestSellerCourses.map((course, index) => (
+            <CourseItem
+              key={course.id}
+              course={course}
+              index={index}
+              totalItems={bestSellerCourses.length}
+            />
+          ))
+        )}
       </div>
 
       <div className="flex justify-between mt-16">
@@ -373,19 +409,23 @@ const HomeCourse = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-6 mt-5">
-        {topics.map((topic, index) => (
-          <div key={index}>
-            <Button
-              href="/courses/1"
-              minWidth={310}
-              backgroundColor="#fff"
-              textColor="black"
-              className="border border-black shadow-custom transition-all duration-300 hover:bg-[#171100] hover:text-white hover:border-[#3A10E5] hover:shadow-lg"
-            >
-              {topic}
-            </Button>
-          </div>
-        ))}
+        {isLoading
+          ? Array(8)
+              .fill(0)
+              .map((_, index) => <TopicSkeleton key={index} />)
+          : topics.map((topic, index) => (
+              <div key={index}>
+                <Button
+                  href="/courses/1"
+                  minWidth={310}
+                  backgroundColor="#fff"
+                  textColor="black"
+                  className="border border-black shadow-custom transition-all duration-300 hover:bg-[#171100] hover:text-white hover:border-[#3A10E5] hover:shadow-lg"
+                >
+                  {topic}
+                </Button>
+              </div>
+            ))}
       </div>
 
       <div className="flex justify-between mt-16">
@@ -397,9 +437,16 @@ const HomeCourse = () => {
       </div>
 
       <div className="flex gap-x-6 mt-5">
-        {mentors.map((mentor) => (
-          <div
-            key={mentor.id}
+        {isLoading ? (
+          <>
+            {[1, 2, 3, 4].map((item, index) => (
+              <MentorSkeleton key={index} />
+            ))}
+          </>
+        ) : (
+          mentors.map((mentor) => (
+            <div
+              key={mentor.id}
             className="w-[330px] h-[290px] border border-black hover:shadow-lg transition-all duration-100 group cursor-pointer"
           >
             <div className="pt-[30px] px-[30px] pb-4 flex flex-col items-center justify-center h-full">
@@ -417,8 +464,9 @@ const HomeCourse = () => {
               </h2>
               <p className="font-bold transition-colors duration-100">{mentor.role}</p>
             </div>
-          </div>
-        ))}
+              </div>
+            ))
+        )}
       </div>
     </div>
   );

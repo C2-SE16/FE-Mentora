@@ -13,7 +13,7 @@ export default function RootLayout({
     pathname?.startsWith('/courses/create') || pathname?.startsWith('/register');
   return (
     <html lang="en">
-      <body className="font-roboto-condensed">
+      <body className="font-robotoCondensed">
         {isDifferentLayout ? children : <Layout>{children}</Layout>}
       </body>
     </html>

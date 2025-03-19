@@ -72,17 +72,17 @@ export default function ProfileSidebar({ firstName, lastName }: ProfileSidebarPr
               </Link>
             </li>
             <li className="py-1">
-              <Link href="#!" className="block font-normal hover:text-[#1dbe70]">
+              <Link href="/profile/edit-privacy" className="block font-normal hover:text-[#1dbe70]">
                 Quyền riêng tư
               </Link>
             </li>
             <li className="py-1">
-              <Link href="#!" className="block font-normal hover:text-[#1dbe70]">
+              <Link href="/profile/edit-notification-preferences" className="block font-normal hover:text-[#1dbe70]">
                 Cài đặt thông báo
               </Link>
             </li>
             <li className="py-1 border-t border-gray-200 mt-2 pt-2 text-[#B11212]">
-              <Link href="#!" className="block font-normal hover:text-[#e63030]">
+              <Link href="/profile/close-account" className="block font-normal hover:text-[#e63030]">
                 Đóng tài khoản
               </Link>
             </li>

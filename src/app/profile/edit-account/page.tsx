@@ -20,7 +20,7 @@ export default function SecurityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6">
         <div className="bg-white border border-gray-200 shadow-custom">
           <div className="flex flex-col md:flex-row">

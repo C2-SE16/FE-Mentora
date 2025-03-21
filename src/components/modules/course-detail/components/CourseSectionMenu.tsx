@@ -46,15 +46,6 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({
 }) => {
   return (
     <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
-      <div className="col-span-3">
-        <h2 className="text-xl font-bold text-gray-900 pt-5">
-          Nội dung khóa học
-        </h2>
-        <p className="text-sm text-gray-600">
-          35 phần - 349 bài giảng - 37h30ph
-        </p>
-      </div>
-
       <div className="col-span-2 w-full">
         <Accordion type="multiple">
           {modules.map((module, index) => (

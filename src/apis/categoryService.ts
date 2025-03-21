@@ -24,9 +24,8 @@ export const CategoryService = {
   async getAllCategories(): Promise<Category[]> {
     try {
       // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
-      const response = await axiosInstance.get<ApiResponse<Category[]>>(
-        '/categories'
-      );
+      const response =
+        await axiosInstance.get<ApiResponse<Category[]>>('/categories');
 
       console.log('API Response:', response.data);
 

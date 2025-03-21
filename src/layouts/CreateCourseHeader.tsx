@@ -10,16 +10,16 @@ interface CreateCourseHeaderProps {
 const CreateCourseHeader = ({ currentStep = 1 }: CreateCourseHeaderProps) => {
   const router = useRouter();
   const pathname = usePathname();
-  
+
   // Xác định bước hiện tại dựa trên đường dẫn
   const getCurrentStep = () => {
     if (pathname?.includes('/step1')) return 1;
     if (pathname?.includes('/step2')) return 2;
     return 1; // Mặc định là bước 1
   };
-  
+
   const totalSteps = 2;
-  
+
   return (
     <header className="flex items-center justify-between border-b border-gray-200 px-4 sm:px-6 md:px-8 py-3 lg:h-[80px]">
       <div className="flex items-center h-full">
@@ -37,8 +37,8 @@ const CreateCourseHeader = ({ currentStep = 1 }: CreateCourseHeaderProps) => {
           Bước {currentStep}/{totalSteps}
         </span>
       </div>
-      
-      <button 
+
+      <button
         onClick={() => router.push('/')}
         className="text-green-500 hover:text-green-600 transition-colors text-sm md:text-base font-robotoCondensed"
       >
@@ -48,4 +48,4 @@ const CreateCourseHeader = ({ currentStep = 1 }: CreateCourseHeaderProps) => {
   );
 };
 
-export default CreateCourseHeader; 
+export default CreateCourseHeader;

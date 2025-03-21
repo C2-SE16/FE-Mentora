@@ -5,7 +5,7 @@ export interface Cart {
   userId: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   items?: CartItem[];
   user?: any; // Tham chiếu đến User
@@ -19,8 +19,8 @@ export interface CartItem {
   discount: number | null;
   appliedVoucherId: string | null;
   finalPrice: number | null;
-  
+
   // Relationships
   cart?: Cart;
   course?: Course;
-} 
+}

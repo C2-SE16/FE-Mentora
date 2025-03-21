@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { LearningObjective } from '@/types/learning-object';
 import { Heart } from 'lucide-react';
 import React from 'react';
 const contents = [
@@ -10,7 +11,14 @@ const contents = [
   'Full lifetime access',
   'Certificate of completion',
 ];
-const CourseSidebar = () => {
+interface CourseSidebarProps {
+  courseId: string;
+  learningObject?: LearningObjective[];
+}
+const CourseSidebar: React.FC<CourseSidebarProps> = ({
+  courseId,
+  learningObject = [],
+}) => {
   return (
     <Card
       className="bg-white border border-gray-300 shadow-md rounded-none w-full h-[500px] p-4 
@@ -35,9 +43,9 @@ const CourseSidebar = () => {
       </h2>
       <div>
         <ul className="list-disc pl-5  text-[15px] font-normal font-robotoCondensed w-full max-w-full">
-          {contents.map((item, index) => (
+          {learningObject.map((item, index) => (
             <li key={index} className="w-full max-w-full break-words">
-              {item}
+              {item.description}
             </li>
           ))}
         </ul>

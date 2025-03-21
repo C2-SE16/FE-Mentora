@@ -1,7 +1,9 @@
 .main-header {
   height: 7.2rem;
   background: white;
-  box-shadow: 0 2px 4px #00000014, 0 4px 12px #00000014;
+  box-shadow:
+    0 2px 4px #00000014,
+    0 4px 12px #00000014;
   display: flex;
   padding: 0 2.4rem;
 }
@@ -101,7 +103,9 @@
 .dropdown-list {
   background: white;
   border: 1px solid #eee;
-  box-shadow: 0 2px 4px #00000014, 0 4px 12px #00000014;
+  box-shadow:
+    0 2px 4px #00000014,
+    0 4px 12px #00000014;
 }
 
 .dropdown-list .dropdown-item {
@@ -120,7 +124,9 @@
   background: white;
   min-width: 300px;
   padding: 20px;
-  box-shadow: 0 2px 4px #00000014, 0 4px 12px #00000014;
+  box-shadow:
+    0 2px 4px #00000014,
+    0 4px 12px #00000014;
 }
 
 .dropdown-content.right {

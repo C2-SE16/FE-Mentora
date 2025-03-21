@@ -4,7 +4,7 @@ import { VoucherUsageHistory } from './vouchers';
 export enum PaymentStatus {
   COMPLETED = 'COMPLETED',
   PENDING = 'PENDING',
-  FAILED = 'FAILED'
+  FAILED = 'FAILED',
 }
 
 export interface Payment {
@@ -16,7 +16,7 @@ export interface Payment {
   transactionId: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   orderDetails?: OrderDetail[];
   user?: any; // Tham chiếu đến User
@@ -30,9 +30,9 @@ export interface OrderDetail {
   discount: number | null;
   finalPrice: number | null;
   createdAt: Date | null;
-  
+
   // Relationships
   course?: Course;
   payment?: Payment;
   voucherUsageHistory?: VoucherUsageHistory[];
-} 
+}

@@ -25,8 +25,8 @@ export default function Step2() {
         setCategories(data);
         setError(null);
       } catch (err) {
-        console.error("Lỗi khi lấy danh sách categories:", err);
-        setError("Không thể tải danh sách thể loại. Vui lòng thử lại sau.");
+        console.error('Lỗi khi lấy danh sách categories:', err);
+        setError('Không thể tải danh sách thể loại. Vui lòng thử lại sau.');
       } finally {
         setIsLoading(false);
       }
@@ -53,7 +53,9 @@ export default function Step2() {
   return (
     <div className="max-w-3xl mx-auto py-8">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold mb-4 font-oswald">Thể loại phù hợp với khóa học của bạn là?</h1>
+        <h1 className="text-3xl font-bold mb-4 font-oswald">
+          Thể loại phù hợp với khóa học của bạn là?
+        </h1>
         <p className="text-gray-600 font-robotoCondensed">
           Bạn có thể chọn thể loại hoặc để trống. Bạn có thể chỉnh sửa sau.
         </p>
@@ -85,7 +87,7 @@ export default function Step2() {
         ) : error ? (
           <div className="text-center py-4 text-red-500">
             <p>{error}</p>
-            <button 
+            <button
               onClick={() => CategoryService.getAllCategories().then(setCategories)}
               className="mt-2 text-green-500 underline"
             >
@@ -113,7 +115,7 @@ export default function Step2() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d={isDropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                  d={isDropdownOpen ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}
                 ></path>
               </svg>
             </button>
@@ -124,10 +126,15 @@ export default function Step2() {
                   {categories.map((category) => (
                     <li
                       key={category.categoryId}
-                      onClick={() => category.categoryType && handleCategorySelect(category.categoryId, category.categoryType)}
+                      onClick={() =>
+                        category.categoryType &&
+                        handleCategorySelect(category.categoryId, category.categoryType)
+                      }
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     >
-                      {category.categoryType ? categoryTypeToVietnamese[category.categoryType] : 'Không xác định'}
+                      {category.categoryType
+                        ? categoryTypeToVietnamese[category.categoryType]
+                        : 'Không xác định'}
                     </li>
                   ))}
                 </ul>
@@ -139,4 +146,3 @@ export default function Step2() {
     </div>
   );
 }
-  

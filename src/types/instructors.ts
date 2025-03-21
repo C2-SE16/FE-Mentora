@@ -10,8 +10,8 @@ export interface Instructor {
   isVerified: boolean | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  
+
   // Relationships
   courses?: Course[];
   user?: any; // Tham chiếu đến User
-} 
+}

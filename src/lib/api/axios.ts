@@ -4,13 +4,14 @@ const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
   withCredentials: true,
   // Bỏ qua lỗi SSL nếu dùng self-signed certificate (chỉ dùng cho development)
-  httpsAgent: process.env.NODE_ENV === 'development' 
-    ? new (require('https').Agent)({ rejectUnauthorized: false })
-    : undefined
+  httpsAgent:
+    process.env.NODE_ENV === 'development'
+      ? new (require('https').Agent)({ rejectUnauthorized: false })
+      : undefined,
 });
 
 // Interceptors
@@ -43,4 +44,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance; 
+export default axiosInstance;

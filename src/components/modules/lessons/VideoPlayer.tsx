@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from 'react';
 import { VideoPlayerProps } from '@/types/lessons';
 
 export default function VideoPlayer({ videoUrl, lessonId, onProgress }: VideoPlayerProps) {
@@ -18,10 +18,10 @@ export default function VideoPlayer({ videoUrl, lessonId, onProgress }: VideoPla
     <div className="relative aspect-video bg-black">
       <video
         ref={videoRef}
-        src={videoUrl || "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"}
+        src={videoUrl || 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'}
         className="w-full h-full"
       />
       {/* Controls UI */}
     </div>
   );
-} 
+}

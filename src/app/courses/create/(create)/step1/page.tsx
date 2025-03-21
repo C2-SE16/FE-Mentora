@@ -22,7 +22,7 @@ export default function Step1() {
     if (newTitle.length <= maxChars) {
       setTitle(newTitle);
       setCharCount(newTitle.length);
-      
+
       // Lưu tiêu đề vào localStorage
       localStorage.setItem('courseTitle', newTitle);
     }

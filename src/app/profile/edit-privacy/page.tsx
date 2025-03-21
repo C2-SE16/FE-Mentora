@@ -6,7 +6,7 @@ import ProfileSidebar from '@/components/ProfileSideBar/ProfileSidebar';
 export default function PrivacySettingsPage() {
   const [firstName, setFirstName] = useState('Anh');
   const [lastName, setLastName] = useState('Bảo');
-  
+
   // State cho các tùy chọn quyền riêng tư
   const [showProfile, setShowProfile] = useState(true);
   const [showCourses, setShowCourses] = useState(true);
@@ -34,7 +34,7 @@ export default function PrivacySettingsPage() {
               <div className="mb-8">
                 <div className="bg-white p-6">
                   <h2 className="text-base font-medium mb-6">Cài đặt trang hồ sơ</h2>
-                  
+
                   <div className="space-y-6">
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
@@ -48,11 +48,11 @@ export default function PrivacySettingsPage() {
                       </div>
                       <div className="ml-3 text-sm">
                         <label htmlFor="showProfile" className="text-black">
-                        Hiển thị hồ sơ của bạn cho người dùng đăng nhập
+                          Hiển thị hồ sơ của bạn cho người dùng đăng nhập
                         </label>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
                         <input
@@ -70,7 +70,7 @@ export default function PrivacySettingsPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 flex justify-start">
                     <button
                       onClick={handleSave}

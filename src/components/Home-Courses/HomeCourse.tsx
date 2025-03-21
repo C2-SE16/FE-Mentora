@@ -447,25 +447,25 @@ const HomeCourse = () => {
           mentors.map((mentor) => (
             <div
               key={mentor.id}
-            className="w-[330px] h-[290px] border border-black hover:shadow-lg transition-all duration-100 group cursor-pointer"
-          >
-            <div className="pt-[30px] px-[30px] pb-4 flex flex-col items-center justify-center h-full">
-              <div className="overflow-hidden rounded-full w-[165px] h-[165px]">
-                <Image
-                  src={mentor.avatar}
-                  alt={`${mentor.name} avatar`}
-                  width={165}
-                  height={165}
-                  className="rounded-full object-cover w-[165px] h-[165px] transition-transform duration-500 group-hover:scale-110"
-                />
+              className="w-[330px] h-[290px] border border-black hover:shadow-lg transition-all duration-100 group cursor-pointer"
+            >
+              <div className="pt-[30px] px-[30px] pb-4 flex flex-col items-center justify-center h-full">
+                <div className="overflow-hidden rounded-full w-[165px] h-[165px]">
+                  <Image
+                    src={mentor.avatar}
+                    alt={`${mentor.name} avatar`}
+                    width={165}
+                    height={165}
+                    className="rounded-full object-cover w-[165px] h-[165px] transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                <h2 className="text-xl font-bold mt-4 transition-colors duration-100">
+                  {mentor.name}
+                </h2>
+                <p className="font-bold transition-colors duration-100">{mentor.role}</p>
               </div>
-              <h2 className="text-xl font-bold mt-4 transition-colors duration-100">
-                {mentor.name}
-              </h2>
-              <p className="font-bold transition-colors duration-100">{mentor.role}</p>
             </div>
-              </div>
-            ))
+          ))
         )}
       </div>
     </div>

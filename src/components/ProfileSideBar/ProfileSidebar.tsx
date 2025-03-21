@@ -33,8 +33,8 @@ export default function ProfileSidebar({ firstName, lastName }: ProfileSidebarPr
         <nav className="w-full">
           <ul className="space-y-2 text-gray-700">
             <li className="py-1">
-              <Link 
-                href="/profile" 
+              <Link
+                href="/profile"
                 className={`block font-normal ${isActive('/profile') ? 'text-[#1dbe70]' : 'hover:text-[#1dbe70]'}`}
               >
                 Hồ sơ
@@ -77,12 +77,18 @@ export default function ProfileSidebar({ firstName, lastName }: ProfileSidebarPr
               </Link>
             </li>
             <li className="py-1">
-              <Link href="/profile/edit-notification-preferences" className="block font-normal hover:text-[#1dbe70]">
+              <Link
+                href="/profile/edit-notification-preferences"
+                className="block font-normal hover:text-[#1dbe70]"
+              >
                 Cài đặt thông báo
               </Link>
             </li>
             <li className="py-1 border-t border-gray-200 mt-2 pt-2 text-[#B11212]">
-              <Link href="/profile/close-account" className="block font-normal hover:text-[#e63030]">
+              <Link
+                href="/profile/close-account"
+                className="block font-normal hover:text-[#e63030]"
+              >
                 Đóng tài khoản
               </Link>
             </li>

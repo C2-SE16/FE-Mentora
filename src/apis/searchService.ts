@@ -1,7 +1,5 @@
 import axiosInstance from '@/lib/api/axios';
 
-
-
 // Define the sort order enum to match the backend
 export enum SortOrder {
   ASC = 'asc',
@@ -91,15 +89,18 @@ export const getFeaturedCourses = async (limit: number = 6): Promise<CourseResul
  * @param limit Number of courses to fetch
  * @returns Promise with courses in the specified category
  */
-export const getCoursesByCategory = async (categoryId: string, limit: number = 10): Promise<CourseResult[]> => {
+export const getCoursesByCategory = async (
+  categoryId: string,
+  limit: number = 10
+): Promise<CourseResult[]> => {
   try {
-    const response = await axiosInstance.get('/courses/search', { 
-      params: { 
+    const response = await axiosInstance.get('/courses/search', {
+      params: {
         categoryId,
         limit,
         sortBy: 'rating',
-        sortOrder: SortOrder.DESC
-      } 
+        sortOrder: SortOrder.DESC,
+      },
     });
     return response.data.courses;
   } catch (error) {

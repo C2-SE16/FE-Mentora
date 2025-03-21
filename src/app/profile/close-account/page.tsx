@@ -30,8 +30,8 @@ export default function CloseAccountPage() {
               <div className="mb-8">
                 <div className="border border-gray-300 rounded-lg bg-white py-6 px-5">
                   <p className="text-black mb-8">
-                    <strong className="text-base font-bold mb-4 text-[#B11212]">CẢNH BÁO:   </strong>
-                     Nếu bạn đóng tài khoản của mình, bạn sẽ hủy đăng ký từ tất cả 0 khóa học của
+                    <strong className="text-base font-bold mb-4 text-[#B11212]">CẢNH BÁO: </strong>
+                    Nếu bạn đóng tài khoản của mình, bạn sẽ hủy đăng ký từ tất cả 0 khóa học của
                     mình và sẽ mất quyền truy cập vào tài khoản và dữ liệu của bạn được liên kết với
                     tài khoản của bạn mãi mãi, ngay cả khi bạn chọn tạo tài khoản mới bằng cách sử
                     dụng cùng một địa chỉ email trong tương lai .

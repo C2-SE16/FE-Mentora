@@ -268,7 +268,7 @@ const Header = () => {
               </Link>
             </li>
             <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-              <Link href="/profile" className="flex items-center justify-center md:justify-start" >
+              <Link href="/profile" className="flex items-center justify-center md:justify-start">
                 <Image
                   src="/avatar.jpg"
                   alt="avatar"

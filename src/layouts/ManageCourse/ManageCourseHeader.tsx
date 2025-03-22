@@ -1,8 +1,8 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import axiosInstance from '@/lib/api/axios';
 import { CreateCourseService } from '@/apis/createCourseService';
-
 interface ManageCourseHeaderProps {
   title?: string;
   courseId: string;
@@ -28,7 +28,6 @@ const ManageCourseHeader = ({ title, courseId, status, onBack }: ManageCourseHea
       try {
         setIsLoading(true);
         const courseData = await CreateCourseService.getCourseDetails(courseId);
-
         const validStatus = ['DRAFT', 'PUBLISHED', 'PENDING'].includes(courseData.approved) 
           ? (courseData.approved as 'DRAFT' | 'PUBLISHED' | 'PENDING') 
           : 'DRAFT';
@@ -39,7 +38,6 @@ const ManageCourseHeader = ({ title, courseId, status, onBack }: ManageCourseHea
         });
       } catch (error: any) {
         console.error('Lỗi khi lấy thông tin khóa học:', error);
-
         setCourseDetails({
           title: 'Không thể tải thông tin khóa học',
           approved: 'DRAFT',

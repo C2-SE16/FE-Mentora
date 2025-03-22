@@ -99,8 +99,7 @@ export default function GoalsPage() {
     }
   };
 
-  // Lưu thông tin
-  const handleSave = async () => {
+  // Lưu thông tin  const handleSave = async () => {
     if (!courseId) {
       setErrorMessage('Không tìm thấy ID khóa học');
       return;
@@ -216,13 +215,11 @@ export default function GoalsPage() {
       return () => clearTimeout(timer);
     }
   }, [successMessage, errorMessage]);
-
   return (
     <div className="min-h-screen flex flex-col">
       <ManageCourseHeader courseId={courseId} onBack={() => router.push('/instructor/courses')} />
 
-      {/* Thông báo cố định ở đầu trang */}
-      {errorMessage && (
+{errorMessage && (
         <div className="fixed top-16 left-0 right-0 z-50 mx-auto max-w-4xl px-4">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md relative">
             <span className="block sm:inline">{errorMessage}</span>
@@ -249,7 +246,6 @@ export default function GoalsPage() {
           </div>
         </div>
       )}
-
       <div className="flex flex-col md:flex-row flex-1">
         <ManageCourseSidebar courseId={courseId} currentStep="intended-learners" />
 

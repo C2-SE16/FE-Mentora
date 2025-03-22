@@ -41,6 +41,7 @@ interface CreateCourseRequest {
   categoryId: string;
 }
 
+
 interface CourseDetails {
   learningObjectives: {
     objectiveId: string;
@@ -67,7 +68,6 @@ interface CourseDetails {
     updatedAt: string;
   }[];
 }
-
 export const CreateCourseService = {
   /**
    * Tạo khóa học đơn giản với title và categoryId
@@ -131,11 +131,7 @@ export const CreateCourseService = {
       }
     }
   },
-
-  /**
-   * Lấy thông tin chi tiết của khóa học
-   */
-  async getCourseDetails(courseId: string): Promise<CourseData> {
+async getCourseDetails(courseId: string): Promise<CourseData> {
     try {
       if (!courseId) {
         throw new Error('ID khóa học không được để trống');

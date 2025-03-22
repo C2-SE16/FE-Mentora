@@ -19,9 +19,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ review }) => {
             src={review.user?.avatar || 'https://github.com/shadcn.png'}
             alt={review.user?.firstName || 'User'}
           />
-          <AvatarFallback>
-            {review.user?.firstName?.charAt(0) || 'U'}
-          </AvatarFallback>
+          <AvatarFallback>{review.user?.firstName?.charAt(0) || 'U'}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col col-span-3">
           <h1 className="text-[20px] font-robotoCondensed font-normal">
@@ -29,9 +27,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ review }) => {
           </h1>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center justify-center ">
-              <h1 className="pr-3 text-[15px] font-robotoCondensed font-normal">
-                {review.rating}
-              </h1>
+              <h1 className="pr-3 text-[15px] font-robotoCondensed font-normal">{review.rating}</h1>
               <Button variant="ghost" size="icon">
                 <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
               </Button>

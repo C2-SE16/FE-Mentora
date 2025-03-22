@@ -18,12 +18,7 @@ const CourseCard: FC<CourseCardProps> = ({ course }) => {
   return (
     <div className="flex gap-4 p-4 border-b">
       <div className="relative w-48 h-32 flex-shrink-0">
-        <Image
-          src={course.thumbnail}
-          alt={course.title}
-          fill
-          className="object-cover rounded"
-        />
+        <Image src={course.thumbnail} alt={course.title} fill className="object-cover rounded" />
       </div>
       <div className="flex-1">
         <h3 className="font-semibold text-lg">{course.title}</h3>

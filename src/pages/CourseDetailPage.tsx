@@ -62,9 +62,7 @@ export default function DetailCourse() {
                 Automation Test
               </Link>
             </nav>
-            <h1 className="text-[40px] text-[#FFF] font-medium font-oswald">
-              {course?.title}
-            </h1>
+            <h1 className="text-[40px] text-[#FFF] font-medium font-oswald">{course?.title}</h1>
             <h2 className="text-[20px] text-[#FFF] font-normal font-robotoCondensed pt-3">
               {course?.description}
             </h2>
@@ -83,8 +81,7 @@ export default function DetailCourse() {
             <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed py-3">
               Tạo bởi :{' '}
               <u className="text-[#00FF84]">
-                {course?.instructor?.user?.lastName}{' '}
-                {course?.instructor?.user?.firstName}
+                {course?.instructor?.user?.lastName} {course?.instructor?.user?.firstName}
               </u>
             </h2>
           </div>
@@ -97,9 +94,7 @@ export default function DetailCourse() {
                lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full "
         >
           {/* flex */}
-          <CourseDescription
-            learningObject={course?.learningObjectives || []}
-          />
+          <CourseDescription learningObject={course?.learningObjectives || []} />
 
           <CourseSidebar
             courseId={course?.courseId || ''}
@@ -112,15 +107,10 @@ export default function DetailCourse() {
       <div className="h-full grid grid-cols-6 gap-4">
         <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
           <div className="col-span-3">
-            <h2 className="text-xl font-bold text-gray-900 pt-5">
-              Nội dung khóa học
-            </h2>
+            <h2 className="text-xl font-bold text-gray-900 pt-5">Nội dung khóa học</h2>
             <p className="text-sm text-gray-600">
-              {course?.modules?.length} phần - {course?.modules?.length} bài
-              giảng -{' '}
-              {course?.durationTime
-                ? formatDuration(course.durationTime)
-                : 'N/A'}
+              {course?.modules?.length} phần - {course?.modules?.length} bài giảng -{' '}
+              {course?.durationTime ? formatDuration(course.durationTime) : 'N/A'}
             </p>
           </div>
         </div>
@@ -138,27 +128,20 @@ export default function DetailCourse() {
           <CommentInput />
           {/* comments */}
           <div className="col-span-1 lg:col-span-2 ">
-            <h1 className="text-[20px] font-normal font-oswald mb-2">
-              Toàn bộ review
-            </h1>
+            <h1 className="text-[20px] font-normal font-oswald mb-2">Toàn bộ review</h1>
             <div className="grid grid-cols-2 gap-8">
               {course?.reviews && course.reviews.length > 0 ? (
                 course.reviews.map((review) => (
                   <CommentCard key={review.reviewId} review={review} />
                 ))
               ) : (
-                <p className="col-span-2 text-center pb-5">
-                  Chưa có đánh giá nào.
-                </p>
+                <p className="col-span-2 text-center pb-5">Chưa có đánh giá nào.</p>
               )}
             </div>
 
             {/* Ẩn nút "Show more" nếu không có review */}
             {course?.reviews && course.reviews.length > 2 && (
-              <Button
-                variant="link"
-                className="text-[#26FF96] mt-3 text-sm p-0"
-              >
+              <Button variant="link" className="text-[#26FF96] mt-3 text-sm p-0">
                 Xem thêm
                 <ChevronDown className="w-4 h-4 ml-1 text-[#26FF96]" />
               </Button>

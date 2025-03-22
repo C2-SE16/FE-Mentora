@@ -41,9 +41,7 @@ interface CourseSectionMenuProps {
   modules?: Module[]; // modules is now optional
 }
 
-const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({
-  modules = [],
-}) => {
+const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [] }) => {
   return (
     <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
       <div className="col-span-2 w-full">
@@ -56,9 +54,7 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({
             >
               <AccordionTrigger className="bg-gray-200 py-3 flex justify-between font-bold text-gray-900 px-3">
                 {module.title}
-                <span className="text-sm text-gray-700">
-                  {module.lessons.length} bài giảng
-                </span>
+                <span className="text-sm text-gray-700">{module.lessons.length} bài giảng</span>
               </AccordionTrigger>
               <AccordionContent className="bg-white px-4 py-2 space-y-2">
                 {module.lessons.length > 0 ? (
@@ -75,15 +71,11 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({
                         )}
                         {lesson.title}
                         {lesson.preview && (
-                          <span className="text-green-600 text-xs ml-2">
-                            Preview
-                          </span>
+                          <span className="text-green-600 text-xs ml-2">Preview</span>
                         )}
                       </div>
                       <span className="text-gray-600">
-                        {lesson.questions
-                          ? `${lesson.questions} câu hỏi`
-                          : lesson.duration}
+                        {lesson.questions ? `${lesson.questions} câu hỏi` : lesson.duration}
                       </span>
                     </div>
                   ))

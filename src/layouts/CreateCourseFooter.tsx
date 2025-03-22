@@ -7,11 +7,7 @@ interface CreateCourseFooterProps {
   nextDisabled?: boolean;
 }
 
-const CreateCourseFooter = ({
-  onNext,
-  onBack,
-  nextDisabled = false,
-}: CreateCourseFooterProps) => {
+const CreateCourseFooter = ({ onNext, onBack, nextDisabled = false }: CreateCourseFooterProps) => {
   const router = useRouter();
   const pathname = usePathname();
 

@@ -1,27 +1,21 @@
 import { FC } from 'react';
-// import Image from 'next/image';
+import { CourseResult } from '@/apis/searchService';
 
-interface Course {
-  id: string;
-  title: string;
-  instructor: string;
-  rating: number;
-  ratingCount: number;
-  duration: string;
-  price: number;
+interface SearchResultsProps {
+  courses: CourseResult[];
 }
 
-const SearchResults: FC = () => {
+const SearchResults: FC<SearchResultsProps> = ({ courses }) => {
   // Mock data based on the schema
-  const courses: Course[] = Array(5).fill({
-    id: '1',
-    title: 'Khóa học: Xây dựng kênh youtube và kiếm tiền nhờ AI',
-    instructor: 'Tạo bởi: Anh Đạt',
-    rating: 4.5,
-    ratingCount: 3000,
-    duration: '4 bài giảng - 30 phút',
-    price: 239000,
-  });
+  // const courses: Course[] = Array(5).fill({
+  //   id: '1',
+  //   title: 'Khóa học: Xây dựng kênh youtube và kiếm tiền nhờ AI',
+  //   instructor: 'Tạo bởi: Anh Đạt',
+  //   rating: 4.5,
+  //   ratingCount: 3000,
+  //   duration: '4 bài giảng - 30 phút',
+  //   price: 239000,
+  // });
 
   return (
     <div className="bg-white rounded-lg divide-y">
@@ -67,7 +61,10 @@ const SearchResults: FC = () => {
                 ({course.ratingCount} đánh giá)
               </span>
             </div>
-            <p className="text-sm text-gray-500 mt-1">{course.duration}</p>
+            {/* Removed the reference to totalDuration since it doesn't exist in CourseResult */}
+            <p className="text-sm text-gray-500 mt-1">
+              {course.description ? course.description.substring(0, 100) + '...' : ''}
+            </p>
           </div>
         </div>
       ))}

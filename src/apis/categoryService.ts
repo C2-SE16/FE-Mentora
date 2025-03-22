@@ -1,8 +1,4 @@
-import {
-  Category,
-  CategoryType,
-  CourseWithCategories,
-} from '@/types/categories';
+import { Category, CategoryType, CourseWithCategories } from '@/types/categories';
 import axiosInstance from '@/lib/api/axios';
 
 interface ApiResponse<T> {
@@ -24,22 +20,15 @@ export const CategoryService = {
   async getAllCategories(): Promise<Category[]> {
     try {
       // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
-      const response =
-        await axiosInstance.get<ApiResponse<Category[]>>('/categories');
+      const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories');
 
       console.log('API Response:', response.data);
 
-      if (
-        response.data &&
-        response.data.statusCode === 200 &&
-        response.data.data.success
-      ) {
+      if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
-      console.warn(
-        'API trả về thành công nhưng dữ liệu không hợp lệ, sử dụng dữ liệu mẫu'
-      );
+      console.warn('API trả về thành công nhưng dữ liệu không hợp lệ, sử dụng dữ liệu mẫu');
       return this.getMockCategories();
     } catch (error) {
       console.error('Lỗi khi lấy danh mục:', error);
@@ -53,21 +42,13 @@ export const CategoryService = {
    */
   async getCategoryById(categoryId: string): Promise<Category | null> {
     try {
-      const response = await axiosInstance.get<ApiResponse<Category>>(
-        `/categories/${categoryId}`
-      );
+      const response = await axiosInstance.get<ApiResponse<Category>>(`/categories/${categoryId}`);
 
-      if (
-        response.data &&
-        response.data.statusCode === 200 &&
-        response.data.data.success
-      ) {
+      if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
-      throw new Error(
-        response.data.data.message || `Lỗi khi lấy danh mục ID ${categoryId}`
-      );
+      throw new Error(response.data.data.message || `Lỗi khi lấy danh mục ID ${categoryId}`);
     } catch (error) {
       console.error(`Lỗi khi lấy danh mục ID ${categoryId}:`, error);
       return null;
@@ -77,31 +58,21 @@ export const CategoryService = {
   /**
    * Lấy các khóa học theo danh mục
    */
-  async getCoursesByCategory(
-    categoryId: string
-  ): Promise<CourseWithCategories[]> {
+  async getCoursesByCategory(categoryId: string): Promise<CourseWithCategories[]> {
     try {
-      const response = await axiosInstance.get<
-        ApiResponse<CourseWithCategories[]>
-      >(`/categories/${categoryId}/courses`);
+      const response = await axiosInstance.get<ApiResponse<CourseWithCategories[]>>(
+        `/categories/${categoryId}/courses`
+      );
 
-      if (
-        response.data &&
-        response.data.statusCode === 200 &&
-        response.data.data.success
-      ) {
+      if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
       throw new Error(
-        response.data.data.message ||
-          `Lỗi khi lấy khóa học theo danh mục ID ${categoryId}`
+        response.data.data.message || `Lỗi khi lấy khóa học theo danh mục ID ${categoryId}`
       );
     } catch (error) {
-      console.error(
-        `Lỗi khi lấy khóa học theo danh mục ID ${categoryId}:`,
-        error
-      );
+      console.error(`Lỗi khi lấy khóa học theo danh mục ID ${categoryId}:`, error);
       return []; // Trả về mảng rỗng trong trường hợp lỗi
     }
   },
@@ -111,21 +82,16 @@ export const CategoryService = {
    */
   async getCategoriesByCourse(courseId: string): Promise<Category[]> {
     try {
-      const response = await axiosInstance.get<
-        ApiResponse<CourseWithCategories>
-      >(`/courses/${courseId}/categories`);
+      const response = await axiosInstance.get<ApiResponse<CourseWithCategories>>(
+        `/courses/${courseId}/categories`
+      );
 
-      if (
-        response.data &&
-        response.data.statusCode === 200 &&
-        response.data.data.success
-      ) {
+      if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data.categories || [];
       }
 
       throw new Error(
-        response.data.data.message ||
-          `Lỗi khi lấy danh mục cho khóa học ID ${courseId}`
+        response.data.data.message || `Lỗi khi lấy danh mục cho khóa học ID ${courseId}`
       );
     } catch (error) {
       console.error(`Lỗi khi lấy danh mục cho khóa học ID ${courseId}:`, error);

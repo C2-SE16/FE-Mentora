@@ -11,15 +11,11 @@ export default function ModuleNavigation({
   modules,
   currentLessonId,
 }: ModuleNavigationProps) {
-  const [expandedModules, setExpandedModules] = useState<string[]>(
-    modules.map((m) => m.moduleId)
-  );
+  const [expandedModules, setExpandedModules] = useState<string[]>(modules.map((m) => m.moduleId));
 
   const toggleModule = (moduleId: string) => {
     setExpandedModules((prev) =>
-      prev.includes(moduleId)
-        ? prev.filter((id) => id !== moduleId)
-        : [...prev, moduleId]
+      prev.includes(moduleId) ? prev.filter((id) => id !== moduleId) : [...prev, moduleId]
     );
   };
 
@@ -32,8 +28,7 @@ export default function ModuleNavigation({
             onClick={() => toggleModule(module.moduleId)}
           >
             <span className="font-medium">
-              {expandedModules.includes(module.moduleId) ? '▼' : '►'}{' '}
-              {module.title}
+              {expandedModules.includes(module.moduleId) ? '▼' : '►'} {module.title}
             </span>
           </div>
 
@@ -94,9 +89,7 @@ export default function ModuleNavigation({
                     </div>
                     <div className="flex-1">
                       <p className="text-sm">{lesson.title}</p>
-                      {lesson.isFree && (
-                        <span className="text-xs text-green-600">Miễn phí</span>
-                      )}
+                      {lesson.isFree && <span className="text-xs text-green-600">Miễn phí</span>}
                     </div>
                     {lesson.duration && (
                       <span className="text-xs text-gray-500">

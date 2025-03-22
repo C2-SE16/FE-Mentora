@@ -11,9 +11,7 @@ interface LessonPageProps {
   };
 }
 
-export async function generateMetadata({
-  params,
-}: LessonPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: LessonPageProps): Promise<Metadata> {
   try {
     // Trong thực tế, bạn sẽ lấy dữ liệu bài học từ database
     return {

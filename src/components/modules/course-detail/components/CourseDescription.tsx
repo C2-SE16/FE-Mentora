@@ -12,23 +12,19 @@ const learnItems = [
 interface CourseDescriptionProps {
   learningObject?: LearningObjective[];
 }
-const CourseDescription: React.FC<CourseDescriptionProps> = ({
-  learningObject = [],
-}) => {
+const CourseDescription: React.FC<CourseDescriptionProps> = ({ learningObject = [] }) => {
   const [showMore, setShowMore] = useState(false);
   return (
     <Card className="w-full col-span-2 border border-gray-300 shadow-md rounded-none">
       <CardContent className="py-6">
         <h2 className="text-lg font-bold mb-4">Bạn sẽ học được những gì?</h2>
         <ul className="space-y-3">
-          {learningObject
-            .slice(0, showMore ? learningObject.length : 2)
-            .map((obj) => (
-              <li key={obj.objectiveId} className="flex items-start text-sm">
-                <Check className="w-5 h-5 text-black stroke-[1.5]" />
-                <span className="ml-2">{obj.description}</span>
-              </li>
-            ))}
+          {learningObject.slice(0, showMore ? learningObject.length : 2).map((obj) => (
+            <li key={obj.objectiveId} className="flex items-start text-sm">
+              <Check className="w-5 h-5 text-black stroke-[1.5]" />
+              <span className="ml-2">{obj.description}</span>
+            </li>
+          ))}
         </ul>
         <Button
           variant="link"

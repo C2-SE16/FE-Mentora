@@ -123,13 +123,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">
-            <Image
-              src="/mentora-footer.svg"
-              alt="logo"
-              width={120}
-              height={120}
-              className=""
-            />
+            <Image src="/mentora-footer.svg" alt="logo" width={120} height={120} className="" />
             <span className="ml-4 mt-2">© 2025</span>
           </div>
           <div className="flex items-center">

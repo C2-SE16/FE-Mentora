@@ -3,11 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { VideoPlayerProps } from '@/types/lessons';
 
-export default function VideoPlayer({
-  videoUrl,
-  lessonId,
-  onProgress,
-}: VideoPlayerProps) {
+export default function VideoPlayer({ videoUrl, lessonId, onProgress }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -90,12 +86,7 @@ export default function VideoPlayer({
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        className="w-full h-full"
-        onClick={togglePlay}
-      />
+      <video ref={videoRef} src={videoUrl} className="w-full h-full" onClick={togglePlay} />
 
       {showControls && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">

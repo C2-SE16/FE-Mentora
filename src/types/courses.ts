@@ -3,6 +3,9 @@ import { Instructor } from './instructors';
 import { OrderDetail } from './orders';
 import { CartItem } from './cart';
 import { Favorite } from './favorites';
+import { TargetAudience } from '@/types/target_audiences';
+import { Requirement } from '@/types/requirements';
+import { LearningObjective } from '@/types/learning-object';
 
 export enum ApprovalStatus {
   PENDING = 'PENDING',
@@ -35,6 +38,9 @@ export interface Course {
   cartItems?: CartItem[];
   favorites?: Favorite[];
   orderDetails?: OrderDetail[];
+  learningObjectives: LearningObjective[];
+  targetAudiences?: TargetAudience[];
+  requirements?: Requirement[];
 }
 
 export interface Module {

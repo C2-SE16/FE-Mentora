@@ -63,6 +63,10 @@ export default function LessonContent({
                   {lesson.duration
                     ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}`
                     : 'N/A'}
+                  Thời lượng:{' '}
+                  {lesson.duration
+                    ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}`
+                    : 'N/A'}
                 </p>
               )}
             </div>
@@ -114,6 +118,9 @@ export default function LessonContent({
                       <a href="#" className="text-blue-600 hover:underline">
                         Hướng dẫn sử dụng ChatGPT cho nội dung YouTube
                       </a>
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Hướng dẫn sử dụng ChatGPT cho nội dung YouTube
+                      </a>
                     </li>
                     <li>
                       <a href="#" className="text-blue-600 hover:underline">
@@ -128,6 +135,7 @@ export default function LessonContent({
             {activeTab === 'notes' && (
               <div>
                 <h3 className="text-lg font-semibold mb-4">Ghi chú của bạn</h3>
+
                 <textarea
                   className="w-full border rounded-md p-3 h-40"
                   placeholder="Thêm ghi chú của bạn về bài học này..."

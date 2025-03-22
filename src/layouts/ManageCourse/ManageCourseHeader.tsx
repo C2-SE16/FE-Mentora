@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axiosInstance from '@/lib/api/axios';
-
+import { CreateCourseService } from '@/apis/createCourseService';
 interface ManageCourseHeaderProps {
   title?: string;
   courseId: string;
@@ -27,26 +27,17 @@ const ManageCourseHeader = ({ title, courseId, status, onBack }: ManageCourseHea
 
       try {
         setIsLoading(true);
-        const response = await axiosInstance.get(`/courses/${courseId}`);
+        const courseData = await CreateCourseService.getCourseDetails(courseId);
+        const validStatus = ['DRAFT', 'PUBLISHED', 'PENDING'].includes(courseData.approved) 
+          ? (courseData.approved as 'DRAFT' | 'PUBLISHED' | 'PENDING') 
+          : 'DRAFT';
 
-        console.log('Course API response:', response.data);
-
-        if (response.data && response.data.data && response.data.data.data) {
-          const courseData = response.data.data.data;
-
-          setCourseDetails({
-            title: courseData.title || 'Khóa học không có tiêu đề',
-            approved: courseData.approved || 'DRAFT',
-          });
-        }
+        setCourseDetails({
+          title: courseData.title || 'Khóa học không có tiêu đề',
+          approved: validStatus,
+        });
       } catch (error: any) {
         console.error('Lỗi khi lấy thông tin khóa học:', error);
-
-        if (error.response) {
-          console.error('Response status:', error.response.status);
-          console.error('Response data:', error.response.data);
-        }
-
         setCourseDetails({
           title: 'Không thể tải thông tin khóa học',
           approved: 'DRAFT',

@@ -25,34 +25,40 @@ const sections = [
     lessons: [],
   },
 ];
-const CourseSectionMenu = () => {
-  return (
-    <div
-      className="col-span-6 col-start-1 grid grid-cols-1 px-6
-     lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full "
-    >
-      {/* Tiêu đề khóa học */}
-      <div className="col-span-3">
-        <h2 className="text-xl font-bold text-gray-900 pt-5">Nội dung khóa học</h2>
-        <p className="text-sm text-gray-600">35 phần - 349 bài giảng - 37h30ph</p>
-      </div>
 
-      {/* Accordion nội dung khóa học */}
+interface Lesson {
+  title: string;
+  duration?: string;
+  preview?: boolean;
+  questions?: number;
+}
+
+interface Module {
+  title: string;
+  lessons: Lesson[];
+}
+interface CourseSectionMenuProps {
+  modules?: Module[]; // modules is now optional
+}
+
+const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [] }) => {
+  return (
+    <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
       <div className="col-span-2 w-full">
         <Accordion type="multiple">
-          {sections.map((section, index) => (
+          {modules.map((module, index) => (
             <AccordionItem
               key={index}
               value={`section-${index}`}
               className="border-b border-gray-300"
             >
               <AccordionTrigger className="bg-gray-200 py-3 flex justify-between font-bold text-gray-900 px-3">
-                {section.title}
-                <span className="text-sm text-gray-700">4 bài giảng - 30 phút</span>
+                {module.title}
+                <span className="text-sm text-gray-700">{module.lessons.length} bài giảng</span>
               </AccordionTrigger>
               <AccordionContent className="bg-white px-4 py-2 space-y-2">
-                {section.lessons.length > 0 ? (
-                  section.lessons.map((lesson, idx) => (
+                {module.lessons.length > 0 ? (
+                  module.lessons.map((lesson, idx) => (
                     <div
                       key={idx}
                       className="flex justify-between items-center text-sm text-gray-800"

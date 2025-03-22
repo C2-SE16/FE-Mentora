@@ -23,7 +23,8 @@ export default function Step1() {
           Tiêu đề mà bạn muốn đặt cho khóa học của bạn
         </h1>
         <p className="text-gray-600 font-robotoCondensed">
-          Oke! bạn không thể tạo một cái tiêu đề tốt ngay được. Bạn có thể chỉnh nó sau
+          Oke! bạn không thể tạo một cái tiêu đề tốt ngay được. Bạn có thể chỉnh
+          nó sau
         </p>
       </div>
 

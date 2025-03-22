@@ -33,7 +33,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const course = getCourse(courseId);
 
   // Tìm bài học hiện tại
-  const { currentLesson, currentModule, modules } = findLessonAndModule(lessonId);
+  const { currentLesson, currentModule, modules } =
+    findLessonAndModule(lessonId);
 
   if (!currentLesson || !currentModule) {
     notFound();

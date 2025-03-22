@@ -41,6 +41,33 @@ interface CreateCourseRequest {
   categoryId: string;
 }
 
+interface CourseDetails {
+  learningObjectives: {
+    objectiveId: string;
+    courseId: string;
+    description: string;
+    orderIndex: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  requirements: {
+    requirementId: string;
+    courseId: string;
+    description: string;
+    orderIndex: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  targetAudience: {
+    audienceId: string;
+    courseId: string;
+    description: string;
+    orderIndex: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+}
+
 export const CreateCourseService = {
   /**
    * Tạo khóa học đơn giản với title và categoryId
@@ -104,6 +131,210 @@ export const CreateCourseService = {
       }
     }
   },
+
+  /**
+   * Lấy thông tin chi tiết của khóa học
+   */
+  async getCourseDetails(courseId: string): Promise<CourseData> {
+    try {
+      if (!courseId) {
+        throw new Error('ID khóa học không được để trống');
+      }
+
+      const response = await axiosInstance.get<ApiResponse<CourseData>>(`/courses/${courseId}`);
+
+      if (response.data && response.data.data && response.data.data.data) {
+        return response.data.data.data;
+      }
+
+      throw new Error(response.data.data?.message || 'Không thể tải thông tin khóa học');
+    } catch (error: any) {
+      console.error('Lỗi khi lấy thông tin khóa học:', error);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        
+        if (error.response.data && error.response.data.message) {
+          const errorMessage = Array.isArray(error.response.data.message)
+            ? error.response.data.message.join(', ')
+            : error.response.data.message;
+          throw new Error(`Lỗi: ${errorMessage}`);
+        }
+        
+        throw new Error(`Lỗi server: ${error.response.status}`);
+      } else if (error.request) {
+        throw new Error('Không nhận được phản hồi từ server');
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  /**
+   * Lấy thông tin mục tiêu, yêu cầu và đối tượng mục tiêu của khóa học
+   */
+  async getCourseGoalsDetails(courseId: string): Promise<CourseDetails> {
+    try {
+      if (!courseId) {
+        throw new Error('ID khóa học không được để trống');
+      }
+
+      const response = await axiosInstance.get<ApiResponse<CourseDetails>>(`/courses/${courseId}/details`);
+
+      if (response.data && response.data.data && response.data.data.data) {
+        return response.data.data.data;
+      }
+
+      throw new Error(response.data.data?.message || 'Không thể tải thông tin chi tiết khóa học');
+    } catch (error: any) {
+      console.error('Lỗi khi lấy thông tin chi tiết khóa học:', error);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        
+        if (error.response.data && error.response.data.message) {
+          const errorMessage = Array.isArray(error.response.data.message)
+            ? error.response.data.message.join(', ')
+            : error.response.data.message;
+          throw new Error(`Lỗi: ${errorMessage}`);
+        }
+        
+        throw new Error(`Lỗi server: ${error.response.status}`);
+      } else if (error.request) {
+        throw new Error('Không nhận được phản hồi từ server');
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  /**
+   * Cập nhật mục tiêu học tập của khóa học
+   */
+  async updateLearningObjectives(courseId: string, learningObjectives: string[]): Promise<CourseDetails> {
+    try {
+      if (!courseId) {
+        throw new Error('ID khóa học không được để trống');
+      }
+
+      const response = await axiosInstance.post<ApiResponse<CourseDetails>>(
+        `/courses/${courseId}/learning-objectives`,
+        { learningObjectives }
+      );
+
+      if (response.data && response.data.data && response.data.data.data) {
+        return response.data.data.data;
+      }
+
+      throw new Error(response.data.data?.message || 'Không thể cập nhật mục tiêu học tập');
+    } catch (error: any) {
+      console.error('Lỗi khi cập nhật mục tiêu học tập:', error);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        
+        if (error.response.data && error.response.data.message) {
+          const errorMessage = Array.isArray(error.response.data.message)
+            ? error.response.data.message.join(', ')
+            : error.response.data.message;
+          throw new Error(`Lỗi: ${errorMessage}`);
+        }
+        
+        throw new Error(`Lỗi server: ${error.response.status}`);
+      } else if (error.request) {
+        throw new Error('Không nhận được phản hồi từ server');
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  /**
+   * Cập nhật yêu cầu của khóa học
+   */
+  async updateRequirements(courseId: string, requirements: string[]): Promise<CourseDetails> {
+    try {
+      if (!courseId) {
+        throw new Error('ID khóa học không được để trống');
+      }
+
+      const response = await axiosInstance.post<ApiResponse<CourseDetails>>(
+        `/courses/${courseId}/requirements`,
+        { requirements }
+      );
+
+      if (response.data && response.data.data && response.data.data.data) {
+        return response.data.data.data;
+      }
+
+      throw new Error(response.data.data?.message || 'Không thể cập nhật yêu cầu khóa học');
+    } catch (error: any) {
+      console.error('Lỗi khi cập nhật yêu cầu khóa học:', error);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        
+        if (error.response.data && error.response.data.message) {
+          const errorMessage = Array.isArray(error.response.data.message)
+            ? error.response.data.message.join(', ')
+            : error.response.data.message;
+          throw new Error(`Lỗi: ${errorMessage}`);
+        }
+        
+        throw new Error(`Lỗi server: ${error.response.status}`);
+      } else if (error.request) {
+        throw new Error('Không nhận được phản hồi từ server');
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  /**
+   * Cập nhật đối tượng mục tiêu của khóa học
+   */
+  async updateTargetAudience(courseId: string, targetAudience: string[]): Promise<CourseDetails> {
+    try {
+      if (!courseId) {
+        throw new Error('ID khóa học không được để trống');
+      }
+
+      const response = await axiosInstance.post<ApiResponse<CourseDetails>>(
+        `/courses/${courseId}/target-audience`,
+        { targetAudience }
+      );
+
+      if (response.data && response.data.data && response.data.data.data) {
+        return response.data.data.data;
+      }
+
+      throw new Error(response.data.data?.message || 'Không thể cập nhật đối tượng mục tiêu');
+    } catch (error: any) {
+      console.error('Lỗi khi cập nhật đối tượng mục tiêu:', error);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        
+        if (error.response.data && error.response.data.message) {
+          const errorMessage = Array.isArray(error.response.data.message)
+            ? error.response.data.message.join(', ')
+            : error.response.data.message;
+          throw new Error(`Lỗi: ${errorMessage}`);
+        }
+        
+        throw new Error(`Lỗi server: ${error.response.status}`);
+      } else if (error.request) {
+        throw new Error('Không nhận được phản hồi từ server');
+      } else {
+        throw error;
+      }
+    }
+  }
 };
 
 export default CreateCourseService;

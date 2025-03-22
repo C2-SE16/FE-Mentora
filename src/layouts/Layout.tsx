@@ -5,7 +5,7 @@ import Footer from '@/layouts/Footer';
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body className="font-roboto-condensed">
+      <body className="font-robotoCondensed">
         <Header />
         {children}
         <Footer />

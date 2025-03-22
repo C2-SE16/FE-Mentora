@@ -12,9 +12,7 @@ interface ApiResponse<T> {
 export const CourseService = {
   async getCourseInDetail(courseId: string): Promise<Course | null> {
     try {
-      const response = await axiosInstance.get<ApiResponse<Course>>(
-        `/courses/detail/${courseId}`
-      );
+      const response = await axiosInstance.get<ApiResponse<Course>>(`/courses/detail/${courseId}`);
 
       if (response.data && response.data.statusCode === 200) {
         console.log('Response data:', response.data.data); // Kiểm tra dữ liệu

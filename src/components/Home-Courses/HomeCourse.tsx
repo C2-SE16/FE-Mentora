@@ -5,166 +5,55 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Button from '../Button/Button';
 import { CourseItemSkeleton, MentorSkeleton, TopicSkeleton } from './HomeCourseLoading';
+import { Course, Mentor, Topic } from '@/interfaces/homepage-course';
+import api from '@/apis/api';
+
+interface HomepageData {
+  recommendedCourses: Course[];
+  bestSellerCourses: Course[];
+  trendingCourses: Course[];
+  topics: Topic[];
+  mentors: Mentor[];
+}
+
+interface ApiResponse {
+  data: HomepageData;
+  statusCode: number;
+}
 
 const HomeCourse = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [homepageData, setHomepageData] = useState<HomepageData>({
+    recommendedCourses: [],
+    bestSellerCourses: [],
+    trendingCourses: [],
+    topics: [],
+    mentors: [],
+  });
 
   useEffect(() => {
-    const setTime = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(setTime);
+    const fetchHomepageData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get<ApiResponse>('courses/homepage');
+        if (response.data && response.data.statusCode === 200) {
+          setHomepageData(response.data.data);
+        } else {
+          console.error('Failed to fetch homepage data');
+        }
+      } catch (error) {
+        console.error('Error fetching homepage data:', error);
+      } finally {
+        // Simulate loading delay for better UX
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      }
+    };
+
+    fetchHomepageData();
   }, []);
 
-  const recommendedCourses = [
-    {
-      id: 1,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: false,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-    {
-      id: 2,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: true,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-    {
-      id: 3,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: false,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-    {
-      id: 4,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: false,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-  ];
-
-  const bestSellerCourses = [
-    {
-      id: 5,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: true,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-    {
-      id: 6,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: true,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-    {
-      id: 7,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: true,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-    {
-      id: 8,
-      title: 'Khóa học: Xây dựng kênh youtube',
-      instructor: 'Anh Dat',
-      rating: 4.5,
-      reviews: 3000,
-      currentPrice: '₫100.000đ',
-      originalPrice: '₫80.000đ',
-      isBestSeller: true,
-      image: '/course-preview.png',
-      updatedDate: 'tháng 5 năm 2023',
-      totalHours: 48.5,
-      level: 'Tất cả trình độ',
-      subtitle: true,
-      description:
-        'Master YouTube Channel, SEO và Content Marketing với kỹ thuật mới nhất và phát triển kênh hiệu quả',
-      features: ['Marketing YouTube', 'Tối ưu hóa SEO', 'Content Marketing'],
-    },
-  ];
 
   const topics = [
     'Java',
@@ -177,32 +66,6 @@ const HomeCourse = () => {
     'Thể thao',
   ];
 
-  const mentors = [
-    {
-      id: 1,
-      name: 'Elliot Senpai',
-      role: 'CTO',
-      avatar: '/avatar.jpg',
-    },
-    {
-      id: 2,
-      name: 'Starling Senpai',
-      role: 'CEO',
-      avatar: '/avatar.jpg',
-    },
-    {
-      id: 3,
-      name: 'Dat-G Senpai',
-      role: 'Master',
-      avatar: '/avatar.jpg',
-    },
-    {
-      id: 4,
-      name: 'Nam-Cuc Senpai',
-      role: 'Trader',
-      avatar: '/avatar.jpg',
-    },
-  ];
 
   // Component cho mỗi khóa học
   const CourseItem = ({ course, index }: any) => {
@@ -211,13 +74,13 @@ const HomeCourse = () => {
 
     return (
       <div className="w-[330px] group relative">
-        <div className="relative overflow-hidden rounded-lg">
+        <div className="relative overflow-hidden rounded-lg w-[330px] h-[200px]">
           <Image
             src={course.image}
             alt={course.title}
             width={330}
-            height={133}
-            className="w-full transition-transform duration-500 group-hover:scale-110"
+            height={200}
+            className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
           />
           {/* Overlay khi hover */}
           <div className="absolute inset-0 bg-black bg-opacity-0 flex items-center justify-center transition-all duration-300 group-hover:bg-opacity-40">
@@ -247,7 +110,7 @@ const HomeCourse = () => {
             <span className="flex gap-x-1">
               {course.rating} <Image src="/star.svg" alt="star" width={16} height={16} />
             </span>
-            <span className="text-[#595c73] ml-1 text-sm">({course.reviews})</span>
+            <span className="text-[#595c73] ml-1 text-sm">({course.reviews || 0})</span>
           </div>
           <div className="flex gap-x-4">
             <span className="">{course.currentPrice}</span>
@@ -292,23 +155,24 @@ const HomeCourse = () => {
               <p className="mt-3 text-sm">{course.description}</p>
 
               <div className="mt-3">
-                {course.features.map((feature: any, idx: any) => (
-                  <div key={idx} className="flex items-center gap-x-2 text-sm mt-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-green-600"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>{feature}</span>
-                  </div>
-                ))}
+                {course.categories &&
+                  course.categories.map((category: any, idx: any) => (
+                    <div key={idx} className="flex items-center gap-x-2 text-sm mt-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-green-600"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span>{category.name}</span>
+                    </div>
+                  ))}
               </div>
 
               <div className="mt-4">
@@ -334,12 +198,11 @@ const HomeCourse = () => {
             ))}
           </>
         ) : (
-          recommendedCourses.map((course, index) => (
+          homepageData.recommendedCourses.map((course, index) => (
             <CourseItem
               key={course.id}
               course={course}
               index={index}
-              totalItems={recommendedCourses.length}
             />
           ))
         )}
@@ -357,17 +220,16 @@ const HomeCourse = () => {
       <div className="flex gap-x-6 mt-5">
         {isLoading ? (
           <>
-            {[1, 2, 3, 4].map((item, index) => (
-              <CourseItemSkeleton key={index} />
+            {[1, 2, 3, 4].map((item) => (
+              <CourseItemSkeleton key={item} />
             ))}
           </>
         ) : (
-          bestSellerCourses.map((course, index) => (
+          homepageData.recommendedCourses.map((course, index) => (
             <CourseItem
               key={course.id}
               course={course}
               index={index}
-              totalItems={bestSellerCourses.length}
             />
           ))
         )}
@@ -384,18 +246,13 @@ const HomeCourse = () => {
       <div className="flex gap-x-6 mt-5">
         {isLoading ? (
           <>
-            {[1, 2, 3, 4].map((item, index) => (
-              <CourseItemSkeleton key={index} />
+            {[1, 2, 3, 4].map((item) => (
+              <CourseItemSkeleton key={item} />
             ))}
           </>
         ) : (
-          bestSellerCourses.map((course, index) => (
-            <CourseItem
-              key={course.id}
-              course={course}
-              index={index}
-              totalItems={bestSellerCourses.length}
-            />
+          homepageData.bestSellerCourses.map((course, index) => (
+            <CourseItem key={course.id} course={course} index={index} />
           ))
         )}
       </div>
@@ -444,7 +301,7 @@ const HomeCourse = () => {
             ))}
           </>
         ) : (
-          mentors.map((mentor) => (
+          homepageData.mentors.map((mentor) => (
             <div
               key={mentor.id}
               className="w-[330px] h-[290px] border border-black hover:shadow-lg transition-all duration-100 group cursor-pointer"
@@ -452,7 +309,7 @@ const HomeCourse = () => {
               <div className="pt-[30px] px-[30px] pb-4 flex flex-col items-center justify-center h-full">
                 <div className="overflow-hidden rounded-full w-[165px] h-[165px]">
                   <Image
-                    src={mentor.avatar}
+                    src={mentor.avatar || '/avatar.jpg'}
                     alt={`${mentor.name} avatar`}
                     width={165}
                     height={165}

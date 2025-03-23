@@ -15,7 +15,7 @@ export default function RootLayout({
     pathname?.startsWith('/instructor');
   return (
     <html lang="en">
-      <body className="font-roboto-condensed">
+      <body className="font-robotoCondensed">
         {isDifferentLayout ? children : <Layout>{children}</Layout>}
       </body>
     </html>

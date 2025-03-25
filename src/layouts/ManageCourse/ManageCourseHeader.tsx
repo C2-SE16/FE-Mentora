@@ -3,11 +3,16 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axiosInstance from '@/lib/api/axios';
 import { CreateCourseService } from '@/apis/createCourseService';
+import Link from 'next/link';
+import { ArrowLeft, Menu } from 'lucide-react';
+
 interface ManageCourseHeaderProps {
   title?: string;
   courseId: string;
   status?: 'DRAFT' | 'PUBLISHED' | 'PENDING';
   onBack?: () => void;
+  onMenuToggle?: () => void;
+  isMobile?: boolean;
 }
 
 interface CourseDetails {
@@ -15,7 +20,7 @@ interface CourseDetails {
   approved: 'DRAFT' | 'PUBLISHED' | 'PENDING';
 }
 
-const ManageCourseHeader = ({ title, courseId, status, onBack }: ManageCourseHeaderProps) => {
+const ManageCourseHeader = ({ title, courseId, status, onBack, onMenuToggle, isMobile }: ManageCourseHeaderProps) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [courseDetails, setCourseDetails] = useState<CourseDetails | null>(null);
@@ -78,6 +83,17 @@ const ManageCourseHeader = ({ title, courseId, status, onBack }: ManageCourseHea
   return (
     <header className="bg-[#1e1e2d] text-white flex justify-between items-center py-3 px-4 sm:px-6 md:px-8 h-[60px]">
       <div className="flex items-center">
+        {/* Nút toggle menu trên mobile */}
+        {isMobile && onMenuToggle && (
+          <button
+            onClick={onMenuToggle}
+            className="mr-3 p-1 rounded-full hover:bg-gray-700 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+        
         <button
           onClick={handleBack}
           className="mr-4 hover:text-gray-300 transition-colors"

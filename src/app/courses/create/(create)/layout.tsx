@@ -38,8 +38,6 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
       <CreateCourseHeader currentStep={currentStep} />
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6">{children}</main>
       <CreateCourseFooter onNext={handleNext} onBack={handleBack} />
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6">{children}</main>
-      <CreateCourseFooter onNext={handleNext} onBack={handleBack} />
     </div>
   );
 }

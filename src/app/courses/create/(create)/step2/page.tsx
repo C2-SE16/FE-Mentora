@@ -58,9 +58,6 @@ export default function Step2() {
         <h1 className="text-3xl font-bold mb-4 font-oswald">
           Thể loại phù hợp với khóa học của bạn là?
         </h1>
-        <h1 className="text-3xl font-bold mb-4 font-oswald">
-          Thể loại phù hợp với khóa học của bạn là?
-        </h1>
         <p className="text-gray-600 font-robotoCondensed">
           Bạn có thể chọn thể loại hoặc để trống. Bạn có thể chỉnh sửa sau.
         </p>
@@ -147,9 +144,6 @@ export default function Step2() {
                       }
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     >
-                      {category.categoryType
-                        ? categoryTypeToVietnamese[category.categoryType]
-                        : 'Không xác định'}
                       {category.categoryType
                         ? categoryTypeToVietnamese[category.categoryType]
                         : 'Không xác định'}

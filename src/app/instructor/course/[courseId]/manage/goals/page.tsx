@@ -99,7 +99,8 @@ export default function GoalsPage() {
     }
   };
 
-  // Lưu thông tin  const handleSave = async () => {
+  // Lưu thông tin
+  const handleSave = async () => {
     if (!courseId) {
       setErrorMessage('Không tìm thấy ID khóa học');
       return;
@@ -420,4 +421,4 @@ export default function GoalsPage() {
       </div>
     </div>
   );
-}
+}  

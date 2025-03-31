@@ -1,0 +1,49 @@
+export enum ApproveEnum {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum CategoryEnum {
+  INFORMATION_TECHNOLOGY = 'INFORMATION_TECHNOLOGY',
+  MARKETING = 'MARKETING',
+  FINANCE = 'FINANCE',
+  BUSINESS = 'BUSINESS',
+}
+
+export enum PaymentEnum {
+  COMPLETED = 'COMPLETED',
+  PENDING = 'PENDING',
+  FAILED = 'FAILED',
+}
+
+export enum RoleEnum {
+  ADMIN = 'ADMIN',
+  STUDENT = 'STUDENT',
+  INSTRUCTOR = 'INSTRUCTOR',
+  SUPPORT_STAFF = 'SUPPORT_STAFF',
+  ANONYMOUS = 'ANONYMOUS',
+}
+
+export enum VoucherScopeEnum {
+  ALL_COURSES = 'ALL_COURSES',
+  SPECIFIC_COURSES = 'SPECIFIC_COURSES',
+  CATEGORY = 'CATEGORY',
+}
+
+export enum CurriculumEnum {
+  LECTURE = 'LECTURE',
+  QUIZ = 'QUIZ',
+}
+
+export enum QuestionTypeEnum {
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  TRUE_FALSE = 'TRUE_FALSE',
+}
+
+export enum ProgressEnum {
+  NOT_STARTED = 'NOT_STARTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+}

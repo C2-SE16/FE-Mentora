@@ -1,3 +1,4 @@
+import { User } from '@/types/users';
 import { Course } from './courses';
 
 export interface Instructor {
@@ -12,6 +13,6 @@ export interface Instructor {
   updatedAt: Date | null;
 
   // Relationships
-  courses?: Course[];
-  user?: any; // Tham chiếu đến User
+  courses?: Course[] | null;
+  user?: User | null;
 }

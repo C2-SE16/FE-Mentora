@@ -1,4 +1,5 @@
-import { Course } from './courses';
+import { User } from '@/types/users';
+import { CartItem } from '@/types/cart_item';
 
 export interface Cart {
   cartId: string;
@@ -7,20 +8,6 @@ export interface Cart {
   updatedAt: Date | null;
 
   // Relationships
-  items?: CartItem[];
-  user?: any; // Tham chiếu đến User
-}
-
-export interface CartItem {
-  cartItemId: string;
-  courseId: string | null;
-  cartId: string | null;
-  price: number | null;
-  discount: number | null;
-  appliedVoucherId: string | null;
-  finalPrice: number | null;
-
-  // Relationships
-  cart?: Cart;
-  course?: Course;
+  items?: CartItem[] | null;
+  user?: User | null;
 }

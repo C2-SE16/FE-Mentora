@@ -1,38 +1,18 @@
-import { Course } from './courses';
-import { VoucherUsageHistory } from './vouchers';
-
-export enum PaymentStatus {
-  COMPLETED = 'COMPLETED',
-  PENDING = 'PENDING',
-  FAILED = 'FAILED',
-}
+import { PaymentEnum } from '@/types/enum';
+import { User } from '@/types/users';
+import { OrderDetail } from '@/types/order_detail';
 
 export interface Payment {
-  paymentId: string;
+  paymentId: string | null;
   userId: string | null;
   amount: number | null;
   paymentMethod: string | null;
-  status: PaymentStatus | null;
+  status: PaymentEnum | null;
   transactionId: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 
   // Relationships
-  orderDetails?: OrderDetail[];
-  user?: any; // Tham chiếu đến User
-}
-
-export interface OrderDetail {
-  orderDetailId: string;
-  paymentId: string | null;
-  courseId: string | null;
-  price: number | null;
-  discount: number | null;
-  finalPrice: number | null;
-  createdAt: Date | null;
-
-  // Relationships
-  course?: Course;
-  payment?: Payment;
-  voucherUsageHistory?: VoucherUsageHistory[];
+  orderDetails?: OrderDetail[] | null;
+  user?: User | null; // Tham chiếu đến User
 }

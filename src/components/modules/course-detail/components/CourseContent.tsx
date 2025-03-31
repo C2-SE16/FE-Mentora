@@ -2,14 +2,11 @@ import { Requirement } from '@/types/requirements';
 import React from 'react';
 
 interface CourseContentProps {
-  requirements?: Requirement[];
+  requirements?: Requirement[] | undefined;
   descriptions?: string[];
 }
 
-const CourseContent: React.FC<CourseContentProps> = ({
-  requirements = [],
-  descriptions = [],
-}) => {
+const CourseContent: React.FC<CourseContentProps> = ({ requirements = [], descriptions = [] }) => {
   return (
     <div className="col-span-2">
       <h1 className="text-[20px] font-normal font-oswald mb-2">Yêu cầu</h1>

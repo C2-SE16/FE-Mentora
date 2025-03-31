@@ -1,3 +1,4 @@
+import { User } from '@/types/users';
 import { Course } from './courses';
 
 export interface Favorite {
@@ -6,6 +7,6 @@ export interface Favorite {
   courseId: string | null;
 
   // Relationships
-  course?: Course;
-  user?: any; // Tham chiếu đến User
+  course?: Course | null;
+  user?: User | null;
 }

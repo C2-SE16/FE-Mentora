@@ -1,8 +1,8 @@
 export interface LearningObjective {
-  objectiveId: string;
-  courseId: string;
-  description: string;
-  orderIndex: number;
-  createdAt: string;
-  updatedAt: string;
+  objectiveId: string | null;
+  courseId: string | null;
+  description: string | null;
+  orderIndex: number | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 }

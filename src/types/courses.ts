@@ -1,17 +1,16 @@
-import { Category, CourseCategory } from './categories';
+import { Category } from './categories';
 import { Instructor } from './instructors';
-import { OrderDetail } from './orders';
-import { CartItem } from './cart';
 import { Favorite } from './favorites';
 import { TargetAudience } from '@/types/target_audiences';
 import { Requirement } from '@/types/requirements';
 import { LearningObjective } from '@/types/learning-object';
-
-export enum ApprovalStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
+import { ApproveEnum } from '@/types/enum';
+import { Module } from '@/types/module';
+import { CourseReview } from '@/types/course_review';
+import { CourseEnrollment } from '@/types/course_enrollment';
+import { CourseCategory } from '@/types/course_category';
+import { CartItem } from '@/types/cart_item';
+import { OrderDetail } from '@/types/order_detail';
 
 export interface Course {
   courseId: string;
@@ -21,118 +20,26 @@ export interface Course {
   overview: string | null;
   durationTime: number | null;
   price: number | null;
-  approved: ApprovalStatus | null;
+  approved: ApproveEnum | null;
   rating: number | null;
-  ratingCount?: number;
   comment: string | null;
+  thumbnail: string | null;
+  isBestSeller: boolean | null;
+  isRecommended: boolean | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 
   // Relationships
-  instructor?: Instructor;
+  instructor?: Instructor | null;
   modules?: Module[];
-  courseCategories?: CourseCategory[];
-  categories?: Category[];
-  reviews?: CourseReview[];
-  enrollments?: CourseEnrollment[];
-  cartItems?: CartItem[];
-  favorites?: Favorite[];
-  orderDetails?: OrderDetail[];
-  learningObjectives: LearningObjective[];
-  targetAudiences?: TargetAudience[];
-  requirements?: Requirement[];
-}
-
-export interface Module {
-  moduleId: string;
-  courseId: string | null;
-  title: string | null;
-  orderIndex: number;
-  description: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-
-  // Relationships
-  course?: Course;
-  lessons?: Lesson[];
-}
-
-export enum LessonType {
-  VIDEO = 'VIDEO',
-  ARTICLE = 'ARTICLE',
-  QUIZ = 'QUIZ',
-}
-
-export interface Lesson {
-  lessonId: string;
-  moduleId: string | null;
-  title: string | null;
-  contentType: LessonType;
-  contentUrl: string | null;
-  duration: number | null;
-  orderIndex: number;
-  description: string | null;
-  isFree: boolean | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-
-  // Relationships
-  module?: Module;
-  progress?: LessonProgress[];
-}
-
-export enum LessonProgressStatus {
-  NOT_STARTED = 'NOT_STARTED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-}
-
-export interface LessonProgress {
-  lessonProgressId: string;
-  userId: string | null;
-  lessonId: string | null;
-  status: LessonProgressStatus | null;
-  progressPercentage: number | null;
-  lastWatchPosition: number | null;
-  completedAt: Date | null;
-
-  // Relationships
-  lesson?: Lesson;
-  user?: any; // Tham chiếu đến User
-}
-
-export interface CourseEnrollment {
-  courseEnrollmentId: string;
-  courseId: string | null;
-  userId: string | null;
-  enrolledAt: Date | null;
-
-  // Relationships
-  course?: Course;
-  user?: any; // Tham chiếu đến User
-}
-
-export interface CourseReview {
-  reviewId: string;
-  courseId: string | null;
-  userId: string | null;
-  rating: number;
-  comment: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-
-  // Relationships
-  course?: Course;
-  user?: any; // Tham chiếu đến User
-}
-
-// Props interfaces
-export interface CourseInfoProps {
-  title: string;
-  instructor: string;
-  rating: number;
-  ratingCount?: number;
-  enrollments: number;
-  language: string;
-  features: string[];
+  courseCategories?: CourseCategory[] | null;
+  categories?: Category[] | null;
+  reviews?: CourseReview[] | null;
+  enrollments?: CourseEnrollment[] | null;
+  cartItems?: CartItem[] | null;
+  favorites?: Favorite[] | null;
+  orderDetails?: OrderDetail[] | null;
+  learningObjectives: LearningObjective[] | null;
+  targetAudiences?: TargetAudience[] | null;
+  requirements?: Requirement[] | undefined;
 }

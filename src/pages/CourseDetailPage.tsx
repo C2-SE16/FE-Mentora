@@ -22,7 +22,7 @@ export default function DetailCourse() {
     const fetchCourse = async () => {
       try {
         const response = await CourseService.getCourseInDetail(
-          '41d6013c-140f-4fe4-863c-a65888aa7d27'
+          '7c3146ca-7487-4259-bd3e-773048d556d0'
         );
         console.log('>>>>>>', response);
         if (response) {
@@ -75,7 +75,7 @@ export default function DetailCourse() {
                 {course?.reviews?.length}
               </h2>
               <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed">
-                (2.000 học sinh)
+                ({course?.enrollments?.length} học sinh)
               </h2>
             </div>
             <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed py-3">
@@ -114,9 +114,8 @@ export default function DetailCourse() {
             </p>
           </div>
         </div>
-
         <div />
-        <CourseSectionMenu />
+        <CourseSectionMenu modules={course?.modules} />
       </div>
       <div className="h-full  grid grid-cols-6 gap-4">
         <div
@@ -129,7 +128,7 @@ export default function DetailCourse() {
           {/* comments */}
           <div className="col-span-1 lg:col-span-2 ">
             <h1 className="text-[20px] font-normal font-oswald mb-2">Toàn bộ review</h1>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
               {course?.reviews && course.reviews.length > 0 ? (
                 course.reviews.map((review) => (
                   <CommentCard key={review.reviewId} review={review} />

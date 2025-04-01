@@ -3,6 +3,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import ManageCourseHeader from '@/layouts/ManageCourse/ManageCourseHeader';
 import ManageCourseSidebar from '@/layouts/ManageCourse/ManageCourseSidebar';
 import { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 export default function ManageCourseLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -73,6 +74,7 @@ export default function ManageCourseLayout({ children }: { children: React.React
           {children}
         </main>
       </div>
+      <Toaster position="top-right" />
     </div>
   );
 }

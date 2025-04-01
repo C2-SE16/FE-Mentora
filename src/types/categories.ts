@@ -9,6 +9,17 @@ export interface Category {
   courseCategories?: CourseCategory[];
 }
 
+// Export CategoryEnum dưới tên CategoryType để tương thích với code hiện tại
+export { CategoryEnum as CategoryType };
+
+// Thêm mapping từ CategoryEnum sang tiếng Việt
+export const categoryTypeToVietnamese = {
+  [CategoryEnum.INFORMATION_TECHNOLOGY]: 'Công nghệ thông tin',
+  [CategoryEnum.MARKETING]: 'Marketing',
+  [CategoryEnum.FINANCE]: 'Tài chính',
+  [CategoryEnum.BUSINESS]: 'Kinh doanh'
+};
+
 // Interface cho bảng tbl_course_categories (bảng quan hệ)
 
 // Cập nhật interface Course để bao gồm categories

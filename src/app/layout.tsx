@@ -2,7 +2,6 @@
 import { usePathname } from 'next/navigation';
 import './globals.css';
 import Layout from '@/layouts/Layout';
-
 export default function RootLayout({
   children,
 }: Readonly<{

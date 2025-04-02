@@ -12,19 +12,25 @@ import { CourseService } from '@/apis/courseService';
 import { useEffect, useState } from 'react';
 import { Course } from '@/types/courses';
 import { formatDuration } from '@/utils/time';
+import { useParams } from 'next/navigation';
 
 export default function DetailCourse() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const params = useParams();
+  const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
 
+  console.log(courseId); // Kiểm tra giá trị courseId
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await CourseService.getCourseInDetail(
-          '7c3146ca-7487-4259-bd3e-773048d556d0'
-        );
-        console.log('>>>>>>', response);
+        if (!courseId) {
+          console.log('No courseId found in params.');
+          return;
+        }
+
+        const response = await CourseService.getCourseInDetail(courseId);
         if (response) {
           setCourse(response);
         }
@@ -124,7 +130,8 @@ export default function DetailCourse() {
         >
           <CourseContent requirements={course?.requirements} />
           {/* comment input */}
-          <CommentInput />
+          <CommentInput courseId={courseId} setCourse={setCourse} />
+
           {/* comments */}
           <div className="col-span-1 lg:col-span-2 ">
             <h1 className="text-[20px] font-normal font-oswald mb-2">Toàn bộ review</h1>

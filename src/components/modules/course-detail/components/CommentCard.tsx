@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CourseReview } from '@/types/courses';
+import { CourseReview } from '@/types/course_review';
 import { EllipsisVertical, Star } from 'lucide-react';
 import React from 'react';
 

@@ -138,7 +138,7 @@ export default function DetailCourse() {
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
               {course?.reviews && course.reviews.length > 0 ? (
                 course.reviews.map((review) => (
-                  <CommentCard key={review.reviewId} review={review} />
+                  <CommentCard key={review.reviewId} review={review} setCourse={setCourse} />
                 ))
               ) : (
                 <p className="col-span-2 text-center pb-5">Chưa có đánh giá nào.</p>

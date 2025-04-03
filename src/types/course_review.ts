@@ -2,7 +2,7 @@ import { Course } from '@/types/courses';
 import { User } from '@/types/users';
 
 export interface CourseReview {
-  reviewId: string | null;
+  reviewId: string;
   courseId?: string | null;
   userId?: string | null;
   rating: number | null;

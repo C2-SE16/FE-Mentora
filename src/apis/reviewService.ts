@@ -14,7 +14,8 @@ export const ReviewService = {
     try {
       //   const token = localStorage.getItem('token'); // Lấy token từ localStorage
       const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzUxOTQ5MywiZXhwIjoxNzQzNjA1ODkzfQ.mxNfYDGm4TfTUty1PzHGb1CWWT8fjkf2ScYXcB9LPHw';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
+
       if (!token) {
         console.error('No authentication token found!');
         return null;
@@ -39,6 +40,70 @@ export const ReviewService = {
     } catch (error) {
       console.error('Create review error:', error);
       return null;
+    }
+  },
+  async updateReview(
+    reviewId: string,
+    updateReviewDto: Partial<CourseReview>
+  ): Promise<CourseReview | null> {
+    try {
+      // const token = localStorage.getItem('token');
+      const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
+
+      if (!token) {
+        console.error('No authentication token found!');
+        return null;
+      }
+
+      const response = await axiosInstance.put<ApiResponse<CourseReview>>(
+        `/reviews/${reviewId}`,
+        updateReviewDto,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data && response.data.statusCode === 200) {
+        console.log('Review updated:', response.data.data);
+        return response.data.data;
+      }
+
+      throw new Error('Failed to update review');
+    } catch (error) {
+      console.error('Update review error:', error);
+      return null;
+    }
+  },
+
+  async deleteReview(reviewId: string): Promise<boolean> {
+    try {
+      // const token = localStorage.getItem('token');
+      const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
+
+      if (!token) {
+        console.error('No authentication token found!');
+        return false;
+      }
+
+      const response = await axiosInstance.delete<ApiResponse<null>>(`/reviews/${reviewId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data && response.data.statusCode === 200) {
+        console.log('Review deleted successfully');
+        return true;
+      }
+
+      throw new Error('Failed to delete review');
+    } catch (error) {
+      console.error('Delete review error:', error);
+      return false;
     }
   },
 };

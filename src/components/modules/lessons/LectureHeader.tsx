@@ -1,10 +1,13 @@
 'use client';
 
-import { LessonHeaderProps } from '@/types/lessons';
-
-export default function LessonHeader({
+interface LessonHeaderProps {
+  courseTitle: string;
+  lectureTitle: string;
+  progress: number;
+}
+export default function LectureHeader({
   courseTitle,
-  lessonTitle,
+  lectureTitle,
   progress = 0,
 }: LessonHeaderProps) {
   return (

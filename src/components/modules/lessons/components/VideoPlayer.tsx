@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { VideoPlayerProps } from '@/types/lessons';
-
-export default function VideoPlayer({ videoUrl, lessonId, onProgress }: VideoPlayerProps) {
+interface VideoPlayerProps {
+  videoUrl?: string;
+  lectureId?: string;
+  onProgress?: number;
+}
+export default function VideoPlayer({ videoUrl, lectureId, onProgress }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -18,7 +21,7 @@ export default function VideoPlayer({ videoUrl, lessonId, onProgress }: VideoPla
     const handleTimeUpdate = () => {
       setCurrentTime(video.currentTime);
       if (onProgress) {
-        onProgress(Math.floor((video.currentTime / video.duration) * 100));
+        // onProgress(Math.floor((video.currentTime / video.duration) * 100));
       }
     };
 

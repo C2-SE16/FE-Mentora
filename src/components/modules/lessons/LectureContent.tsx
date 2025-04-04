@@ -3,19 +3,15 @@
 import { useState } from 'react';
 import VideoPlayer from './components/VideoPlayer';
 import ModuleNavigation from './components/ModuleNavigation';
-import { LessonContentProps } from '@/types/lessons';
-import { LessonType } from '@/types/courses';
+import { Course, LessonType } from '@/types/courses';
+import { Lecture } from '@/types/lecture';
 
-export default function LessonContent({
-  courseId,
-  lessonId,
-  lesson,
-  module,
-  modules,
-  instructor,
-  rating,
-  ratingCount,
-}: LessonContentProps) {
+interface LectureContentProps {
+  lecture?: Lecture;
+  course?: Course;
+}
+
+export default function LectureContent({ lecture, course }: LectureContentProps) {
   const [progress, setProgress] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'questions'>('content');
 
@@ -31,17 +27,17 @@ export default function LessonContent({
       <div className="w-full md:w-3/4 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
           <VideoPlayer
-            videoUrl={lesson?.contentUrl || undefined}
-            lessonId={lessonId}
-            onProgress={handleProgress}
+            videoUrl="http://localhost:9090/videos/7c3146ca-7487-4259-bd3e-773048d556d0/cf85021c-cb69-432e-9252-ed26106422f3.mp4"
+            lectureId={lecture?.lectureId || undefined}
+            // onProgress={handleProgress}
           />
 
           <div className="p-4 border-b">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold">{lesson?.title || 'Chọn một bài học'}</h2>
+              <h2 className="text-xl font-semibold">{lecture?.title || 'Chọn một bài học'}</h2>
               <div className="flex items-center mt-1">
                 <div className="flex items-center">
-                  <span className="text-yellow-500 text-sm">
+                  {/* <span className="text-yellow-500 text-sm">
                     {Array.from({ length: Math.floor(rating || 0) }).map((_, i) => (
                       <span key={i}>★</span>
                     ))}
@@ -54,21 +50,15 @@ export default function LessonContent({
                   </span>
                   <span className="ml-1 text-sm">{rating}</span>
                   <span className="mx-2 text-gray-400 text-sm">|</span>
-                  <span className="text-green-500 text-sm">({ratingCount} đánh giá )</span>
+                  <span className="text-green-500 text-sm">({ratingCount} đánh giá )</span> */}
                 </div>
               </div>
-              {lesson?.contentType === LessonType.VIDEO && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Thời lượng:{' '}
-                  {lesson.duration
-                    ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}`
-                    : 'N/A'}
-                  Thời lượng:{' '}
-                  {lesson.duration
-                    ? `${Math.floor(lesson.duration / 60)}:${(lesson.duration % 60).toString().padStart(2, '0')}`
-                    : 'N/A'}
-                </p>
-              )}
+              <p className="text-sm text-gray-500 mt-1">
+                Thời lượng:{' '}
+                {lecture?.duration
+                  ? `${Math.floor(lecture?.duration / 60)}:${(lecture?.duration % 60).toString().padStart(2, '0')}`
+                  : 'N/A'}
+              </p>
             </div>
 
             <div className="flex border-b">
@@ -168,26 +158,28 @@ export default function LessonContent({
       </div>
 
       {/* Danh sách bài học */}
+
       <div className="w-full md:w-1/4 bg-gray-100 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
           <div className="p-3 bg-gray-800 text-white">
             <h3 className="font-medium">Nội dung module</h3>
-            <p className="text-sm mt-1">{module.title}</p>
+            <p className="text-sm mt-1">{}</p>
           </div>
 
-          <ModuleNavigation courseId={courseId} modules={modules} currentLessonId={lessonId} />
+          <ModuleNavigation
+            courseId={course?.courseId}
+            modules={course?.modules || []}
+            currentLessonId={lecture?.lectureId}
+          />
         </div>
 
-        {/* Thông tin giảng viên */}
         <div className="mt-4 bg-white shadow-md rounded-md p-4">
           <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
             <div>
               <p className="font-medium">
-                {typeof instructor === 'string'
-                  ? instructor
-                  : instructor.instructorId || 'Giảng viên'}
+                {course?.instructor?.user?.lastName} {course?.instructor?.user?.firstName}
               </p>
               <p className="text-sm text-gray-600">Giảng viên</p>
             </div>

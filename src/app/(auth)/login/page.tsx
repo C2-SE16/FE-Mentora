@@ -3,24 +3,73 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import api from '@/apis/api';
+
+const loginSchema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+// Component Spinner
+const Spinner = () => (
+  <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+);
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    register,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login data:', formData);
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const loginData = {
+        email: data.email,
+        password: data.password,
+      };
+
+      const response = await api.post('auth/login', loginData);
+      console.log('response', response);
+      if (response.data) {
+        const accessToken = response.data.data.accessToken;
+        localStorage.setItem('accessToken', accessToken);
+        setSuccess(true);
+        router.push('/');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Đăng nhập thất bại, vui lòng thử lại.');
+      } else {
+        setError('Có lỗi xảy ra. Vui lòng thử lại sau.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,44 +94,62 @@ const Login = () => {
           <div className="max-w-md w-full mx-auto">
             <h1 className="text-3xl font-bold mb-8 text-center">Đăng nhập</h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{error}</div>}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <input
                   type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
                   placeholder="Email"
-                  className="w-full border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
+                  className={`w-full border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+                  {...register('email')}
+                  disabled={success}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
+
               <div>
                 <input
                   type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
                   placeholder="Mật khẩu"
-                  className="w-full border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
+                  className={`w-full border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+                  {...register('password')}
+                  disabled={success}
                 />
+                {errors.password && (
+                  <p className="mt-1 text-red-500 text-sm">{errors.password.message}</p>
+                )}
               </div>
 
               <button
                 type="submit"
                 className="w-full bg-[#00FF84] text-black font-medium py-3 px-4 rounded-md hover:bg-[#00e878] transition-colors flex items-center justify-center"
+                disabled={isLoading || success}
               >
-                <span>Đăng nhập với email</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <Spinner />
+                  </div>
+                ) : success ? (
+                  <div className="flex items-center space-x-2">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <>
+                    <span>Đăng nhập với email</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 ml-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </>
+                )}
               </button>
             </form>
 
@@ -125,7 +192,7 @@ const Login = () => {
 
             <div className="mt-8 text-center bg-gray-100 py-4 rounded-md">
               <p className="text-gray-600">
-                Bạn đã chưa có tài khoản,{' '}
+                Bạn chưa có tài khoản?{' '}
                 <Link href="/register" className="text-[#1dbe70] font-semibold hover:underline">
                   đăng kí
                 </Link>

@@ -17,7 +17,7 @@ export const categoryTypeToVietnamese = {
   [CategoryEnum.INFORMATION_TECHNOLOGY]: 'Công nghệ thông tin',
   [CategoryEnum.MARKETING]: 'Marketing',
   [CategoryEnum.FINANCE]: 'Tài chính',
-  [CategoryEnum.BUSINESS]: 'Kinh doanh'
+  [CategoryEnum.BUSINESS]: 'Kinh doanh',
 };
 
 // Interface cho bảng tbl_course_categories (bảng quan hệ)

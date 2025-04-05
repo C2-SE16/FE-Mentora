@@ -23,34 +23,34 @@ export default function GoalsPage() {
   useEffect(() => {
     const fetchCourseGoals = async () => {
       if (!courseId) return;
-      
+
       try {
         setIsLoading(true);
         setErrorMessage(null);
         const courseDetails = await CreateCourseService.getCourseGoalsDetails(courseId);
-        
+
         // Cập nhật state với dữ liệu từ API
         if (courseDetails.learningObjectives && courseDetails.learningObjectives.length > 0) {
           setLearningObjectives(
             courseDetails.learningObjectives
               .sort((a, b) => a.orderIndex - b.orderIndex)
-              .map(obj => obj.description)
+              .map((obj) => obj.description)
           );
         }
-        
+
         if (courseDetails.requirements && courseDetails.requirements.length > 0) {
           setRequirements(
             courseDetails.requirements
               .sort((a, b) => a.orderIndex - b.orderIndex)
-              .map(req => req.description)
+              .map((req) => req.description)
           );
         }
-        
+
         if (courseDetails.targetAudience && courseDetails.targetAudience.length > 0) {
           setTargetAudience(
             courseDetails.targetAudience
               .sort((a, b) => a.orderIndex - b.orderIndex)
-              .map(aud => aud.description)
+              .map((aud) => aud.description)
           );
         }
       } catch (error: any) {
@@ -110,92 +110,91 @@ export default function GoalsPage() {
       setIsLoading(true);
       setErrorMessage(null);
       setSuccessMessage(null);
-      
+
       // Lọc bỏ các mục trống
       const filteredObjectives = learningObjectives.filter((obj) => obj.trim() !== '');
       const filteredRequirements = requirements.filter((req) => req.trim() !== '');
       const filteredAudience = targetAudience.filter((aud) => aud.trim() !== '');
-      
+
       // Kiểm tra số lượng mục tiêu học tập
       if (filteredObjectives.length < 4) {
         console.log('Không đủ mục tiêu học tập:', filteredObjectives.length);
         setIsLoading(false);
         setErrorMessage('Bạn phải nhập ít nhất 4 mục tiêu học tập');
-        
+
         // Khôi phục vị trí cuộn sau khi hiển thị thông báo lỗi
         setTimeout(() => {
           window.scrollTo({
             top: scrollPosition,
-            behavior: 'auto'
+            behavior: 'auto',
           });
         }, 0);
-        
+
         return;
       }
-      
+
       // Cập nhật tất cả thông tin
       await Promise.all([
         CreateCourseService.updateLearningObjectives(courseId, filteredObjectives),
         CreateCourseService.updateRequirements(courseId, filteredRequirements),
-        CreateCourseService.updateTargetAudience(courseId, filteredAudience)
+        CreateCourseService.updateTargetAudience(courseId, filteredAudience),
       ]);
-      
+
       setSuccessMessage('Đã lưu thông tin thành công!');
-      
+
       // Cập nhật lại dữ liệu từ server
       const updatedGoals = await CreateCourseService.getCourseGoalsDetails(courseId);
-      
+
       // Cập nhật state với dữ liệu mới
       if (updatedGoals.learningObjectives && updatedGoals.learningObjectives.length > 0) {
         setLearningObjectives(
           updatedGoals.learningObjectives
             .sort((a, b) => a.orderIndex - b.orderIndex)
-            .map(obj => obj.description)
+            .map((obj) => obj.description)
         );
       } else {
         // Nếu không có mục tiêu học tập, đặt lại mảng với 4 chuỗi rỗng
         setLearningObjectives(['', '', '', '']);
       }
-      
+
       if (updatedGoals.requirements && updatedGoals.requirements.length > 0) {
         setRequirements(
           updatedGoals.requirements
             .sort((a, b) => a.orderIndex - b.orderIndex)
-            .map(req => req.description)
+            .map((req) => req.description)
         );
       } else {
         // Nếu không có yêu cầu, đặt lại mảng với 1 chuỗi rỗng
         setRequirements(['']);
       }
-      
+
       if (updatedGoals.targetAudience && updatedGoals.targetAudience.length > 0) {
         setTargetAudience(
           updatedGoals.targetAudience
             .sort((a, b) => a.orderIndex - b.orderIndex)
-            .map(aud => aud.description)
+            .map((aud) => aud.description)
         );
       } else {
         // Nếu không có đối tượng mục tiêu, đặt lại mảng với 1 chuỗi rỗng
         setTargetAudience(['']);
       }
-      
+
       // Khôi phục vị trí cuộn sau khi cập nhật thành công
       setTimeout(() => {
         window.scrollTo({
           top: scrollPosition,
-          behavior: 'auto'
+          behavior: 'auto',
         });
       }, 0);
-      
     } catch (error: any) {
       setErrorMessage(error.message || 'Không thể lưu thông tin khóa học');
       console.error('Lỗi khi lưu thông tin khóa học:', error);
-      
+
       // Khôi phục vị trí cuộn sau khi hiển thị thông báo lỗi
       setTimeout(() => {
         window.scrollTo({
           top: scrollPosition,
-          behavior: 'auto'
+          behavior: 'auto',
         });
       }, 0);
     } finally {
@@ -221,7 +220,7 @@ export default function GoalsPage() {
         <div className="fixed top-16 left-0 right-0 z-50 mx-auto max-w-4xl px-4">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md relative">
             <span className="block sm:inline">{errorMessage}</span>
-            <button 
+            <button
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
               onClick={() => setErrorMessage(null)}
             >
@@ -235,7 +234,7 @@ export default function GoalsPage() {
         <div className="fixed top-16 left-0 right-0 z-50 mx-auto max-w-4xl px-4">
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-md relative">
             <span className="block sm:inline">{successMessage}</span>
-            <button 
+            <button
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
               onClick={() => setSuccessMessage(null)}
             >
@@ -262,8 +261,8 @@ export default function GoalsPage() {
                 <Link href="#" className="text-blue-600 hover:underline">
                   Trang giới thiệu khóa học
                 </Link>{' '}
-                của bạn và sẽ có tác động trực tiếp đến hiệu suất khóa học. Những mô tả này sẽ
-                giúp học viên quyết định xem khóa học của bạn có phù hợp với họ hay không.
+                của bạn và sẽ có tác động trực tiếp đến hiệu suất khóa học. Những mô tả này sẽ giúp
+                học viên quyết định xem khóa học của bạn có phù hợp với họ hay không.
               </p>
 
               {/* What will students learn section */}
@@ -288,7 +287,9 @@ export default function GoalsPage() {
                       placeholder={`Ví dụ: Xác định vai trò và trách nhiệm của một quản lý dự án`}
                       className="w-full border border-gray-300 rounded-md py-2 px-4 pr-12 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <div className="absolute right-3 top-2 text-gray-400 text-xs sm:text-sm">160</div>
+                    <div className="absolute right-3 top-2 text-gray-400 text-xs sm:text-sm">
+                      160
+                    </div>
                   </div>
                 ))}
 
@@ -318,9 +319,9 @@ export default function GoalsPage() {
                   Yêu cầu hoặc điều kiện tiên quyết để tham gia khóa học của bạn là gì?
                 </h2>
                 <p className="text-sm sm:text-base text-gray-700 mb-4">
-                  Liệt kê các kỹ năng, kinh nghiệm, công cụ hoặc thiết bị cần thiết mà học viên
-                  nên có trước khi tham gia khóa học của bạn. Nếu không có yêu cầu nào, hãy sử
-                  dụng không gian này như một cơ hội để giảm rào cản cho người mới bắt đầu.
+                  Liệt kê các kỹ năng, kinh nghiệm, công cụ hoặc thiết bị cần thiết mà học viên nên
+                  có trước khi tham gia khóa học của bạn. Nếu không có yêu cầu nào, hãy sử dụng
+                  không gian này như một cơ hội để giảm rào cản cho người mới bắt đầu.
                 </p>
 
                 {requirements.map((requirement, index) => (
@@ -357,7 +358,9 @@ export default function GoalsPage() {
 
               {/* Target audience section */}
               <div className="mb-8">
-                <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-2">Khóa học này dành cho ai?</h2>
+                <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-2">
+                  Khóa học này dành cho ai?
+                </h2>
                 <p className="text-sm sm:text-base text-gray-700 mb-4">
                   Viết mô tả rõ ràng về{' '}
                   <Link href="#" className="text-blue-600 hover:underline">
@@ -413,4 +416,4 @@ export default function GoalsPage() {
       )}
     </>
   );
-}  
+}

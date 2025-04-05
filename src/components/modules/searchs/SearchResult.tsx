@@ -46,20 +46,14 @@ const SearchResults: FC<SearchResultsProps> = ({ courses }) => {
           </div>
           <div className="flex-1">
             <div className="flex justify-between items-start">
-              <h3 className="font-semibold text-lg max-w-[70%]">
-                {course.title}
-              </h3>
-              <p className="font-bold ml-auto">
-                ₫{course.price.toLocaleString()}
-              </p>
+              <h3 className="font-semibold text-lg max-w-[70%]">{course.title}</h3>
+              <p className="font-bold ml-auto">₫{course.price.toLocaleString()}</p>
             </div>
             <p className="text-gray-600">{course.instructor}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className="font-bold">{course.rating}</span>
               <span>⭐</span>
-              <span className="text-gray-600">
-                ({course.ratingCount} đánh giá)
-              </span>
+              <span className="text-gray-600">({course.ratingCount} đánh giá)</span>
             </div>
             {/* Removed the reference to totalDuration since it doesn't exist in CourseResult */}
             <p className="text-sm text-gray-500 mt-1">

@@ -54,7 +54,6 @@ const HomeCourse = () => {
     fetchHomepageData();
   }, []);
 
-
   const topics = [
     'Java',
     'Deep Learning',
@@ -65,7 +64,6 @@ const HomeCourse = () => {
     'Thiết kế đồ họa',
     'Thể thao',
   ];
-
 
   // Component cho mỗi khóa học
   const CourseItem = ({ course, index }: any) => {
@@ -199,11 +197,7 @@ const HomeCourse = () => {
           </>
         ) : (
           homepageData.recommendedCourses.map((course, index) => (
-            <CourseItem
-              key={course.id}
-              course={course}
-              index={index}
-            />
+            <CourseItem key={course.id} course={course} index={index} />
           ))
         )}
       </div>
@@ -226,11 +220,7 @@ const HomeCourse = () => {
           </>
         ) : (
           homepageData.recommendedCourses.map((course, index) => (
-            <CourseItem
-              key={course.id}
-              course={course}
-              index={index}
-            />
+            <CourseItem key={course.id} course={course} index={index} />
           ))
         )}
       </div>

@@ -13,7 +13,7 @@ import CurriculumFooter from '@/components/modules/manage-course/curriculum/Curr
 export default function CurriculumPage() {
   const pathname = usePathname();
   const courseId = pathname ? pathname.split('/')[3] : '';
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [modules, setModules] = useState<Module[]>([]);
@@ -31,7 +31,7 @@ export default function CurriculumPage() {
     setIsFetching(true);
     try {
       const moduleList = await ModuleService.getModulesByCourse(courseId);
-      
+
       // Tải curriculum cho từng module
       const modulesWithCurricula = await Promise.all(
         moduleList.map(async (module) => {
@@ -44,7 +44,7 @@ export default function CurriculumPage() {
           }
         })
       );
-      
+
       setModules(modulesWithCurricula);
     } catch (error: any) {
       toast.error('Lỗi khi tải danh sách module: ' + error.message);
@@ -60,9 +60,9 @@ export default function CurriculumPage() {
       const newModule = await ModuleService.createModule({
         title: 'Module mới',
         courseId: courseId,
-        orderIndex: modules.length
+        orderIndex: modules.length,
       });
-      
+
       setModules([...modules, { ...newModule, curricula: [] }]);
       toast.success('Đã thêm module mới');
     } catch (error: any) {
@@ -84,8 +84,8 @@ export default function CurriculumPage() {
         {modules.length === 0 ? (
           <EmptyState onAddModule={handleAddModule} />
         ) : (
-          <ModuleList 
-            modules={modules} 
+          <ModuleList
+            modules={modules}
             setModules={setModules}
             courseId={courseId}
             animating={animating}
@@ -95,7 +95,7 @@ export default function CurriculumPage() {
         )}
       </div>
 
-      <CurriculumFooter 
+      <CurriculumFooter
         handleAddModule={handleAddModule}
         handleSave={handleSave}
         isLoading={isLoading}
@@ -105,16 +105,26 @@ export default function CurriculumPage() {
       <style jsx global>{`
         .module-highlight {
           animation: fadeInOut 600ms ease-in-out;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        
+
         @keyframes fadeInOut {
-          0% { background-color: transparent; }
-          30% { background-color: #dbeafe; } /* blue-100 */
-          70% { background-color: #dbeafe; } /* blue-100 */
-          100% { background-color: transparent; }
+          0% {
+            background-color: transparent;
+          }
+          30% {
+            background-color: #dbeafe;
+          } /* blue-100 */
+          70% {
+            background-color: #dbeafe;
+          } /* blue-100 */
+          100% {
+            background-color: transparent;
+          }
         }
       `}</style>
     </div>
   );
-} 
+}

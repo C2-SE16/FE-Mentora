@@ -25,7 +25,7 @@ export const QuizService = {
       throw new Error(response.data.data.message || `Lỗi khi lấy thông tin quiz ID ${quizId}`);
     } catch (error: any) {
       console.error(`Lỗi khi lấy thông tin quiz ID ${quizId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -59,7 +59,7 @@ export const QuizService = {
       throw new Error(response.data.data.message || `Lỗi khi cập nhật quiz ID ${quizId}`);
     } catch (error: any) {
       console.error(`Lỗi khi cập nhật quiz ID ${quizId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -68,7 +68,7 @@ export const QuizService = {
         throw error;
       }
     }
-  }
+  },
 };
 
-export default QuizService; 
+export default QuizService;

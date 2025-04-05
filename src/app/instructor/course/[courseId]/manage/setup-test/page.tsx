@@ -64,10 +64,10 @@ const SetupAndTestVideoPage = () => {
 
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <input 
-              type="file" 
-              accept="video/*" 
-              onChange={handleFileChange} 
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleFileChange}
               className="text-sm sm:text-base w-full sm:w-auto"
             />
             <button
@@ -78,7 +78,7 @@ const SetupAndTestVideoPage = () => {
               {isUploading ? 'Uploading...' : 'Upload Video'}
             </button>
           </div>
-          
+
           {selectedFile && (
             <p className="text-xs sm:text-sm break-all">
               <span className="font-medium">Selected:</span> {selectedFile.name}
@@ -87,7 +87,9 @@ const SetupAndTestVideoPage = () => {
 
           {uploadProgress > 0 && (
             <div className="mt-4">
-              <p className="text-sm sm:text-base mb-1">Upload Progress: {Math.round(uploadProgress)}%</p>
+              <p className="text-sm sm:text-base mb-1">
+                Upload Progress: {Math.round(uploadProgress)}%
+              </p>
               <div className="w-full bg-gray-300 rounded h-2">
                 <div
                   className="bg-blue-500 h-2 rounded"

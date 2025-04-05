@@ -33,18 +33,18 @@ export const ModuleService = {
       throw new Error(response.data.data.message || 'Lỗi khi tạo module');
     } catch (error: any) {
       console.error('Lỗi khi tạo module:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -68,7 +68,7 @@ export const ModuleService = {
       throw new Error(response.data.data.message || `Lỗi khi lấy thông tin module ID ${moduleId}`);
     } catch (error: any) {
       console.error(`Lỗi khi lấy thông tin module ID ${moduleId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -84,16 +84,20 @@ export const ModuleService = {
    */
   async getModulesByCourse(courseId: string): Promise<Module[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<Module[]>>(`/modules/course/${courseId}`);
+      const response = await axiosInstance.get<ApiResponse<Module[]>>(
+        `/modules/course/${courseId}`
+      );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi lấy danh sách module cho khóa học ID ${courseId}`);
+      throw new Error(
+        response.data.data.message || `Lỗi khi lấy danh sách module cho khóa học ID ${courseId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi lấy danh sách module cho khóa học ID ${courseId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -101,7 +105,7 @@ export const ModuleService = {
       } else {
         throw error;
       }
-      
+
       return []; // Trả về mảng rỗng trong trường hợp lỗi
     }
   },
@@ -109,13 +113,19 @@ export const ModuleService = {
   /**
    * Cập nhật thông tin module
    */
-  async updateModule(moduleId: string, moduleData: {
-    title?: string;
-    description?: string;
-    orderIndex?: number;
-  }): Promise<Module> {
+  async updateModule(
+    moduleId: string,
+    moduleData: {
+      title?: string;
+      description?: string;
+      orderIndex?: number;
+    }
+  ): Promise<Module> {
     try {
-      const response = await axiosInstance.put<ApiResponse<Module>>(`/modules/${moduleId}`, moduleData);
+      const response = await axiosInstance.put<ApiResponse<Module>>(
+        `/modules/${moduleId}`,
+        moduleData
+      );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
@@ -124,18 +134,18 @@ export const ModuleService = {
       throw new Error(response.data.data.message || `Lỗi khi cập nhật module ID ${moduleId}`);
     } catch (error: any) {
       console.error(`Lỗi khi cập nhật module ID ${moduleId}:`, error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -159,7 +169,7 @@ export const ModuleService = {
       throw new Error(response.data.data.message || `Lỗi khi xóa module ID ${moduleId}`);
     } catch (error: any) {
       console.error(`Lỗi khi xóa module ID ${moduleId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -168,7 +178,7 @@ export const ModuleService = {
         throw error;
       }
     }
-    
+
     return false;
   },
 
@@ -179,7 +189,7 @@ export const ModuleService = {
     try {
       const response = await axiosInstance.post<ApiResponse<any>>('/modules/reorder', {
         courseId,
-        moduleIds
+        moduleIds,
       });
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
@@ -189,22 +199,22 @@ export const ModuleService = {
       if (response.data && response.data.data.message && !response.data.data.success) {
         throw new Error(response.data.data.message);
       }
-      
+
       return true;
     } catch (error: any) {
       console.error('Lỗi khi sắp xếp lại thứ tự các module:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -221,7 +231,7 @@ export const ModuleService = {
     try {
       const response = await axiosInstance.post<ApiResponse<any>>('/modules/lessons/reorder', {
         moduleId,
-        lessonIds
+        lessonIds,
       });
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
@@ -231,22 +241,22 @@ export const ModuleService = {
       if (response.data && response.data.data.message && !response.data.data.success) {
         throw new Error(response.data.data.message);
       }
-      
+
       return true;
     } catch (error: any) {
       console.error('Lỗi khi sắp xếp lại thứ tự các bài học:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -260,9 +270,9 @@ export const ModuleService = {
    * Di chuyển bài học giữa các module
    */
   async moveLessonBetweenModules(
-    lessonId: string, 
-    sourceModuleId: string, 
-    destinationModuleId: string, 
+    lessonId: string,
+    sourceModuleId: string,
+    destinationModuleId: string,
     newIndex: number
   ): Promise<boolean> {
     try {
@@ -270,7 +280,7 @@ export const ModuleService = {
         lessonId,
         sourceModuleId,
         destinationModuleId,
-        newIndex
+        newIndex,
       });
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
@@ -280,22 +290,22 @@ export const ModuleService = {
       if (response.data && response.data.data.message && !response.data.data.success) {
         throw new Error(response.data.data.message);
       }
-      
+
       return true;
     } catch (error: any) {
       console.error('Lỗi khi di chuyển bài học giữa các module:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -303,7 +313,7 @@ export const ModuleService = {
         throw error;
       }
     }
-  }
+  },
 };
 
-export default ModuleService; 
+export default ModuleService;

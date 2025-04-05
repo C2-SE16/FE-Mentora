@@ -5,14 +5,12 @@ import { Toaster } from 'react-hot-toast';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      <body className="font-robotoCondensed">
-        <Toaster position="top-right" />
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <>
+      <Toaster position="top-right" />
+      <Header />
+      {children}
+      <Footer />
+    </>
   );
 };
 

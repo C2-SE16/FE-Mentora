@@ -15,10 +15,7 @@ interface CourseSidebarProps {
   courseId: string;
   learningObject?: LearningObjective[];
 }
-const CourseSidebar: React.FC<CourseSidebarProps> = ({
-  courseId,
-  learningObject = [],
-}) => {
+const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [] }) => {
   return (
     <Card
       className="bg-white border border-gray-300 shadow-md rounded-none w-full h-[500px] p-4 

@@ -20,9 +20,8 @@ export const CategoryService = {
   async getAllCategories(): Promise<Category[]> {
     try {
       // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
-      const response = await axiosInstance.get<ApiResponse<Category[]>>("/categories");
-      
-      
+      const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories');
+
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }

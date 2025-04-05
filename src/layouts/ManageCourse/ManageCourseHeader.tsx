@@ -20,7 +20,14 @@ interface CourseDetails {
   approved: 'DRAFT' | 'PUBLISHED' | 'PENDING';
 }
 
-const ManageCourseHeader = ({ title, courseId, status, onBack, onMenuToggle, isMobile }: ManageCourseHeaderProps) => {
+const ManageCourseHeader = ({
+  title,
+  courseId,
+  status,
+  onBack,
+  onMenuToggle,
+  isMobile,
+}: ManageCourseHeaderProps) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [courseDetails, setCourseDetails] = useState<CourseDetails | null>(null);
@@ -33,8 +40,8 @@ const ManageCourseHeader = ({ title, courseId, status, onBack, onMenuToggle, isM
       try {
         setIsLoading(true);
         const courseData = await CreateCourseService.getCourseDetails(courseId);
-        const validStatus = ['DRAFT', 'PUBLISHED', 'PENDING'].includes(courseData.approved) 
-          ? (courseData.approved as 'DRAFT' | 'PUBLISHED' | 'PENDING') 
+        const validStatus = ['DRAFT', 'PUBLISHED', 'PENDING'].includes(courseData.approved)
+          ? (courseData.approved as 'DRAFT' | 'PUBLISHED' | 'PENDING')
           : 'DRAFT';
 
         setCourseDetails({
@@ -93,7 +100,7 @@ const ManageCourseHeader = ({ title, courseId, status, onBack, onMenuToggle, isM
             <Menu className="w-5 h-5" />
           </button>
         )}
-        
+
         <button
           onClick={handleBack}
           className="mr-4 hover:text-gray-300 transition-colors"

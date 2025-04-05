@@ -22,7 +22,9 @@ export default function EmptyState({ onAddModule }: EmptyStateProps) {
         />
       </svg>
       <h3 className="mt-2 text-sm font-medium text-gray-900">Khóa học này chưa có nội dung</h3>
-      <p className="mt-1 text-sm text-gray-500">Hãy thêm module đầu tiên để bắt đầu xây dựng khóa học của bạn.</p>
+      <p className="mt-1 text-sm text-gray-500">
+        Hãy thêm module đầu tiên để bắt đầu xây dựng khóa học của bạn.
+      </p>
       {onAddModule && (
         <div className="mt-6">
           <button
@@ -49,4 +51,4 @@ export default function EmptyState({ onAddModule }: EmptyStateProps) {
       )}
     </div>
   );
-} 
+}

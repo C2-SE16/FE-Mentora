@@ -35,14 +35,14 @@ export const VideoService = {
 
       const response = await api.post('/upload/chunk', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Lỗi khi upload chunk:', error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -60,13 +60,13 @@ export const VideoService = {
     try {
       const response = await api.post('/upload/merge', {
         fileName,
-        totalChunks
+        totalChunks,
       });
-      
+
       return response.data;
     } catch (error: any) {
       console.error('Lỗi khi ghép file video:', error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -100,15 +100,15 @@ export const VideoService = {
       console.log('Gửi request tải lên chunk với tên file:', fileName);
       const response = await api.post('/upload/lecture-video', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
       console.log('Response từ server khi tải lên chunk:', response.data);
 
       return response.data;
     } catch (error: any) {
       console.error('Lỗi khi tải lên phần video bài giảng:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
@@ -125,9 +125,9 @@ export const VideoService = {
    * Yêu cầu server ghép các chunks thành video bài giảng hoàn chỉnh
    */
   async mergeLectureVideoChunks(
-    fileName: string, 
-    totalChunks: number, 
-    courseId: string, 
+    fileName: string,
+    totalChunks: number,
+    courseId: string,
     lectureId: string
   ): Promise<MergeChunksResponse> {
     try {
@@ -136,27 +136,27 @@ export const VideoService = {
         fileName,
         totalChunks,
         courseId,
-        lectureId
+        lectureId,
       });
-      
+
       // Log đầy đủ response để debug
       console.log('Response đầy đủ từ server:', response);
-      
+
       // Kiểm tra cấu trúc response
       const responseData = response.data?.data || response.data;
       console.log('Dữ liệu từ response:', responseData);
-      
+
       // Đảm bảo response có cấu trúc đúng
       return {
         success: true,
         message: responseData?.message || 'Video bài giảng đã được tải lên thành công!',
         filePath: responseData?.filePath,
         courseId: responseData?.courseId,
-        lectureId: responseData?.lectureId
+        lectureId: responseData?.lectureId,
       };
     } catch (error: any) {
       console.error('Lỗi khi ghép file video bài giảng:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
@@ -181,7 +181,7 @@ export const VideoService = {
     try {
       const chunkSize = 5 * 1024 * 1024; // 5MB mỗi chunk
       const totalChunks = Math.ceil(file.size / chunkSize);
-      
+
       // Tạo tên file an toàn (thêm timestamp để tránh trùng lặp)
       const timestamp = new Date().getTime();
       const fileExtension = file.name.split('.').pop() || '';
@@ -194,15 +194,20 @@ export const VideoService = {
         const chunk = file.slice(start, end);
 
         const response = await this.uploadLectureVideoChunk(
-          chunk, i, totalChunks, safeFileName, courseId, lectureId
+          chunk,
+          i,
+          totalChunks,
+          safeFileName,
+          courseId,
+          lectureId
         );
-        
+
         // Cập nhật tên file từ response của server (chỉ cần lấy từ chunk đầu tiên)
         if (i === 0 && response.fileName) {
           safeFileName = response.fileName;
           console.log('Đã cập nhật tên file từ server:', safeFileName);
         }
-        
+
         // Cập nhật tiến trình nếu có callback
         if (onProgressUpdate) {
           onProgressUpdate(((i + 1) / totalChunks) * 100);
@@ -211,23 +216,26 @@ export const VideoService = {
 
       // Ghép các chunks
       const mergeResponse = await this.mergeLectureVideoChunks(
-        safeFileName, totalChunks, courseId, lectureId
+        safeFileName,
+        totalChunks,
+        courseId,
+        lectureId
       );
-      
+
       console.log('Merge response in uploadLectureVideo:', mergeResponse);
-      
+
       if (!mergeResponse.filePath) {
         // Tạo đường dẫn mặc định nếu server không trả về
         console.warn('Server không trả về đường dẫn file, sử dụng đường dẫn mặc định');
         return `/uploads/videos/${courseId}/${lectureId}.mp4`;
       }
-      
+
       return mergeResponse.filePath;
     } catch (error) {
       console.error('Lỗi trong quá trình tải lên video bài giảng:', error);
       throw error;
     }
-  }
+  },
 };
 
-export default VideoService; 
+export default VideoService;

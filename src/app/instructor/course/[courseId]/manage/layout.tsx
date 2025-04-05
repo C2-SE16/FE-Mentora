@@ -11,7 +11,7 @@ export default function ManageCourseLayout({ children }: { children: React.React
   const courseId = pathname.split('/')[3] || '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Xác định bước hiện tại dựa trên pathname
   const getCurrentStep = () => {
     if (pathname.includes('/goals')) return 'intended-learners';
@@ -25,13 +25,13 @@ export default function ManageCourseLayout({ children }: { children: React.React
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     // Kiểm tra ban đầu
     checkIfMobile();
-    
+
     // Thêm event listener để kiểm tra khi thay đổi kích thước màn hình
     window.addEventListener('resize', checkIfMobile);
-    
+
     // Cleanup
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
@@ -43,36 +43,34 @@ export default function ManageCourseLayout({ children }: { children: React.React
 
   return (
     <div className="min-h-screen flex flex-col">
-      <ManageCourseHeader 
-        courseId={courseId} 
+      <ManageCourseHeader
+        courseId={courseId}
         onBack={() => router.push('/instructor/courses')}
         onMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         isMobile={isMobile}
       />
-      
+
       <div className="flex flex-1 relative">
         {/* Overlay để đóng menu khi click bên ngoài trên mobile */}
         {isMobile && isMobileMenuOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 md:hidden"
             style={{ zIndex: 20 }}
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
-        
+
         {/* Sidebar container với z-index cao hơn overlay */}
-        <div 
+        <div
           className={`${
             isMobile ? (isMobileMenuOpen ? 'block' : 'hidden') : 'block'
           } md:block fixed md:static w-64 h-[calc(100vh-60px)] z-30`}
         >
           <ManageCourseSidebar courseId={courseId} currentStep={getCurrentStep()} />
         </div>
-        
+
         {/* Main content */}
-        <main className="flex-1 bg-white overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 bg-white overflow-y-auto">{children}</main>
       </div>
       <Toaster position="top-right" />
     </div>

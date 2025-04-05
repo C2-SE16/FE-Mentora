@@ -22,10 +22,12 @@ export const LectureService = {
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi lấy thông tin lecture ID ${lectureId}`);
+      throw new Error(
+        response.data.data.message || `Lỗi khi lấy thông tin lecture ID ${lectureId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi lấy thông tin lecture ID ${lectureId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -51,7 +53,10 @@ export const LectureService = {
     }
   ): Promise<Lecture> {
     try {
-      const response = await axiosInstance.put<ApiResponse<Lecture>>(`/lectures/${lectureId}`, data);
+      const response = await axiosInstance.put<ApiResponse<Lecture>>(
+        `/lectures/${lectureId}`,
+        data
+      );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
@@ -60,7 +65,7 @@ export const LectureService = {
       throw new Error(response.data.data.message || `Lỗi khi cập nhật lecture ID ${lectureId}`);
     } catch (error: any) {
       console.error(`Lỗi khi cập nhật lecture ID ${lectureId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -74,24 +79,22 @@ export const LectureService = {
   /**
    * Cập nhật mô tả của lecture
    */
-  async updateLectureDescription(
-    lectureId: string,
-    description: string
-  ): Promise<Lecture> {
+  async updateLectureDescription(lectureId: string, description: string): Promise<Lecture> {
     try {
-      const response = await axiosInstance.put<ApiResponse<Lecture>>(
-        `/lectures/${lectureId}`,
-        { description }
-      );
+      const response = await axiosInstance.put<ApiResponse<Lecture>>(`/lectures/${lectureId}`, {
+        description,
+      });
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi cập nhật mô tả lecture ID ${lectureId}`);
+      throw new Error(
+        response.data.data.message || `Lỗi khi cập nhật mô tả lecture ID ${lectureId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi cập nhật mô tả lecture ID ${lectureId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -126,10 +129,13 @@ export const LectureService = {
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi cập nhật thông tin đầy đủ cho lecture ID ${lectureId}`);
+      throw new Error(
+        response.data.data.message ||
+          `Lỗi khi cập nhật thông tin đầy đủ cho lecture ID ${lectureId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi cập nhật thông tin đầy đủ cho lecture ID ${lectureId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -138,7 +144,7 @@ export const LectureService = {
         throw error;
       }
     }
-  }
+  },
 };
 
-export default LectureService; 
+export default LectureService;

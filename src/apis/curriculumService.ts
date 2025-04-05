@@ -34,18 +34,18 @@ export const CurriculumService = {
       throw new Error(response.data.data.message || 'Lỗi khi tạo curriculum');
     } catch (error: any) {
       console.error('Lỗi khi tạo curriculum:', error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -60,16 +60,20 @@ export const CurriculumService = {
    */
   async getCurriculumById(curriculumId: string): Promise<Curriculum> {
     try {
-      const response = await axiosInstance.get<ApiResponse<Curriculum>>(`/curricula/${curriculumId}`);
+      const response = await axiosInstance.get<ApiResponse<Curriculum>>(
+        `/curricula/${curriculumId}`
+      );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi lấy thông tin curriculum ID ${curriculumId}`);
+      throw new Error(
+        response.data.data.message || `Lỗi khi lấy thông tin curriculum ID ${curriculumId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi lấy thông tin curriculum ID ${curriculumId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -85,17 +89,21 @@ export const CurriculumService = {
    */
   async getCurriculaByModuleId(moduleId: string): Promise<Curriculum[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<Curriculum[]>>(`/curricula/module/${moduleId}`);
+      const response = await axiosInstance.get<ApiResponse<Curriculum[]>>(
+        `/curricula/module/${moduleId}`
+      );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         // Dữ liệu trả về đã bao gồm thông tin về lectures và quizzes
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi lấy danh sách curriculum cho module ID ${moduleId}`);
+      throw new Error(
+        response.data.data.message || `Lỗi khi lấy danh sách curriculum cho module ID ${moduleId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi lấy danh sách curriculum cho module ID ${moduleId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -103,7 +111,7 @@ export const CurriculumService = {
       } else {
         throw error;
       }
-      
+
       return []; // Trả về mảng rỗng trong trường hợp lỗi
     }
   },
@@ -121,27 +129,32 @@ export const CurriculumService = {
     }
   ): Promise<Curriculum> {
     try {
-      const response = await axiosInstance.put<ApiResponse<Curriculum>>(`/curricula/${curriculumId}`, data);
+      const response = await axiosInstance.put<ApiResponse<Curriculum>>(
+        `/curricula/${curriculumId}`,
+        data
+      );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
         return response.data.data.data;
       }
 
-      throw new Error(response.data.data.message || `Lỗi khi cập nhật curriculum ID ${curriculumId}`);
+      throw new Error(
+        response.data.data.message || `Lỗi khi cập nhật curriculum ID ${curriculumId}`
+      );
     } catch (error: any) {
       console.error(`Lỗi khi cập nhật curriculum ID ${curriculumId}:`, error);
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -165,7 +178,7 @@ export const CurriculumService = {
       throw new Error(response.data.data.message || `Lỗi khi xóa curriculum ID ${curriculumId}`);
     } catch (error: any) {
       console.error(`Lỗi khi xóa curriculum ID ${curriculumId}:`, error);
-      
+
       if (error.response) {
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
@@ -174,7 +187,7 @@ export const CurriculumService = {
         throw error;
       }
     }
-    
+
     return false;
   },
 
@@ -185,7 +198,7 @@ export const CurriculumService = {
     try {
       const response = await axiosInstance.post<ApiResponse<Curriculum[]>>('/curricula/reorder', {
         moduleId,
-        curriculumIds
+        curriculumIds,
       });
 
       // Kiểm tra nếu API trả về thành công, bất kể có data.success hay không
@@ -194,7 +207,7 @@ export const CurriculumService = {
         if (response.data.data && response.data.data.data) {
           return response.data.data.data;
         }
-        
+
         // Nếu không có data.data, trả về mảng rỗng
         console.log('API trả về thành công nhưng không có dữ liệu:', response.data);
         return [];
@@ -202,29 +215,28 @@ export const CurriculumService = {
 
       // Nếu không thành công, ném lỗi
       throw new Error(
-        response.data && response.data.data && response.data.data.message 
-          ? response.data.data.message 
+        response.data && response.data.data && response.data.data.message
+          ? response.data.data.message
           : 'Lỗi khi sắp xếp lại thứ tự các curriculum'
       );
     } catch (error: any) {
-      
       // Nếu lỗi có chứa từ "thành công", không ném lỗi mà trả về mảng rỗng
       if (error.message && error.message.includes('thành công')) {
         console.log('Phát hiện thông báo thành công trong lỗi:', error.message);
         return [];
       }
-      
+
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -232,7 +244,7 @@ export const CurriculumService = {
         throw error;
       }
     }
-  }
+  },
 };
 
-export default CurriculumService; 
+export default CurriculumService;

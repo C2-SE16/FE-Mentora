@@ -41,7 +41,6 @@ interface CreateCourseRequest {
   categoryId: string;
 }
 
-
 interface CourseDetails {
   learningObjectives: {
     objectiveId: string;
@@ -131,7 +130,7 @@ export const CreateCourseService = {
       }
     }
   },
-async getCourseDetails(courseId: string): Promise<CourseData> {
+  async getCourseDetails(courseId: string): Promise<CourseData> {
     try {
       if (!courseId) {
         throw new Error('ID khóa học không được để trống');
@@ -150,14 +149,14 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -176,7 +175,9 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
         throw new Error('ID khóa học không được để trống');
       }
 
-      const response = await axiosInstance.get<ApiResponse<CourseDetails>>(`/courses/${courseId}/details`);
+      const response = await axiosInstance.get<ApiResponse<CourseDetails>>(
+        `/courses/${courseId}/details`
+      );
 
       if (response.data && response.data.data && response.data.data.data) {
         return response.data.data.data;
@@ -189,14 +190,14 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -209,7 +210,10 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
   /**
    * Cập nhật mục tiêu học tập của khóa học
    */
-  async updateLearningObjectives(courseId: string, learningObjectives: string[]): Promise<CourseDetails> {
+  async updateLearningObjectives(
+    courseId: string,
+    learningObjectives: string[]
+  ): Promise<CourseDetails> {
     try {
       if (!courseId) {
         throw new Error('ID khóa học không được để trống');
@@ -231,14 +235,14 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -273,14 +277,14 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -315,14 +319,14 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
-        
+
         if (error.response.data && error.response.data.message) {
           const errorMessage = Array.isArray(error.response.data.message)
             ? error.response.data.message.join(', ')
             : error.response.data.message;
           throw new Error(`Lỗi: ${errorMessage}`);
         }
-        
+
         throw new Error(`Lỗi server: ${error.response.status}`);
       } else if (error.request) {
         throw new Error('Không nhận được phản hồi từ server');
@@ -330,7 +334,7 @@ async getCourseDetails(courseId: string): Promise<CourseData> {
         throw error;
       }
     }
-  }
+  },
 };
 
 export default CreateCourseService;

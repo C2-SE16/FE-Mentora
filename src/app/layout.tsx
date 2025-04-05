@@ -8,10 +8,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
+
+  // Kiểm tra các đường dẫn cần layout riêng
   const isDifferentLayout =
     pathname?.startsWith('/courses/create') ||
-    pathname?.startsWith('/register') ||
-    pathname?.startsWith('/instructor');
+    pathname?.startsWith('/instructor') ||
+    pathname?.startsWith('/login') ||
+    pathname?.startsWith('/register');
+
   return (
     <html lang="en">
       <body className="font-robotoCondensed">

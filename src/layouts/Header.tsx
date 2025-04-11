@@ -7,12 +7,18 @@ const Header = () => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   console.log('searchResults', searchResults);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    setIsLoggedIn(!!token);
+  }, []);
 
   useEffect(() => {
     const handleClickOutSide = (e: MouseEvent) => {
@@ -95,6 +101,7 @@ const Header = () => {
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     localStorage.removeItem('accessToken');
+    setIsLoggedIn(false);
     router.push('/');
   };
 
@@ -337,236 +344,304 @@ const Header = () => {
                 </div>
               </div>
             )}
-
-            {/* No Results */}
-            {/* {showResults && searchQuery && searchResults.length === 0 && !isLoading && (
-              <div className="absolute left-0 right-0 top-[55px] bg-white shadow-lg rounded-md z-20 p-4">
-                <p className="text-center text-gray-500">Không tìm thấy kết quả phù hợp</p>
-              </div>
-            )} */}
           </div>
           {/* Navigation Links */}
-          <ul className="flex flex-col md:flex-row items-center w-full md:w-auto">
-            <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
-              <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                Giảng dạy
-              </span>
-              <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
-                <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
-                    repellendus deleniti.
-                  </p>
-                  <div>
-                    <Link
-                      href="#!"
-                      className="flex justify-center items-center tracking-[1px] border border-black text-black font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-transparent"
-                    >
-                      Thử ngay
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
-              <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                Khoá học của tôi
-              </span>
-              <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
-                <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
-                    repellendus deleniti.
-                  </p>
-                  <div>
-                    <Link
-                      href="#!"
-                      className="flex justify-center items-center tracking-[1px] border border-black text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-black"
-                    >
-                      Thử ngay
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-              <Link href="#!">
-                <Image src="/heart.svg" alt="heart" width={24} height={24} className="inline" />
-                <span className="md:hidden ml-2">Yêu thích</span>
-              </Link>
-            </li>
-            <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-              <Link href="#!">
-                <Image
-                  src="/shopping-cart.svg"
-                  alt="shopping-cart"
-                  width={24}
-                  height={24}
-                  className="inline"
-                />
-                <span className="md:hidden ml-2">Giỏ hàng</span>
-              </Link>
-            </li>
-            <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-              <Link href="#!">
-                <Image src="/bell.svg" alt="bell" width={24} height={24} className="inline" />
-                <span className="md:hidden ml-2">Thông báo</span>
-              </Link>
-            </li>
-            <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-              <Link href="/profile" className="flex items-center justify-center md:justify-start">
-                <Image
-                  src="/avatar.jpg"
-                  alt="avatar"
-                  width={32}
-                  height={32}
-                  className="w-[32px] h-[32px] rounded-full object-cover"
-                />
-                <span className="md:hidden ml-2">Tài khoản</span>
-              </Link>
-              <div className="absolute right-0 top-[22px] md:top-[42px] pt-[30px] pb-[30px] hidden z-10 group-hover:block w-full md:w-auto">
-                <ul className="bg-white border border-gray-200 shadow-custom w-full rounded-md">
-                  <li>
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-x-3 px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black"
-                    >
-                      <Image
-                        src="/avatar.jpg"
-                        alt="avatar"
-                        width={50}
-                        height={50}
-                        className="w-[50px] h-[50px] rounded-full object-cover"
-                      />
+          <ul className="flex flex-col md:flex-row items-center w-full md:w-auto gap-x-2">
+            {isLoggedIn ? (
+              <>
+                <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
+                  <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                    Giảng dạy
+                  </span>
+                  <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
+                    <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
+                        repellendus deleniti.
+                      </p>
                       <div>
-                        <h3 className="text-base font-bold hover:text-[#1dbe70] text-left">
-                          Elliot Senpai
-                        </h3>
-                        <p className="text-[10px] truncate max-w-[150px]">
-                          justAboutEmail@gmail.com
-                        </p>
+                        <Link
+                          href="#!"
+                          className="flex justify-center items-center tracking-[1px] border border-black text-black font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-transparent"
+                        >
+                          Thử ngay
+                        </Link>
                       </div>
-                    </Link>
-                  </li>
-                  <li className="py-3">
-                    <div className="h-[1px] w-full bg-gray-200"></div>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Khóa học của tôi
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Giảng dạy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Giỏ hàng
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Danh sách yêu thích
-                    </Link>
-                  </li>
-                  <li className="py-3">
-                    <div className="h-[1px] w-full bg-gray-200"></div>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Hồ sơ
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Ảnh
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Xem hồ sơ công khai
-                    </Link>
-                  </li>
-                  <li className="py-3">
-                    <div className="h-[1px] w-full bg-gray-200"></div>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Bảo mật tài khoản
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Gói đăng ký
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Phương thức thanh toán
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Quyền riêng tư
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Cài đặt thông báo
-                    </Link>
-                  </li>
-                  <li className="pt-3">
-                    <div className="h-[1px] w-full bg-gray-200"></div>
-                  </li>
-                  <li>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-[#B11212] hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                    >
-                      Đăng xuất
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </li>
+                    </div>
+                  </div>
+                </li>
+                <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
+                  <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                    Khoá học của tôi
+                  </span>
+                  <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
+                    <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
+                        repellendus deleniti.
+                      </p>
+                      <div>
+                        <Link
+                          href="#!"
+                          className="flex justify-center items-center tracking-[1px] border border-black text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-black"
+                        >
+                          Thử ngay
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                  <Link href="#!">
+                    <Image src="/heart.svg" alt="heart" width={24} height={24} className="inline" />
+                    <span className="md:hidden ml-2">Yêu thích</span>
+                  </Link>
+                </li>
+                <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                  <Link href="#!">
+                    <Image
+                      src="/shopping-cart.svg"
+                      alt="shopping-cart"
+                      width={24}
+                      height={24}
+                      className="inline"
+                    />
+                    <span className="md:hidden ml-2">Giỏ hàng</span>
+                  </Link>
+                </li>
+                <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                  <Link href="#!">
+                    <Image src="/bell.svg" alt="bell" width={24} height={24} className="inline" />
+                    <span className="md:hidden ml-2">Thông báo</span>
+                  </Link>
+                </li>
+                <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                  <Link
+                    href="/profile"
+                    className="flex items-center justify-center md:justify-start"
+                  >
+                    <Image
+                      src="/avatar.jpg"
+                      alt="avatar"
+                      width={32}
+                      height={32}
+                      className="w-[32px] h-[32px] rounded-full object-cover"
+                    />
+                    <span className="md:hidden ml-2">Tài khoản</span>
+                  </Link>
+                  <div className="absolute right-0 top-[22px] md:top-[42px] pt-[30px] pb-[30px] hidden z-10 group-hover:block w-full md:w-auto">
+                    <ul className="bg-white border border-gray-200 shadow-custom w-full rounded-md">
+                      <li>
+                        <Link
+                          href="/profile"
+                          className="flex items-center gap-x-3 px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black"
+                        >
+                          <Image
+                            src="/avatar.jpg"
+                            alt="avatar"
+                            width={50}
+                            height={50}
+                            className="w-[50px] h-[50px] rounded-full object-cover"
+                          />
+                          <div>
+                            <h3 className="text-base font-bold hover:text-[#1dbe70] text-left">
+                              Elliot Senpai
+                            </h3>
+                            <p className="text-[10px] truncate max-w-[150px]">
+                              justAboutEmail@gmail.com
+                            </p>
+                          </div>
+                        </Link>
+                      </li>
+                      <li className="py-3">
+                        <div className="h-[1px] w-full bg-gray-200"></div>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Khóa học của tôi
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Giảng dạy
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Giỏ hàng
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Danh sách yêu thích
+                        </Link>
+                      </li>
+                      <li className="py-3">
+                        <div className="h-[1px] w-full bg-gray-200"></div>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Hồ sơ
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Ảnh
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Xem hồ sơ công khai
+                        </Link>
+                      </li>
+                      <li className="py-3">
+                        <div className="h-[1px] w-full bg-gray-200"></div>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Bảo mật tài khoản
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Gói đăng ký
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Phương thức thanh toán
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Quyền riêng tư
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#!"
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Cài đặt thông báo
+                        </Link>
+                      </li>
+                      <li className="pt-3">
+                        <div className="h-[1px] w-full bg-gray-200"></div>
+                      </li>
+                      <li>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-[#B11212] hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                        >
+                          Đăng xuất
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
+                  <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                    Giảng dạy
+                  </span>
+                  <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
+                    <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
+                        repellendus deleniti.
+                      </p>
+                      <div>
+                        <Link
+                          href="#!"
+                          className="flex justify-center items-center tracking-[1px] border border-black text-black font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-transparent"
+                        >
+                          Thử ngay
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                  <Link href="#!">
+                    <Image
+                      src="/shopping-cart.svg"
+                      alt="shopping-cart"
+                      width={24}
+                      height={24}
+                      className="inline"
+                    />
+                    <span className="md:hidden ml-2">Giỏ hàng</span>
+                  </Link>
+                </li>
+                <li className="w-full md:w-auto text-center mx-0 my-3">
+                  <Link
+                    href="/login"
+                    className="block py-2 px-4 text-black rounded-md transition-all duration-200 border border-black"
+                  >
+                    Đăng nhập
+                  </Link>
+                </li>
+                <li className="w-full md:w-auto text-center mx-0 my-3">
+                  <Link
+                    href="/register"
+                    className="block py-2 px-4 border border-[#00FF84] bg-[#00FF84] text-black rounded-md transition-all duration-200 hover:bg-[#18a35e]"
+                  >
+                    Đăng kí
+                  </Link>
+                </li>
+                <li>
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>

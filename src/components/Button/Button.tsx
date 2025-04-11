@@ -26,7 +26,7 @@ const Button = ({
 }: ButtonProps) => {
   // Tailwind base classes
   const baseClasses =
-    'inline-block rounded-[5px] bg-[#171100] text-white text-center text-[14px] font-semibold leading-[40px] no-underline';
+    'inline-block rounded-[5px] bg-[#171100] text-white text-center text-[12px] font-semibold leading-[30px] no-underline';
 
   // Dynamic style for custom colors and width
   const style = {

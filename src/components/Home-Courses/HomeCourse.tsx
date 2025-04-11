@@ -72,60 +72,49 @@ const HomeCourse = () => {
 
     return (
       <div className="w-[330px] group relative">
-        <div className="relative overflow-hidden rounded-lg w-[330px] h-[200px]">
-          <Image
-            src={course.image}
-            alt={course.title}
-            width={330}
-            height={200}
-            className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
-          />
-          {/* Overlay khi hover */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 flex items-center justify-center transition-all duration-300 group-hover:bg-opacity-40">
-            {/* Icon play */}
-            <div className="w-12 h-12 flex items-center justify-center bg-white bg-opacity-80 rounded-full transform scale-0 transition-transform duration-300 group-hover:scale-100">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="text-[#3A10E5]"
+        <Link href={`/courses/${course.id}`}>
+          <div className="relative overflow-hidden rounded-lg w-[330px] h-[200px] cursor-pointer">
+            <Image
+              src={course.image}
+              alt={course.title}
+              width={330}
+              height={200}
+              className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
+            />
+          </div>
+          <div className="info">
+            <div className="head">
+              <Link
+                href={`/courses/${course.id}`}
+                className="font-bold text-lg mt-2 text-[#303141]"
               >
-                <path d="M8 5v14l11-7z" />
-              </svg>
+                {course.title}
+              </Link>
             </div>
+            <p className="mt-1">{course.instructor}</p>
+            <div className="flex gap-x-1 items-center">
+              <span className="flex gap-x-1">
+                {course.rating} <Image src="/star.svg" alt="star" width={16} height={16} />
+              </span>
+              <span className="text-[#595c73] ml-1 text-sm">({course.reviews || 0})</span>
+            </div>
+            <div className="flex gap-x-4">
+              <span className="">{course.currentPrice}</span>
+              <span className="line-through">{course.originalPrice}</span>
+            </div>
+            {course.isBestSeller && (
+              <Button
+                href={`/courses/${course.id}`}
+                backgroundColor="#3A10E5"
+                textColor="#ffffff"
+                minWidth={90}
+                className="mt-3"
+              >
+                bán chạy
+              </Button>
+            )}
           </div>
-        </div>
-        <div className="info">
-          <div className="head">
-            <Link href={`/courses/${course.id}`} className="font-bold text-lg mt-2 text-[#303141]">
-              {course.title}
-            </Link>
-          </div>
-          <p className="mt-1">{course.instructor}</p>
-          <div className="flex gap-x-1 items-center">
-            <span className="flex gap-x-1">
-              {course.rating} <Image src="/star.svg" alt="star" width={16} height={16} />
-            </span>
-            <span className="text-[#595c73] ml-1 text-sm">({course.reviews || 0})</span>
-          </div>
-          <div className="flex gap-x-4">
-            <span className="">{course.currentPrice}</span>
-            <span className="line-through">{course.originalPrice}</span>
-          </div>
-          {course.isBestSeller && (
-            <Button
-              href={`/courses/${course.id}`}
-              backgroundColor="#3A10E5"
-              textColor="#ffffff"
-              minWidth={110}
-              className="mt-3"
-            >
-              bán chạy
-            </Button>
-          )}
-        </div>
+        </Link>
 
         {/* Popup thông tin khi hover - hiển thị bên phải hoặc bên trái tùy thuộc vào vị trí */}
         <div

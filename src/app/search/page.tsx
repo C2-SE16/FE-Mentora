@@ -1,26 +1,21 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SearchResults from '@/components/modules/searchs/SearchResult';
-import {
-  searchCourses,
-  SearchCourseParams,
-  SearchCoursesResponse,
-  SortOrder,
-} from '@/apis/searchService';
 
-const SearchPage: FC = () => {
+
+import api from '@/apis/api';
+import { useSearch } from '@/components/modules/searchs/SearchContext';
+
+const SearchPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [searchResults, setSearchResults] = useState<SearchCoursesResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { searchResults, setSearchResults, searchQuery, setSearchQuery } = useSearch();
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get search query from URL
-  const query = searchParams?.get('q') || '';
-  const page = parseInt(searchParams?.get('page') || '1');
-  const categoryId = searchParams?.get('category') || undefined;
+  const query = searchParams?.get('query') || '';
   const minRating = searchParams?.get('rating')
     ? parseFloat(searchParams.get('rating') || '0')
     : undefined;
@@ -59,51 +54,40 @@ const SearchPage: FC = () => {
   };
 
   useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (!query) {
-        // If no query, set empty results but don't show loading
-        setSearchResults({
-          courses: [],
-          pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-        });
-        setIsLoading(false);
-        return;
-      }
+    // If the URL query doesn't match the context query, update context and fetch results
+    if (query !== searchQuery) {
+      setSearchQuery(query);
+      fetchSearchResults(query);
+    }
+    // If there are no results but we have a query, fetch them
+    else if (searchResults.length === 0 && query) {
+      fetchSearchResults(query);
+    }
+  }, [query, searchQuery, searchResults.length]);
 
-      setIsLoading(true);
-      setError(null);
+  const fetchSearchResults = async (searchQuery: string) => {
+    if (!searchQuery) return;
 
-      try {
-        // Prepare search parameters
-        const params: SearchCourseParams = {
-          query,
-          page,
-          limit: 10,
-          minRating,
-          categoryId,
-          sortBy: 'createdAt',
-          sortOrder: SortOrder.DESC,
-        };
-
-        // Call the search API
-        const results = await searchCourses(params);
-        console.log('Search results:', results); // Debug log
-        setSearchResults(results);
-      } catch (err) {
-        console.error('Error fetching search results:', err);
-        setError('Failed to load search results. Please try again.');
-        // Set empty results on error
-        setSearchResults({
-          courses: [],
-          pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSearchResults();
-  }, [query, page, categoryId, minRating]);
+    setIsLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('accessToken');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await api.get('courses/search', {
+        params: {
+          query: searchQuery,
+        },
+        headers,
+      });
+      setSearchResults(response.data.data.courses || []);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setError('Failed to load search results. Please try again.');
+      setSearchResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -112,7 +96,7 @@ const SearchPage: FC = () => {
           {isLoading
             ? 'Đang tìm kiếm...'
             : query
-              ? `${searchResults?.pagination?.total || 0} kết quả cho "${query}"`
+              ? `${searchResults.length} kết quả cho "${query}"`
               : 'Kết quả tìm kiếm'}
         </h1>
 
@@ -142,9 +126,7 @@ const SearchPage: FC = () => {
             </button>
           </div>
           <span className="text-gray-600">
-            {!isLoading && searchResults?.pagination
-              ? `${searchResults.pagination.total} kết quả`
-              : ''}
+            {!isLoading && searchResults.length > 0 && `${searchResults.length} kết quả`}
           </span>
         </div>
 
@@ -184,8 +166,8 @@ const SearchPage: FC = () => {
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                 {error}
               </div>
-            ) : searchResults?.courses && searchResults.courses.length > 0 ? (
-              <SearchResults courses={searchResults.courses} />
+            ) : searchResults.length > 0 ? (
+              <SearchResults courses={searchResults} />
             ) : (
               <div className="bg-white rounded-lg p-8 text-center shadow">
                 <p className="text-gray-500">

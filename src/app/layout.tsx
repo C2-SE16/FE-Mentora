@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation';
 import './globals.css';
 import Layout from '@/layouts/Layout';
+import { SearchProvider } from '@/components/modules/searchs/SearchContext';
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,7 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-robotoCondensed">
-        {isDifferentLayout ? children : <Layout>{children}</Layout>}
+        {isDifferentLayout ? (
+          children
+        ) : (
+          <Layout>
+            <SearchProvider>{children}</SearchProvider>
+          </Layout>
+        )}
       </body>
     </html>
   );

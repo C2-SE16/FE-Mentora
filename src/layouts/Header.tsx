@@ -1,11 +1,80 @@
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import api from '@/apis/api';
 const Header = () => {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+  console.log('searchResults', searchResults);
+
+  useEffect(() => {
+    const handleClickOutSide = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutSide);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutSide);
+    };
+  }, []);
+
+  const debounce = <T extends (...args: any[]) => any>(func: T, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return function (this: any, ...args: Parameters<T>) {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, args), delay);
+    };
+  };
+
+  const searchCourses = debounce(async (query) => {
+    if (!query || query.trim() === '') {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('accessToken');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await api.get('courses/search', {
+        params: {
+          query,
+        },
+        headers,
+      });
+      console.log('response', response);
+      setSearchResults(response.data.data.courses || []);
+      setShowResults(true);
+    } catch (error) {
+      console.error('Error searching courses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, 300);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    searchCourses(value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
+      setShowResults(false);
+    }
+  };
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -194,17 +263,87 @@ const Header = () => {
             </div>
           </div>
           {/* Search Bar */}
-          <div className="w-full md:flex-1 mx-0 my-3 cursor-pointer h-[50px] border border-black rounded-[15px]">
-            <form className="flex flex-row-reverse h-full overflow-hidden px-[18px] py-[14px]">
+          <div
+            className="w-full md:flex-1 mx-0 my-3 cursor-pointer h-[50px] border border-black rounded-[15px] relative"
+            ref={searchRef}
+          >
+            <form
+              className="flex flex-row-reverse h-full overflow-hidden px-[18px] py-[14px]"
+              onSubmit={handleSearchSubmit}
+            >
               <input
                 type="text"
                 placeholder="Tìm kiếm gì đó"
                 className="flex-1 outline-none border-none bg-transparent ml-[14px]"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onFocus={() => searchQuery && setShowResults(true)}
               />
-              <button className="outline-none border-none bg-transparent">
-                <Image src="/search.svg" alt="search" width={24} height={24} />
+              <button type="submit" className="outline-none border-none bg-transparent">
+                {isLoading ? (
+                  <div className="w-6 h-6 border-t-2 border-[#1dbe70] rounded-full animate-spin"></div>
+                ) : (
+                  <Image src="/search.svg" alt="search" width={24} height={24} />
+                )}
               </button>
             </form>
+
+            {/* Search Results Dropdown */}
+            {showResults && searchResults.length > 0 && (
+              <div className="absolute left-0 right-0 top-[55px] bg-white shadow-lg rounded-md z-20 max-h-[400px] overflow-y-auto">
+                <ul className="py-2">
+                  {searchResults.map((course: any) => (
+                    <li key={course.courseId} className="hover:bg-[#f5f5f5]">
+                      <Link
+                        href={`/course/${course.courseId}`}
+                        className="block px-4 py-2 text-gray-800 hover:text-[#1dbe70]"
+                        onClick={() => setShowResults(false)}
+                      >
+                        <div className="flex items-center">
+                          {course.thumbnail ? (
+                            <Image
+                              src={course.thumbnail}
+                              alt={course.title}
+                              width={40}
+                              height={30}
+                              className="object-cover rounded mr-3"
+                            />
+                          ) : (
+                            <div className="w-[40px] h-[30px] bg-gray-200 rounded mr-3 flex items-center justify-center">
+                              <span className="text-xs">No img</span>
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">{course.title}</h4>
+                            <p className="text-xs text-gray-500 truncate">
+                              <strong>Khóa học</strong>
+                              {'  '}
+                              {course.tbl_instructors?.instructorName || 'Unknown instructor'}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <div className="px-4 py-2 border-t border-gray-200">
+                  <Link
+                    href={`/search?query=${encodeURIComponent(searchQuery)}`}
+                    className="text-[#1dbe70] hover:underline text-sm block py-1 text-center"
+                    onClick={() => setShowResults(false)}
+                  >
+                    Xem tất cả kết quả
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* No Results */}
+            {/* {showResults && searchQuery && searchResults.length === 0 && !isLoading && (
+              <div className="absolute left-0 right-0 top-[55px] bg-white shadow-lg rounded-md z-20 p-4">
+                <p className="text-center text-gray-500">Không tìm thấy kết quả phù hợp</p>
+              </div>
+            )} */}
           </div>
           {/* Navigation Links */}
           <ul className="flex flex-col md:flex-row items-center w-full md:w-auto">

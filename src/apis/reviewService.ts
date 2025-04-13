@@ -5,6 +5,13 @@ interface ApiResponse<T> {
   data: T;
   statusCode: number;
 }
+interface ReviewListResponse {
+  reviews: CourseReview[];
+  ratingCount: { [key: number]: number };
+  total: number;
+  currentPage: number;
+  totalPages: number;
+}
 
 /**
  * Service để tương tác với API Reviews
@@ -104,6 +111,24 @@ export const ReviewService = {
     } catch (error) {
       console.error('Delete review error:', error);
       return false;
+    }
+  },
+
+  async getAllReviewFromCourseId(courseId: string): Promise<ReviewListResponse | null> {
+    try {
+      const response = await axiosInstance.get<ApiResponse<ReviewListResponse>>(
+        `/reviews/course/${courseId}`
+      );
+
+      if (response.data && response.data.statusCode === 200) {
+        console.log('Review get successfully');
+        return response.data.data;
+      }
+
+      throw new Error('Failed to get review');
+    } catch (error) {
+      console.error('Get review error:', error);
+      return null;
     }
   },
 };

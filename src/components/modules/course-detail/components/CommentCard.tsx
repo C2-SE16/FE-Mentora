@@ -16,7 +16,7 @@ import { Course } from '@/types/courses';
 
 interface CommentCardProps {
   review: CourseReview;
-  setCourse: React.Dispatch<React.SetStateAction<Course | null>>;
+  setCourse?: React.Dispatch<React.SetStateAction<Course | null>>;
 }
 
 const CommentCard: React.FC<CommentCardProps> = ({ review, setCourse }) => {
@@ -52,7 +52,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ review, setCourse }) => {
     );
     if (result) {
       console.log('Review updated successfully:', result);
-      setCourse((prevCourse) => {
+      setCourse?.((prevCourse) => {
         if (!prevCourse) return prevCourse;
         return {
           ...prevCourse,
@@ -87,7 +87,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ review, setCourse }) => {
                   const result = await ReviewService.deleteReview(review.reviewId);
                   if (result) {
                     toast.success('Đánh giá đã được xóa thành công!');
-                    setCourse((prevCourse) => {
+                    setCourse?.((prevCourse) => {
                       if (!prevCourse) return prevCourse;
                       return {
                         ...prevCourse,

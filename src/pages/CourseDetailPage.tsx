@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, Star } from 'lucide-react';
+import { ChevronDown, Star, X } from 'lucide-react';
 import Link from 'next/link';
 import CourseDescription from '@/components/modules/course-detail/components/CourseDescription';
 import CourseSidebar from '@/components/modules/course-detail/components/CourseSidebar';
@@ -13,11 +13,13 @@ import { useEffect, useState } from 'react';
 import { Course } from '@/types/courses';
 import { formatDuration } from '@/utils/time';
 import { useParams } from 'next/navigation';
+import { AllReviewsComponent } from '@/components/modules/course-detail/components/ReviewsComponent';
 
 export default function DetailCourse() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const params = useParams();
   const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
 
@@ -121,7 +123,7 @@ export default function DetailCourse() {
           </div>
         </div>
         <div />
-        <CourseSectionMenu modules={course?.modules} />
+        <CourseSectionMenu modules={course?.modules} courseId={course?.courseId} />
       </div>
       <div className="h-full  grid grid-cols-6 gap-4">
         <div
@@ -147,7 +149,11 @@ export default function DetailCourse() {
 
             {/* Ẩn nút "Show more" nếu không có review */}
             {course?.reviews && course.reviews.length > 2 && (
-              <Button variant="link" className="text-[#26FF96] mt-3 text-sm p-0">
+              <Button
+                variant="link"
+                className="text-[#26FF96] mt-3 text-sm p-0"
+                onClick={() => setShowAllReviews(true)}
+              >
                 Xem thêm
                 <ChevronDown className="w-4 h-4 ml-1 text-[#26FF96]" />
               </Button>
@@ -155,6 +161,23 @@ export default function DetailCourse() {
           </div>
         </div>
       </div>
+
+      {showAllReviews && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+          <div className="bg-white max-w-4xl w-full h-[80vh] overflow-y-auto rounded-lg p-6 shadow-lg relative">
+            <div className="flex flex-row justify-between pb-4">
+              <h1 className="text-[20px] font-normal font-oswald mb-2">Rating and comment</h1>
+              <button
+                className="text-gray-600 hover:text-black text-xl"
+                onClick={() => setShowAllReviews(false)}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <AllReviewsComponent />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

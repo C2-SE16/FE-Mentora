@@ -5,14 +5,16 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Module } from '@/types/module';
-import { FileText } from 'lucide-react';
+import { MonitorPlay } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
 interface CourseSectionMenuProps {
   modules?: Module[];
+  courseId?: string;
 }
 
-const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [] }) => {
+const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], courseId }) => {
   return (
     <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 pb-4 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
       <div className="col-span-2 w-full">
@@ -33,7 +35,7 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [] }) =
                 {(module.curricula ?? []).length > 0 ? (
                   (module.curricula ?? []).map((curriculum) => (
                     <div key={curriculum.curriculumId}>
-                      <p className="text-sm font-semibold text-black">{curriculum.title}</p>
+                      {/* <p className="text-sm font-semibold text-black">{curriculum.title}</p> */}
                       {(curriculum.lectures ?? []).length > 0 ? (
                         (curriculum.lectures ?? []).map((lecture) => (
                           <div
@@ -41,8 +43,14 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [] }) =
                             className="flex justify-between items-center text-sm text-black pl-4"
                           >
                             <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-gray-600" />
-                              {lecture.title}
+                              <MonitorPlay className="w-4 h-4 text-gray-600" />
+                              <Link
+                                href={`/courses/${courseId}/curricula/lecture/${lecture.lectureId}`}
+                                className="underline text-green-600"
+                              >
+                                {lecture.title}
+                              </Link>
+
                               {lecture.isFree && (
                                 <span className="text-green-600 text-xs ml-2">Miễn phí</span>
                               )}

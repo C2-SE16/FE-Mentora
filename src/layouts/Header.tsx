@@ -392,9 +392,8 @@ const Header = () => {
                   </div>
                 </li>
                 <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                  <Link href="#!">
+                  <Link href="/favorite-list">
                     <Image src="/heart.svg" alt="heart" width={24} height={24} className="inline" />
-                    <span className="md:hidden ml-2">Yêu thích</span>
                   </Link>
                 </li>
                 <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">

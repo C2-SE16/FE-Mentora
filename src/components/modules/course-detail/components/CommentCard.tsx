@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -18,18 +19,31 @@ interface CommentCardProps {
   review: CourseReview;
   setCourse?: React.Dispatch<React.SetStateAction<Course | null>>;
 }
-
+interface DecodedToken {
+  sub: string;
+  email: string;
+  role: string;
+}
 const CommentCard: React.FC<CommentCardProps> = ({ review, setCourse }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newComment, setNewComment] = useState(review.comment || '');
   const [newRating, setNewRating] = useState(review.rating || 0);
-  const currentUserId = 'a2b0cf54-38f7-4b78-b501-e3d17961c68e';
+  const token = localStorage.getItem('accessToken');
+  let currentUserId = '';
   console.log('review.userId' + review.userId);
   console.log('review.currentUserId' + currentUserId);
   const handleUpdateReview = () => {
     setIsEditing(true);
   };
-
+  if (token) {
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      currentUserId = decoded.sub;
+      console.log('Decoded userId:', currentUserId);
+    } catch (err) {
+      console.error('Invalid token', err);
+    }
+  }
   const handleSaveReview = async () => {
     if (!newComment.trim() || newRating === 0) {
       toast.error('Hãy nhập bình luận và đánh giá sao!');

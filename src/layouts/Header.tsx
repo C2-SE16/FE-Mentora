@@ -398,15 +398,14 @@ const Header = () => {
                   </Link>
                 </li>
                 <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                  <Link href="#!">
+                  <Link href="/cart" className="cursor-pointer">
                     <Image
                       src="/shopping-cart.svg"
                       alt="shopping-cart"
                       width={24}
                       height={24}
-                      className="inline"
+                      className="cursor-pointer"
                     />
-                    <span className="md:hidden ml-2">Giỏ hàng</span>
                   </Link>
                 </li>
                 <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
@@ -562,12 +561,23 @@ const Header = () => {
                         <div className="h-[1px] w-full bg-gray-200"></div>
                       </li>
                       <li>
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-[#B11212] hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
-                        >
-                          Đăng xuất
-                        </button>
+                        <div className="flex items-center gap-4">
+                          <Link href="/cart" className="cursor-pointer">
+                            <Image
+                              src="/shopping-cart.svg"
+                              alt="shopping-cart"
+                              width={24}
+                              height={24}
+                              className="cursor-pointer"
+                            />
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="bg-[#1dbe70] text-white px-4 py-2 rounded-lg hover:bg-[#18a862] transition-colors"
+                          >
+                            Đăng xuất
+                          </button>
+                        </div>
                       </li>
                     </ul>
                   </div>

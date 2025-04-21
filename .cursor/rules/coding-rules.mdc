@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- Always check the folder structure carefully before coding
+- Before coding, check which file to write to
+- Do not delete existing functions, only delete when needed to fix and fix errors
+- Always apply the SOLID rule
+- Do not let a file have too many lines, encourage splitting modules and components
+
+- Project architech
+FE-Mentora/
+├── .next/                  # Thư mục build của Next.js
+├── src/                    # Mã nguồn chính
+│   ├── app/               # App Router (Next.js 13+)
+│   ├── pages/             # Pages Router
+│   ├── components/        # Các component tái sử dụng
+│   │   ├── ui/           # UI components
+│   │   └── features/     # Feature-specific components
+│   ├── layouts/          # Layout templates
+│   ├── apis/             # API clients
+│   ├── types/            # TypeScript type definitions
+│   ├── interfaces/       # TypeScript interfaces
+│   ├── utils/            # Utility functions
+│   ├── lib/              # Custom libraries
+│   ├── data/             # Mock data
+│   ├── styles/           # Global styles
+│   ├── constants/        # Constants
+│   └── hooks/            # Custom React hooks
+├── public/                # Static assets
+│   ├── images/
+│   └── fonts/
+├── node_modules/          # Dependencies
+├── package.json           # Project dependencies & scripts
+├── tsconfig.json          # TypeScript configuration
+├── tailwind.config.ts     # Tailwind CSS configuration
+├── next.config.ts         # Next.js configuration
+├── .env                   # Environment variables
+├── .prettierrc            # Prettier configuration
+└── eslint.config.mjs      # ESLint configuration

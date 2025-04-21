@@ -3,6 +3,9 @@ import { usePathname } from 'next/navigation';
 import './globals.css';
 import Layout from '@/layouts/Layout';
 import { SearchProvider } from '@/components/modules/searchs/SearchContext';
+import React from 'react';
+import { Toaster } from 'react-hot-toast';
+
 export default function RootLayout({
   children,
 }: Readonly<{

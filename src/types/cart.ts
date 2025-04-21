@@ -1,13 +1,11 @@
 import { User } from '@/types/users';
 import { CartItem } from '@/types/cart_item';
+import { Course } from './courses';
 
 export interface Cart {
-  cartId: string;
-  userId: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-
-  // Relationships
-  items?: CartItem[] | null;
-  user?: User | null;
+  data: {
+    courses: Course[];
+    totalItems: number;
+  };
+  statusCode: number;
 }

@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import LessonHeader from '@/components/modules/lessons/LessonHeader';
-import LessonContent from '@/components/modules/lessons/LessonContent';
+
 import { getCourse, findLessonAndModule } from '@/data/courses';
 
 interface LessonPageProps {

@@ -6,6 +6,7 @@ import { Course } from '@/types/courses';
 import { Star } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
+
 interface CommentInputProps {
   courseId: string;
   setCourse: React.Dispatch<React.SetStateAction<Course | null>>;

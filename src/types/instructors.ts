@@ -4,6 +4,7 @@ import { Course } from './courses';
 export interface Instructor {
   instructorId: string;
   userId: string | null;
+  instructorName: string | null;
   bio: string | null;
   profilePicture: string | null;
   experience: string | null;

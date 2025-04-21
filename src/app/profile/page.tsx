@@ -1,23 +1,121 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import ProfileSidebar from '@/components/ProfileSideBar/ProfileSidebar';
+import { useAuth } from '@/contexts/AuthContext';
+import api from '@/apis/api';
+import toast from 'react-hot-toast';
+import { ProfileFormData } from '@/interfaces/profile-form';
+import { AxiosError } from 'axios';
 
 export default function ProfilePage() {
-  const [firstName, setFirstName] = useState('Anh');
-  const [lastName, setLastName] = useState('Bảo');
-  const [title, setTitle] = useState('');
-  const [biography, setBiography] = useState('');
+  const { user, refetchUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<ProfileFormData>({
+    fullName: '',
+    title: '',
+    description: '',
+    websiteLink: '',
+    facebookLink: '',
+    linkedinLink: '',
+    youtubeLink: '',
+  });
   const [language, setLanguage] = useState('Tiếng Việt');
-  const [website, setWebsite] = useState('');
-  const [facebook, setFacebook] = useState('');
-  const [linkedin, setLinkedin] = useState('');
-  const [youtube, setYoutube] = useState('');
 
-  const handleSave = () => {
-    console.log('Save profile');
+  // Initialize form data when user data is loaded
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName || '',
+        title: user.title || '',
+        description: user.description || '',
+        websiteLink: user.websiteLink || '',
+        facebookLink: user.facebookLink || '',
+        linkedinLink: user.linkedinLink || '',
+        youtubeLink: user.youtubeLink || '',
+      });
+    }
+  }, [user]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+
+      // Create a copy of formData to work with
+      const updateData = { ...formData };
+
+      // Format website link if it's not empty
+      if (updateData.websiteLink && updateData.websiteLink.trim() !== '') {
+        if (
+          !updateData.websiteLink.startsWith('http://') &&
+          !updateData.websiteLink.startsWith('https://')
+        ) {
+          updateData.websiteLink = `https://${updateData.websiteLink}`;
+        }
+      } else {
+        // Remove empty website link to avoid validation errors
+        delete updateData.websiteLink;
+      }
+
+      // Handle social media links
+      if (updateData.facebookLink && updateData.facebookLink.trim() !== '') {
+        updateData.facebookLink = `http://www.facebook.com/${updateData.facebookLink.replace(/^(https?:\/\/)?(www\.)?facebook\.com\/?/i, '')}`;
+      } else {
+        delete updateData.facebookLink;
+      }
+
+      if (updateData.linkedinLink && updateData.linkedinLink.trim() !== '') {
+        updateData.linkedinLink = `http://www.linkedin.com/${updateData.linkedinLink.replace(/^(https?:\/\/)?(www\.)?linkedin\.com\/?/i, '')}`;
+      } else {
+        delete updateData.linkedinLink;
+      }
+
+      if (updateData.youtubeLink && updateData.youtubeLink.trim() !== '') {
+        updateData.youtubeLink = `http://www.youtube.com/${updateData.youtubeLink.replace(/^(https?:\/\/)?(www\.)?youtube\.com\/?/i, '')}`;
+      } else {
+        delete updateData.youtubeLink;
+      }
+
+      console.log('Sending data:', updateData);
+
+      // Get the token
+      const token = localStorage.getItem('accessToken');
+
+      // Call the API
+      const response = await api.patch('user/profile', updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('response:::', response);
+
+      if (response.data) {
+        toast.success('Cập nhật hồ sơ thành công');
+        await refetchUser();
+        window.dispatchEvent(new CustomEvent('profile-updated'));
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      if (error instanceof AxiosError && error.response && error.response.data) {
+        const errorData = error.response.data;
+        console.log('Error details:', errorData);
+      } else {
+        toast.error('Có lỗi xảy ra khi cập nhật hồ sơ');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -26,7 +124,7 @@ export default function ProfilePage() {
         <div className="bg-white border border-gray-200 shadow-custom">
           <div className="flex flex-col md:flex-row">
             {/* Sidebar */}
-            <ProfileSidebar firstName={firstName} lastName={lastName} />
+            <ProfileSidebar />
 
             {/* Main content */}
             <div className="w-full md:w-3/4 p-6">
@@ -41,8 +139,9 @@ export default function ProfilePage() {
                   <div>
                     <input
                       type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
                       placeholder="Tên"
                       className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
                     />
@@ -50,17 +149,9 @@ export default function ProfilePage() {
                   <div>
                     <input
                       type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Họ"
-                      className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
                       placeholder="Tiêu đề"
                       className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
                     />
@@ -73,8 +164,9 @@ export default function ProfilePage() {
                         <button className="p-2 border-r border-gray-300 italic">I</button>
                       </div>
                       <textarea
-                        value={biography}
-                        onChange={(e) => setBiography(e.target.value)}
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                         placeholder="Giới thiệu về bạn..."
                         className="w-full p-2 min-h-[100px] outline-none"
                       ></textarea>
@@ -100,8 +192,9 @@ export default function ProfilePage() {
                   <div>
                     <input
                       type="text"
-                      value={website}
-                      onChange={(e) => setWebsite(e.target.value)}
+                      name="websiteLink"
+                      value={formData.websiteLink}
+                      onChange={handleChange}
                       placeholder="Website (https://...)"
                       className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
                     />
@@ -113,8 +206,9 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="text"
-                      value={facebook}
-                      onChange={(e) => setFacebook(e.target.value)}
+                      name="facebookLink"
+                      value={formData.facebookLink}
+                      onChange={handleChange}
                       placeholder="Hồ Sơ Facebook"
                       className="flex-1 border-t border-r border-b border-gray-300 rounded-r-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
                     />
@@ -126,8 +220,9 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="text"
-                      value={linkedin}
-                      onChange={(e) => setLinkedin(e.target.value)}
+                      name="linkedinLink"
+                      value={formData.linkedinLink}
+                      onChange={handleChange}
                       placeholder="Hồ Sơ LinkedIn"
                       className="flex-1 border-t border-r border-b border-gray-300 rounded-r-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
                     />
@@ -139,8 +234,9 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="text"
-                      value={youtube}
-                      onChange={(e) => setYoutube(e.target.value)}
+                      name="youtubeLink"
+                      value={formData.youtubeLink}
+                      onChange={handleChange}
                       placeholder="Hồ Sơ Youtube"
                       className="flex-1 border-t border-r border-b border-gray-300 rounded-r-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1dbe70]"
                     />
@@ -151,9 +247,17 @@ export default function ProfilePage() {
               <div className="flex justify-start">
                 <button
                   onClick={handleSave}
-                  className="bg-[#00FF84] hover:bg-[#64e2a7] text-black py-2 px-8 rounded transition-colors duration-300text-center text-[14px] font-semibold  no-underline"
+                  disabled={isLoading}
+                  className="bg-[#00FF84] hover:bg-[#64e2a7] text-black py-2 px-8 rounded transition-colors duration-300 text-center text-[14px] font-semibold no-underline flex items-center"
                 >
-                  Lưu
+                  {isLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-t-2 border-black rounded-full animate-spin mr-2"></div>
+                      Đang lưu...
+                    </>
+                  ) : (
+                    'Lưu'
+                  )}
                 </button>
               </div>
             </div>

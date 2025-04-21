@@ -3,13 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
-type ProfileSidebarProps = {
-  firstName: string;
-  lastName: string;
-};
-
-export default function ProfileSidebar({ firstName, lastName }: ProfileSidebarProps) {
+export default function ProfileSidebar() {
+  const { user, isLoading } = useAuth();
   const pathname = usePathname();
 
   const isActive = (path: string) => {
@@ -19,16 +16,21 @@ export default function ProfileSidebar({ firstName, lastName }: ProfileSidebarPr
   return (
     <div className="w-full md:w-1/4 border-r border-gray-200">
       <div className="p-6 flex flex-col items-center">
-        <Image
-          src="/avatar.jpg"
-          alt="Avatar"
-          width={40}
-          height={40}
-          className="w-40 h-40 bg-black rounded-full mb-4 object-cover"
-        />
-        <h2 className="text-xl font-bold text-center mb-8 font-oswald">
-          {firstName} {lastName}
-        </h2>
+        {isLoading ? (
+          <div className="w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+            <div className="w-8 h-8 border-t-2 border-[#1dbe70] rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <Image
+            src={user?.avatar || '/avatar.jpg'}
+            alt="Avatar"
+            width={40}
+            height={40}
+            className="w-40 h-40 bg-black rounded-full mb-4 object-cover"
+          />
+        )}
+        
+        <h2 className="text-xl font-bold text-center mb-8 font-oswald">{user?.fullName}</h2>
 
         <nav className="w-full">
           <ul className="space-y-2 text-gray-700">

@@ -1,24 +1,21 @@
+'use client';
+
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/apis/api';
+import { useAuth } from '@/contexts/AuthContext';
+
 const Header = () => {
+  const { user, isLoggedIn, isLoading, logout, refetchUser } = useAuth();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [avatarKey, setAvatarKey] = useState(Date.now());
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
-  console.log('searchResults', searchResults);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    setIsLoggedIn(!!token);
-  }, []);
 
   useEffect(() => {
     const handleClickOutSide = (e: MouseEvent) => {
@@ -32,6 +29,21 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutSide);
     };
   }, []);
+
+  useEffect(() => {
+    const handleAvatarUpdate = () => {
+      // Force refetch user data
+      refetchUser();
+      // Update the key to force re-render of the avatar images
+      setAvatarKey(Date.now());
+    };
+
+    window.addEventListener('avatar-updated', handleAvatarUpdate);
+
+    return () => {
+      window.removeEventListener('avatar-updated', handleAvatarUpdate);
+    };
+  }, [refetchUser]);
 
   const debounce = <T extends (...args: any[]) => any>(func: T, delay: number) => {
     let timer: NodeJS.Timeout;
@@ -48,7 +60,6 @@ const Header = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
       const token = localStorage.getItem('accessToken');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -63,8 +74,6 @@ const Header = () => {
       setShowResults(true);
     } catch (error) {
       console.error('Error searching courses:', error);
-    } finally {
-      setIsLoading(false);
     }
   }, 300);
 
@@ -85,7 +94,7 @@ const Header = () => {
   useEffect(() => {
     const handleRouteChange = () => {
       setMobileMenuOpen(false);
-      setIsLoading(false);
+      // setIsLoading(false);
     };
 
     window.addEventListener('popstate', handleRouteChange);
@@ -101,7 +110,8 @@ const Header = () => {
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     localStorage.removeItem('accessToken');
-    setIsLoggedIn(false);
+    // setIsLoggedIn(false);
+    logout();
     router.push('/');
   };
 
@@ -347,7 +357,11 @@ const Header = () => {
           </div>
           {/* Navigation Links */}
           <ul className="flex flex-col md:flex-row items-center w-full md:w-auto gap-x-2">
-            {isLoggedIn ? (
+            {isLoading ? (
+              <li className="w-full md:w-auto text-center mx-0 my-3">
+                <div className="w-6 h-6 border-t-2 border-[#1dbe70] rounded-full animate-spin mx-auto"></div>
+              </li>
+            ) : isLoggedIn ? (
               <>
                 <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
                   <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
@@ -418,13 +432,20 @@ const Header = () => {
                     href="/profile"
                     className="flex items-center justify-center md:justify-start"
                   >
-                    <Image
-                      src="/avatar.jpg"
-                      alt="avatar"
-                      width={32}
-                      height={32}
-                      className="w-[32px] h-[32px] rounded-full object-cover"
-                    />
+                    {isLoading ? (
+                      <div className="w-[32px] h-[32px] rounded-full bg-gray-200 flex items-center justify-center">
+                        <div className="w-4 h-4 border-t-2 border-[#1dbe70] rounded-full animate-spin"></div>
+                      </div>
+                    ) : (
+                      <Image
+                        src={`${user?.avatar || '/avatar.jpg'}?v=${avatarKey}`}
+                        alt="avatar"
+                        width={32}
+                        height={32}
+                        className="w-[32px] h-[32px] rounded-full object-cover"
+                        key={`nav-avatar-${avatarKey}`}
+                      />
+                    )}
                     <span className="md:hidden ml-2">Tài khoản</span>
                   </Link>
                   <div className="absolute right-0 top-[22px] md:top-[42px] pt-[30px] pb-[30px] hidden z-10 group-hover:block w-full md:w-auto">
@@ -435,19 +456,18 @@ const Header = () => {
                           className="flex items-center gap-x-3 px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black"
                         >
                           <Image
-                            src="/avatar.jpg"
+                            src={`${user?.avatar || '/avatar.jpg'}?v=${avatarKey}`}
                             alt="avatar"
                             width={50}
                             height={50}
                             className="w-[50px] h-[50px] rounded-full object-cover"
+                            key={`dropdown-avatar-${avatarKey}`}
                           />
                           <div>
                             <h3 className="text-base font-bold hover:text-[#1dbe70] text-left">
-                              Elliot Senpai
+                              {user?.fullName}
                             </h3>
-                            <p className="text-[10px] truncate max-w-[150px]">
-                              justAboutEmail@gmail.com
-                            </p>
+                            <p className="text-[10px] truncate max-w-[150px]">{user?.email}</p>
                           </div>
                         </Link>
                       </li>

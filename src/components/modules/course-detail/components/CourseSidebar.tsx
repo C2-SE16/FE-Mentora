@@ -1,3 +1,6 @@
+'use client';
+
+import { FavoriteService } from '@/apis/favoriteService';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LearningObjective } from '@/types/learning-object';
@@ -45,6 +48,18 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
     }
   };
 
+  const handleAddFavorite = async () => {
+    const message = await FavoriteService.addFavorite({
+      userId: '69ec3c08-793e-45c8-9975-5bb70f4e48d5',
+      courseId: '05b88570-e7e1-4b3e-8b97-15f1b4139a38',
+    });
+    if (message) {
+      toast.success(message); // thông báo thành công
+    } else {
+      toast.error('Thêm vào danh sách yêu thích thất bại!');
+    }
+  };
+
   return (
     <Card
       className="bg-white border border-gray-300 shadow-md rounded-none w-full h-[500px] p-4 
@@ -53,13 +68,16 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
     >
       <div className="p-4 bg-slate-300 h-[150px]"></div>
       <div className="pt-5 grid grid-cols-3 gap-4">
-        <Button 
+        <Button
           className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]"
           onClick={handleAddToCart}
         >
           Thêm vào giỏ hàng
         </Button>
-        <Button className="col-span-1 h-14 bg-white border border-[rgba(0,255,132,0.85)] rounded-lg flex items-center justify-center hover:bg-slate-100">
+        <Button
+          onClick={handleAddFavorite} // 👈 gọi hàm khi bấm trái tim
+          className="col-span-1 h-14 bg-white border border-[rgba(0,255,132,0.85)] rounded-lg flex items-center justify-center hover:bg-slate-100"
+        >
           <Heart className="w-8 h-8 text-[rgba(0,255,132,0.85)]" />
         </Button>
 

@@ -19,9 +19,9 @@ interface ReviewListResponse {
 export const ReviewService = {
   async createReview(createReviewDto: Partial<CourseReview>): Promise<CourseReview | null> {
     try {
-      //   const token = localStorage.getItem('token'); // Lấy token từ localStorage
-      const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
+      const token = localStorage.getItem('accessToken'); // Lấy token từ localStorage
+      // const token =
+      // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
 
       if (!token) {
         console.error('No authentication token found!');
@@ -54,9 +54,9 @@ export const ReviewService = {
     updateReviewDto: Partial<CourseReview>
   ): Promise<CourseReview | null> {
     try {
-      // const token = localStorage.getItem('token');
-      const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
+      const token = localStorage.getItem('accessToken');
+      // const token =
+      //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
 
       if (!token) {
         console.error('No authentication token found!');
@@ -87,9 +87,9 @@ export const ReviewService = {
 
   async deleteReview(reviewId: string): Promise<boolean> {
     try {
-      // const token = localStorage.getItem('token');
-      const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
+      const token = localStorage.getItem('accessToken');
+      // const token =
+      //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMmIwY2Y1NC0zOGY3LTRiNzgtYjUwMS1lM2QxNzk2MWM2OGUiLCJlbWFpbCI6ImFuaGRhdEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzY1Mjg1MywiZXhwIjoxNzQzNzM5MjUzfQ.ICfPI6k7S8FdKz7vDWShmEu044H_BTMsW2O5Mdtpeow';
 
       if (!token) {
         console.error('No authentication token found!');

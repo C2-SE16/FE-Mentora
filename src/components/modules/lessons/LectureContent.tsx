@@ -27,7 +27,7 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
       <div className="w-full md:w-3/4 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
           <VideoPlayer
-            videoUrl="http://localhost:9090/videos/7c3146ca-7487-4259-bd3e-773048d556d0/cf85021c-cb69-432e-9252-ed26106422f3.mp4"
+            videoUrl={`http://localhost:9090/videos/${course?.courseId}/${lecture?.lectureId}.mp4`}
             lectureId={lecture?.lectureId || undefined}
             // onProgress={handleProgress}
           />

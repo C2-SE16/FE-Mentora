@@ -18,6 +18,7 @@ export interface Course {
   level?: string;
   description?: string;
   categories?: Category[];
+  subtitle?: boolean;
 }
 
 export interface Topic {

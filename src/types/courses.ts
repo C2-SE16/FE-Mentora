@@ -12,25 +12,61 @@ import { CourseCategory } from '@/types/course_category';
 import { CartItem } from '@/types/cart_item';
 import { OrderDetail } from '@/types/order_detail';
 
+export interface Price {
+  s: number;
+  e: number;
+  d: number[];
+}
+
+export interface Rating {
+  s: number;
+  e: number;
+  d: number[];
+}
+
+export interface Instructor {
+  instructorId: string;
+  userId: string;
+  instructorName: string | null;
+  bio: string;
+  profilePicture: string;
+  experience: string;
+  average_rating: Rating;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CourseCategory {
+  courseCategoryId: string;
+  categoryId: string;
+  courseId: string;
+  tbl_categories: {
+    categoryId: string;
+    categoryType: string;
+  };
+}
+
 export interface Course {
   courseId: string;
-  instructorId: string | null;
-  title: string | null;
-  description: string | null;
-  overview: string | null;
-  durationTime: number | null;
-  price: number | null;
-  approved: ApproveEnum | null;
-  rating: number | null;
+  instructorId: string;
+  title: string;
+  description: string;
+  overview: string;
+  durationTime: number;
+  price: Price;
+  approved: string;
+  rating: Rating;
   comment: string | null;
-  thumbnail: string | null;
-  isBestSeller: boolean | null;
-  isRecommended: boolean | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
+  createdAt: string;
+  updatedAt: string;
+  isBestSeller: boolean;
+  isRecommended: boolean;
+  thumbnail: string;
+  tbl_course_categories: CourseCategory[];
+  tbl_instructors: Instructor;
 
   // Relationships
-  instructor?: Instructor | null;
   modules?: ImportedModule[];
   courseCategories?: CourseCategory[];
   categories?: Category[];

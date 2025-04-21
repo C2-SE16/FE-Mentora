@@ -5,8 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LearningObjective } from '@/types/learning-object';
 import { Heart } from 'lucide-react';
-import React from 'react'; // 👈 import đúng service
-import { toast } from 'react-hot-toast'; // nếu bạn đang dùng react-hot-toast
+import React from 'react';
+import { cartService } from '@/apis/cartService';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+
+const contents = [
+  '  37 hours on-demand video',
+  '8 articles',
+  '3 downloadable resources',
+  'Access on mobile and TV',
+  'Full lifetime access',
+  'Certificate of completion',
+];
 
 interface CourseSidebarProps {
   courseId: string;
@@ -14,6 +25,29 @@ interface CourseSidebarProps {
 }
 
 const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [] }) => {
+  const router = useRouter();
+
+  const handleAddToCart = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        toast.error('Vui lòng đăng nhập để thêm khóa học vào giỏ hàng');
+        router.push('/login');
+        return;
+      }
+
+      await cartService.addToCart(courseId);
+      toast.success('Đã thêm khóa học vào giỏ hàng thành công!');
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại');
+        router.push('/login');
+      } else {
+        toast.error('Khóa học đã tồn tại trong giỏ hàng.');
+      }
+    }
+  };
+
   const handleAddFavorite = async () => {
     const message = await FavoriteService.addFavorite({
       userId: '69ec3c08-793e-45c8-9975-5bb70f4e48d5',
@@ -34,7 +68,10 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
     >
       <div className="p-4 bg-slate-300 h-[150px]"></div>
       <div className="pt-5 grid grid-cols-3 gap-4">
-        <Button className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]">
+        <Button
+          className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]"
+          onClick={handleAddToCart}
+        >
           Thêm vào giỏ hàng
         </Button>
         <Button

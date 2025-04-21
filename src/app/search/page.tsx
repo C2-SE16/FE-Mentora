@@ -4,9 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SearchResults from '@/components/modules/searchs/SearchResult';
 
-
 import api from '@/apis/api';
-import { useSearch } from '@/components/modules/searchs/SearchContext';
+import { useSearch } from '@/contexts/SearchContext';
 
 const SearchPage = () => {
   const searchParams = useSearchParams();

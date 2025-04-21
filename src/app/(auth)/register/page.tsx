@@ -76,7 +76,6 @@ const Register = () => {
 
   return (
     <>
-      {/* <Header /> */}
       <div className="flex justify-center items-center min-h-screen bg-white">
         <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto overflow-hidden">
           {/* Left side - Image */}

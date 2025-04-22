@@ -27,28 +27,6 @@ interface CourseSidebarProps {
 }
 
 const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [] }) => {
-  const router = useRouter();
-
-  const handleAddToCart = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        toast.error('Vui lòng đăng nhập để thêm khóa học vào giỏ hàng');
-        router.push('/login');
-        return;
-      }
-
-      await cartService.addToCart(courseId);
-      toast.success('Đã thêm khóa học vào giỏ hàng thành công!');
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại');
-        router.push('/login');
-      } else {
-        toast.error('Khóa học đã tồn tại trong giỏ hàng.');
-      }
-    }
-  };
 
   const router = useRouter();
 

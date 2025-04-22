@@ -4,7 +4,6 @@ import './globals.css';
 import Layout from '@/layouts/Layout';
 import { SearchProvider } from '@/contexts/SearchContext';
 import React from 'react';
-import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/contexts/AuthContext';
 
 

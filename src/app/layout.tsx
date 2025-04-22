@@ -7,6 +7,7 @@ import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/contexts/AuthContext';
 
+
 export default function RootLayout({
   children,
 }: Readonly<{

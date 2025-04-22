@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/apis/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { InstructorService } from '@/apis/instructorService';
 
 const Header = () => {
   const { user, isLoggedIn, isLoading, logout, refetchUser } = useAuth();
@@ -113,6 +114,34 @@ const Header = () => {
     // setIsLoggedIn(false);
     logout();
     router.push('/');
+  };
+
+  const handleTeachingClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    if (!isLoggedIn) {
+      // Nếu chưa đăng nhập, chuyển đến trang đăng nhập
+      router.push('/login');
+      return;
+    }
+    
+    try {
+      // Kiểm tra trạng thái instructor
+      const response = await InstructorService.checkInstructorStatus();
+      
+      // Kiểm tra giá trị isInstructor từ response
+      if (response && response.isInstructor === true) {
+        // Nếu đã là instructor, chuyển đến dashboard
+        router.push('/instructor/dashboard');
+      } else {
+        // Nếu chưa là instructor hoặc có lỗi, chuyển đến trang đăng ký
+        router.push('/instructor/register');
+      }
+    } catch (error) {
+      console.error('Lỗi kiểm tra trạng thái instructor:', error);
+      // Mặc định chuyển đến trang đăng ký nếu có lỗi
+      router.push('/instructor/register');
+    }
   };
 
   return (
@@ -370,15 +399,16 @@ const Header = () => {
                   <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
                     <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
                       <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
-                        repellendus deleniti.
+                        Trở thành giảng viên tại Mentora và chia sẻ kiến thức của bạn đến học viên
+                        trên toàn thế giới. Bắt đầu tạo khóa học và tận hưởng thu nhập bổ sung.
                       </p>
-                      <div>
+                      <div className="mt-4">
                         <Link
                           href="#!"
-                          className="flex justify-center items-center tracking-[1px] border border-black text-black font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-transparent"
+                          onClick={handleTeachingClick}
+                          className="flex justify-center items-center tracking-[1px] border border-black text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-[#1dbe70] hover:bg-[#18a862] transition-colors"
                         >
-                          Thử ngay
+                          Bắt đầu
                         </Link>
                       </div>
                     </div>
@@ -485,6 +515,7 @@ const Header = () => {
                       <li>
                         <Link
                           href="#!"
+                          onClick={handleTeachingClick}
                           className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                         >
                           Giảng dạy
@@ -611,15 +642,16 @@ const Header = () => {
                   <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
                     <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
                       <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
-                        repellendus deleniti.
+                        Trở thành giảng viên tại Mentora và chia sẻ kiến thức của bạn đến học viên
+                        trên toàn thế giới. Bắt đầu tạo khóa học và tận hưởng thu nhập bổ sung.
                       </p>
-                      <div>
+                      <div className="mt-4">
                         <Link
                           href="#!"
-                          className="flex justify-center items-center tracking-[1px] border border-black text-black font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-transparent"
+                          onClick={handleTeachingClick}
+                          className="flex justify-center items-center tracking-[1px] border border-black text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-[#1dbe70] hover:bg-[#18a862] transition-colors"
                         >
-                          Thử ngay
+                          Đăng ký giảng dạy
                         </Link>
                       </div>
                     </div>

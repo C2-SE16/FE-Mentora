@@ -92,9 +92,11 @@ const HomeCourse = () => {
   };
 
   return (
-    <div className="mt-5 px-4 sm:px-6 lg:px-8">
+    <div className="mt-5">
+      <h1 className="text-3xl font-bold">Nên học cái gì tiếp theo</h1>
+      <h2 className="text-2xl mt-2 font-medium">Đề xuất cho bạn</h2>
       {/* Course list 1 */}
-      <CourseList 
+      <CourseList
         courses={homepageData.recommendedCourses}
         isLoading={isLoading}
         onAddToCart={handleAddToCart}
@@ -109,7 +111,7 @@ const HomeCourse = () => {
         </Link>
       </div>
 
-      <CourseList 
+      <CourseList
         courses={homepageData.recommendedCourses}
         isLoading={isLoading}
         onAddToCart={handleAddToCart}
@@ -124,7 +126,7 @@ const HomeCourse = () => {
         </Link>
       </div>
 
-      <CourseList 
+      <CourseList
         courses={homepageData.bestSellerCourses}
         isLoading={isLoading}
         onAddToCart={handleAddToCart}

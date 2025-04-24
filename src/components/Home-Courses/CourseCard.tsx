@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Course } from '@/interfaces/homepage-course';
 import Button from '../Button/Button';
+import { StarRating } from './StarRating';
 
 interface CourseCardProps {
   course: Course;
@@ -35,13 +36,12 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             </Link>
           </div>
           <p className="mt-1 text-sm sm:text-base">{course.instructor}</p>
-          <div className="flex gap-x-1 items-center">
-            <span className="flex gap-x-1">
-              {course.rating} <Image src="/star.svg" alt="star" width={16} height={16} />
-            </span>
-            <span className="text-[#595c73] ml-1 text-sm">({course.reviews || 0})</span>
+          <div className="flex items-center gap-2">
+            {course.rating}
+            <StarRating rating={course.rating} />
+            <span className="text-[#595c73] text-sm">({course.reviews || 0})</span>
           </div>
-          <div className="flex gap-x-4 text-sm sm:text-base">
+          <div className="flex gap-x-4 text-sm sm:text-base mt-1">
             <span className="">{course.currentPrice}</span>
             <span className="line-through">{course.originalPrice}</span>
           </div>
@@ -105,7 +105,7 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             </div>
 
             <div className="mt-4">
-              <button 
+              <button
                 className="bg-[#3A10E5] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
                 onClick={(e) => onAddToCart(course.id, e)}
               >
@@ -119,4 +119,4 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
   );
 };
 
-export default CourseCard; 
+export default CourseCard;

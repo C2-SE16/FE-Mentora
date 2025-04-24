@@ -1,16 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import ProfileSidebar from '@/components/ProfileSideBar/ProfileSidebar';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SecurityPage() {
-  const [firstName, setFirstName] = useState('Anh');
-  const [lastName, setLastName] = useState('Bảo');
+  const { user } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [email, setEmail] = useState('anhbao123@gmail.com');
+  const [email, setEmail] = useState(user?.email);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   const handlePasswordChange = (e: React.FormEvent) => {
@@ -24,7 +22,7 @@ export default function SecurityPage() {
       <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6">
         <div className="bg-white border border-gray-200 shadow-custom">
           <div className="flex flex-col md:flex-row">
-            <ProfileSidebar firstName={firstName} lastName={lastName} />
+            <ProfileSidebar />
 
             {/* Main content */}
             <div className="w-full md:w-3/4 p-6 mx-0 md:mx-10">

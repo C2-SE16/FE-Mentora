@@ -65,6 +65,21 @@ const Header = () => {
     try {
       const token = localStorage.getItem('accessToken');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      if (token && query.trim().length > 1) {
+        try {
+          await api.post(
+            'elasticsearch/search-history',
+            {
+              content: query.trim(),
+            },
+            { headers }
+          );
+        } catch (error) {
+          console.error('Error searching history:', error);
+        }
+      }
+
       const response = await api.get('courses/search', {
         params: {
           query,
@@ -112,8 +127,11 @@ const Header = () => {
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     localStorage.removeItem('accessToken');
-    // setIsLoggedIn(false);
     logout();
+
+    // Dispatch custom event để thông báo logout cho các component khác
+    window.dispatchEvent(new Event('user-logout'));
+
     router.push('/');
   };
 
@@ -192,8 +210,15 @@ const Header = () => {
             className={`flex-1 ${mobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row justify-between items-center gap-4 px-6 pb-4 md:pb-0 md:px-0`}
           >
             <div className="hidden md:block mb-2">
-              <Link href="/" legacyBehavior className="cursor-pointer">
-                <Image src="/mentora-logo.svg" alt="logo" width={120} height={120} priority />
+              <Link href="/" legacyBehavior>
+                <Image
+                  src="/mentora-logo.svg"
+                  alt="logo"
+                  width={120}
+                  height={120}
+                  priority
+                  className="cursor-pointer"
+                />
               </Link>
             </div>
             {/* Categories Dropdown */}
@@ -339,7 +364,7 @@ const Header = () => {
                     {searchResults.map((course: any) => (
                       <li key={course.courseId} className="hover:bg-[#f5f5f5]">
                         <Link
-                          href={`/course/${course.courseId}`}
+                          href={`/search?query=${encodeURIComponent(searchQuery)}`}
                           className="block px-4 py-2 text-gray-800 hover:text-[#1dbe70]"
                           onClick={() => setShowResults(false)}
                         >

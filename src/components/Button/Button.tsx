@@ -10,6 +10,7 @@ interface ButtonProps {
   textColor?: string;
   width?: string | number;
   minWidth?: string | number;
+  textSize?: string;
   onClick?: () => void;
 }
 
@@ -22,6 +23,7 @@ const Button = ({
   width,
   minWidth,
   onClick,
+  textSize,
   ...rest
 }: ButtonProps) => {
   // Tailwind base classes
@@ -34,6 +36,7 @@ const Button = ({
     color: textColor || '',
     width: width ? `${width}px` : '',
     minWidth: minWidth ? `${minWidth}px` : '110px',
+    fontSize: textSize ? `${textSize}px` : '12px',
   };
 
   return (

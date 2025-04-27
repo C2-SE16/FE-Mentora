@@ -10,15 +10,29 @@ const HeaderInfo = () => {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    setHasToken(!!token);
-  }, []);
+    // Kiểm tra token mỗi khi component render
+    const checkToken = () => {
+      const token = localStorage.getItem('accessToken');
+      setHasToken(!!token);
+    };
 
-  if (!isLoading && !user) {
-    return null;
-  }
+    // Gọi kiểm tra ngay lập tức
+    checkToken();
 
-  if (isLoading && !hasToken) {
+    // Thêm event listener để lắng nghe sự thay đổi localStorage
+    window.addEventListener('storage', checkToken);
+
+    // Tạo một custom event để lắng nghe logout từ bất kỳ đâu trong ứng dụng
+    window.addEventListener('user-logout', checkToken);
+
+    return () => {
+      window.removeEventListener('storage', checkToken);
+      window.removeEventListener('user-logout', checkToken);
+    };
+  }, [isLoggedIn]); // Vẫn giữ isLoggedIn để đảm bảo useEffect chạy khi trạng thái đăng nhập thay đổi
+
+  // Kiểm tra cả isLoggedIn từ context và hasToken từ localStorage
+  if (!isLoggedIn || !hasToken || !user) {
     return null;
   }
 
@@ -49,7 +63,7 @@ const HeaderInfo = () => {
         <h3 className="font-medium text-2xl text-gray-800">Chào mừng {user.fullName} trở lại!</h3>
         <Link
           href="/profile/interests"
-          className="text-sm text-purple-600 hover:text-purple-800 transition-colors"
+          className="text-md text-[#2cbb78] hover:text-[#54c78f] transition-colors"
         >
           Thêm nghề nghiệp và sở thích
         </Link>

@@ -16,15 +16,17 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
 
   return (
     <div className="w-full group relative">
-      <Link href={`/courses/${course.id || course.courseId}`}>
+      <div>
         <div className="relative overflow-hidden rounded-lg w-full aspect-video cursor-pointer">
-          <Image
-            src={course.image || course.thumbnail || ''}
-            alt={course.title}
-            width={330}
-            height={200}
-            className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
-          />
+          <Link href={`/courses/${course.id || course.courseId}`}>
+            <Image
+              src={course.image || course.thumbnail || ''}
+              alt={course.title}
+              width={330}
+              height={200}
+              className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
+            />
+          </Link>
         </div>
         <div className="info">
           <div className="head">

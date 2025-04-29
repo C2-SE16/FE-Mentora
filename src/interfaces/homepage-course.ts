@@ -5,6 +5,7 @@ export interface Category {
 
 export interface Course {
   id: string;
+  courseId?: string;
   title: string;
   instructor: string;
   rating: number;
@@ -19,6 +20,8 @@ export interface Course {
   description?: string;
   categories?: Category[];
   subtitle?: boolean;
+  thumbnail?: string;
+  price?: string;
 }
 
 export interface Topic {

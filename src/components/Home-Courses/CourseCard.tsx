@@ -16,22 +16,20 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
 
   return (
     <div className="w-full group relative">
-      <div>
+      <Link href={`/courses/${course.id || course.courseId}`}>
         <div className="relative overflow-hidden rounded-lg w-full aspect-video cursor-pointer">
-          <Link href={`/courses/${course.id}`}>
-            <Image
-              src={course.image}
-              alt={course.title}
-              width={330}
-              height={200}
-              className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
-            />
-          </Link>
+          <Image
+            src={course.image || course.thumbnail || ''}
+            alt={course.title}
+            width={330}
+            height={200}
+            className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
+          />
         </div>
         <div className="info">
           <div className="head">
             <Link
-              href={`/courses/${course.id}`}
+              href={`/courses/${course.id || course.courseId}`}
               className="font-bold text-base sm:text-lg mt-2 text-[#303141] line-clamp-2"
             >
               {course.title}
@@ -44,13 +42,13 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             <span className="text-[#595c73] text-sm">({course.reviews || 0})</span>
           </div>
           <div className="flex gap-x-4 text-sm sm:text-base mt-1">
-            <span className="">{course.currentPrice}</span>
+            <span className="">₫{course.currentPrice || course.price}</span>
             <span className="line-through">{course.originalPrice}</span>
           </div>
           {course.isBestSeller && (
             <Button
-              href={`/courses/${course.id}`}
-              backgroundColor="#3A10E5"
+              href={`/courses/${course.id || course.courseId}`}
+              backgroundColor="#29cc60"
               textColor="#ffffff"
               minWidth={90}
               className="mt-3 text-sm sm:text-base"
@@ -108,7 +106,7 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
 
             <div className="mt-4">
               <button
-                className="bg-[#3A10E5] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+                className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
                 onClick={(e) => onAddToCart(course.id, e)}
               >
                 Thêm vào giỏ hàng

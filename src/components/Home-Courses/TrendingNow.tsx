@@ -16,7 +16,7 @@ const TrendingNow = () => {
               <h3 className="text-xl font-bold text-gray-800">ChatGPT is a top skill</h3>
               <Link
                 href="/courses/chatgpt"
-                className="text-purple-600 hover:text-purple-800 flex items-center text-sm font-medium mt-1"
+                className="text-[#29cc60] hover:text-[#25ad53] flex items-center text-sm font-medium mt-1"
               >
                 See ChatGPT courses
                 <svg
@@ -69,7 +69,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/python"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Python
                   <svg
@@ -93,7 +93,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/web-development"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Web Development
                   <svg
@@ -117,7 +117,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/data-science"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Data Science
                   <svg
@@ -148,7 +148,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/blender"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Blender
                   <svg
@@ -172,7 +172,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/graphic-design"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Graphic Design
                   <svg
@@ -196,7 +196,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/ux-design"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   User Experience (UX) Design
                   <svg
@@ -227,7 +227,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/pmp"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   PMI Project Management Professional (PMP)
                   <svg
@@ -251,7 +251,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/power-bi"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Microsoft Power BI
                   <svg
@@ -275,7 +275,7 @@ const TrendingNow = () => {
               <div>
                 <Link
                   href="/courses/project-management"
-                  className="text-purple-600 hover:text-purple-800 flex items-center"
+                  className="text-[#29cc60] hover:text-[#25ad53] flex items-center"
                 >
                   Project Management
                   <svg

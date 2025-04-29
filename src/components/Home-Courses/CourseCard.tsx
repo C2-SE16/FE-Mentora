@@ -16,15 +16,17 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
 
   return (
     <div className="w-full group relative">
-      <Link href={`/courses/${course.id}`}>
+      <div>
         <div className="relative overflow-hidden rounded-lg w-full aspect-video cursor-pointer">
-          <Image
-            src={course.image}
-            alt={course.title}
-            width={330}
-            height={200}
-            className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
-          />
+          <Link href={`/courses/${course.id}`}>
+            <Image
+              src={course.image}
+              alt={course.title}
+              width={330}
+              height={200}
+              className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
+            />
+          </Link>
         </div>
         <div className="info">
           <div className="head">
@@ -57,7 +59,7 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             </Button>
           )}
         </div>
-      </Link>
+      </div>
 
       <div
         className={`absolute ${popupPosition} top-0 w-[280px] sm:w-[320px] bg-white rounded-lg shadow-xl opacity-0 invisible transform translate-x-2 transition-all duration-300 z-50 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 border border-gray-200`}

@@ -7,10 +7,12 @@ import api from '@/apis/api';
 import toast from 'react-hot-toast';
 import { ProfileFormData } from '@/interfaces/profile-form';
 import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
-  const { user, refetchUser } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const { user, refetchUser, isLoggedIn, isLoading } = useAuth();
+  const router = useRouter();
+  const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
     fullName: '',
     title: '',
@@ -22,7 +24,7 @@ export default function ProfilePage() {
   });
   const [language, setLanguage] = useState('Tiếng Việt');
 
-  // Initialize form data when user data is loaded
+  // Khởi tạo form data khi user data được tải
   useEffect(() => {
     if (user) {
       setFormData({
@@ -49,7 +51,7 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      setIsLoading(true);
+      setIsUpdating(true);
 
       // Create a copy of formData to work with
       const updateData = { ...formData };
@@ -63,7 +65,6 @@ export default function ProfilePage() {
           updateData.websiteLink = `https://${updateData.websiteLink}`;
         }
       } else {
-        // Remove empty website link to avoid validation errors
         delete updateData.websiteLink;
       }
 
@@ -86,8 +87,6 @@ export default function ProfilePage() {
         delete updateData.youtubeLink;
       }
 
-      console.log('Sending data:', updateData);
-
       // Get the token
       const token = localStorage.getItem('accessToken');
 
@@ -97,8 +96,6 @@ export default function ProfilePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log('response:::', response);
 
       if (response.data) {
         toast.success('Cập nhật hồ sơ thành công');
@@ -114,7 +111,7 @@ export default function ProfilePage() {
         toast.error('Có lỗi xảy ra khi cập nhật hồ sơ');
       }
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
   };
 
@@ -247,10 +244,10 @@ export default function ProfilePage() {
               <div className="flex justify-start">
                 <button
                   onClick={handleSave}
-                  disabled={isLoading}
+                  disabled={isUpdating}
                   className="bg-[#00FF84] hover:bg-[#64e2a7] text-black py-2 px-8 rounded transition-colors duration-300 text-center text-[14px] font-semibold no-underline flex items-center"
                 >
-                  {isLoading ? (
+                  {isUpdating ? (
                     <>
                       <div className="w-5 h-5 border-t-2 border-black rounded-full animate-spin mr-2"></div>
                       Đang lưu...

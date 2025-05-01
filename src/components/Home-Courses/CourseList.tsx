@@ -19,16 +19,11 @@ const CourseList = ({ courses, isLoading, onAddToCart }: CourseListProps) => {
         </>
       ) : (
         courses.map((course, index) => (
-          <CourseCard 
-            key={course.id} 
-            course={course} 
-            index={index}
-            onAddToCart={onAddToCart}
-          />
+          <CourseCard key={course.id} course={course} index={index} onAddToCart={onAddToCart} />
         ))
       )}
     </div>
   );
 };
 
-export default CourseList; 
+export default CourseList;

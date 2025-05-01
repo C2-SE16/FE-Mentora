@@ -32,4 +32,4 @@ const TopicList = ({ topics, isLoading }: TopicListProps) => {
   );
 };
 
-export default TopicList; 
+export default TopicList;

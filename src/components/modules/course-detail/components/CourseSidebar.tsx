@@ -10,8 +10,6 @@ import { cartService } from '@/apis/cartService';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-
-
 const contents = [
   '  37 hours on-demand video',
   '8 articles',
@@ -27,7 +25,6 @@ interface CourseSidebarProps {
 }
 
 const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [] }) => {
-
   const router = useRouter();
 
   const handleAddToCart = async () => {

@@ -29,7 +29,7 @@ export default function ProfileSidebar() {
             className="w-40 h-40 bg-black rounded-full mb-4 object-cover"
           />
         )}
-        
+
         <h2 className="text-xl font-bold text-center mb-8 font-oswald">{user?.fullName}</h2>
 
         <nav className="w-full">

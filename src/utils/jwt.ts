@@ -13,4 +13,4 @@ export const decodeJWT = (token: string) => {
     console.error('Error decoding JWT:', error);
     return null;
   }
-}; 
+};

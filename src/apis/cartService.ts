@@ -18,7 +18,7 @@ export const cartService = {
     if (!token) {
       throw new Error('No access token found');
     }
-    
+
     const decodedToken = decodeJWT(token);
     if (!decodedToken || !decodedToken.sub) {
       throw new Error('Invalid token');
@@ -26,7 +26,7 @@ export const cartService = {
 
     const response = await axiosInstance.post(`${CART_ENDPOINT}/add`, {
       courseId: courseId,
-      userId: decodedToken.sub
+      userId: decodedToken.sub,
     });
     return response.data;
   },
@@ -42,4 +42,4 @@ export const cartService = {
   clearCart: async (): Promise<void> => {
     await axiosInstance.delete(`${CART_ENDPOINT}/clear`);
   },
-}; 
+};

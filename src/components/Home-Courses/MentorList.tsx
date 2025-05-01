@@ -44,4 +44,4 @@ const MentorList = ({ mentors, isLoading }: MentorListProps) => {
   );
 };
 
-export default MentorList; 
+export default MentorList;

@@ -24,9 +24,7 @@ export function CartItem({ course, onRemove }: CartItemProps) {
         <p className="text-sm text-gray-600">
           Giảng viên: {course.tbl_instructors?.instructorName || 'Chưa có thông tin'}
         </p>
-        <p className="text-primary font-semibold">
-          {formatCurrency(course.price?.d?.[0] || 0)}
-        </p>
+        <p className="text-primary font-semibold">{formatCurrency(course.price?.d?.[0] || 0)}</p>
       </div>
       <Button
         variant="ghost"
@@ -37,4 +35,4 @@ export function CartItem({ course, onRemove }: CartItemProps) {
       </Button>
     </div>
   );
-} 
+}

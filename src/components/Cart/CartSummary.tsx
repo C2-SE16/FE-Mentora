@@ -20,7 +20,7 @@ export function CartSummary({
   return (
     <div className="bg-gray-50 p-6 rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Tổng cộng</h2>
-      
+
       <div className="mb-4">
         <div className="flex justify-between mb-2">
           <span>Tạm tính</span>
@@ -36,11 +36,7 @@ export function CartSummary({
           onChange={(e) => onCouponChange(e.target.value)}
           className="mb-2"
         />
-        <Button
-          variant="outline"
-          onClick={onApplyCoupon}
-          className="w-full"
-        >
+        <Button variant="outline" onClick={onApplyCoupon} className="w-full">
           Áp dụng
         </Button>
       </div>
@@ -48,9 +44,7 @@ export function CartSummary({
       <div className="border-t pt-4">
         <div className="flex justify-between mb-4">
           <span className="font-semibold">Tổng tiền</span>
-          <span className="font-semibold text-xl text-primary">
-            {formatCurrency(total)}
-          </span>
+          <span className="font-semibold text-xl text-primary">{formatCurrency(total)}</span>
         </div>
 
         <Button onClick={onCheckout} className="w-full">
@@ -59,4 +53,4 @@ export function CartSummary({
       </div>
     </div>
   );
-} 
+}

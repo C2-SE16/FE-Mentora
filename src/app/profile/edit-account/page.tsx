@@ -3,18 +3,95 @@
 import React, { useState } from 'react';
 import ProfileSidebar from '@/components/ProfileSideBar/ProfileSidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import api from '@/apis/api';
+import { toast } from 'react-hot-toast';
 
 export default function SecurityPage() {
   const { user } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState(user?.email);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const validateForm = () => {
+    const formErrors: { [key: string]: string } = {};
+
+    if (!currentPassword) {
+      formErrors.currentPassword = 'Vui lòng nhập mật khẩu hiện tại';
+    }
+
+    if (!newPassword) {
+      formErrors.newPassword = 'Vui lòng nhập mật khẩu mới';
+    } else if (newPassword.length < 6) {
+      formErrors.newPassword = 'Mật khẩu mới phải có ít nhất 6 ký tự';
+    }
+
+    if (newPassword !== confirmPassword) {
+      formErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+    }
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Logic xử lý đổi mật khẩu ở đây
-    console.log('Passwords:', { currentPassword, newPassword });
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        toast.error('Vui lòng đăng nhập lại');
+        return;
+      }
+
+      const response = await api.post(
+        'auth/change-password',
+        {
+          currentPassword,
+          newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data && response.data.data.success) {
+        toast.success('Đổi mật khẩu thành công!');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setErrors({});
+      } else {
+        toast.error('Có lỗi xảy ra khi đổi mật khẩu');
+      }
+    } catch (error: any) {
+      console.error('Password change error:', error);
+
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+
+        if (error.response.status === 401) {
+          setErrors({
+            currentPassword: 'Mật khẩu hiện tại không chính xác',
+          });
+        }
+      } else {
+        toast.error('Có lỗi xảy ra. Vui lòng thử lại sau.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -61,31 +138,84 @@ export default function SecurityPage() {
                 </button>
               </div>
 
+              {/* Change Password Form */}
+              <h2 className="text-base font-semibold mb-4">Thay đổi mật khẩu</h2>
               <div className="mb-8">
                 <div className="mb-4">
                   <input
                     type="password"
-                    placeholder="Nhập mật khẩu mới"
-                    className="w-full h-[35px] px-4 py-2 border border-gray-300 rounded-lg"
+                    placeholder="Mật khẩu hiện tại"
+                    className={`w-full h-[35px] px-4 py-2 border ${
+                      errors.currentPassword ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg`}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                   />
+                  {errors.currentPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.currentPassword}</p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <input
+                    type="password"
+                    placeholder="Mật khẩu mới"
+                    className={`w-full h-[35px] px-4 py-2 border ${
+                      errors.newPassword ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg`}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  {errors.newPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>
+                  )}
                 </div>
                 <div className="mb-6">
                   <input
                     type="password"
                     placeholder="Nhập lại mật khẩu mới"
-                    className="w-full h-[35px] px-4 py-2 border border-gray-300 rounded-lg"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    className={`w-full h-[35px] px-4 py-2 border ${
+                      errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg`}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                  )}
                 </div>
                 <div>
                   <button
                     onClick={handlePasswordChange}
-                    className="bg-[#00FF84] hover:bg-[#00FF84]/80 text-black py-2 px-3 rounded transition-colors duration-300 w-[157px] text-sm font-semibold"
+                    disabled={isSubmitting}
+                    className="bg-[#00FF84] hover:bg-[#00FF84]/80 text-black py-2 px-3 rounded transition-colors duration-300 w-[157px] text-sm font-semibold disabled:opacity-50 flex items-center justify-center"
                   >
-                    Thay đổi mật khẩu
+                    {isSubmitting ? (
+                      <>
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Đang xử lý...
+                      </>
+                    ) : (
+                      'Thay đổi mật khẩu'
+                    )}
                   </button>
                 </div>
               </div>

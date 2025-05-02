@@ -2,9 +2,9 @@
 import { usePathname } from 'next/navigation';
 import './globals.css';
 import Layout from '@/layouts/Layout';
-import { SearchProvider } from '@/components/modules/searchs/SearchContext';
+import { SearchProvider } from '@/contexts/SearchContext';
 import React from 'react';
-import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 export default function RootLayout({
   children,
@@ -18,7 +18,10 @@ export default function RootLayout({
     pathname?.startsWith('/courses/create') ||
     pathname?.startsWith('/instructor') ||
     pathname?.startsWith('/login') ||
-    pathname?.startsWith('/register');
+    pathname?.startsWith('/register') ||
+    pathname?.startsWith('/verify-email') ||
+    pathname?.startsWith('/reset-password') ||
+    pathname?.startsWith('/forgot-password');
 
   return (
     <html lang="en">
@@ -27,7 +30,9 @@ export default function RootLayout({
           children
         ) : (
           <Layout>
-            <SearchProvider>{children}</SearchProvider>
+            <AuthProvider>
+              <SearchProvider>{children}</SearchProvider>
+            </AuthProvider>
           </Layout>
         )}
       </body>

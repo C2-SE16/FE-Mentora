@@ -1,19 +1,22 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import ProfileSidebar from '@/components/ProfileSideBar/ProfileSidebar';
+import api from '@/apis/api';
+import toast from 'react-hot-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfilePhotoPage() {
-  const [firstName, setFirstName] = useState('Anh');
-  const [lastName, setLastName] = useState('Bảo');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { refetchUser } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
@@ -26,8 +29,53 @@ export default function ProfilePhotoPage() {
     fileInputRef.current?.click();
   };
 
-  const handleSave = () => {
-    console.log('Save photo');
+  const handleCancelPreview = () => {
+    setPreviewImage(null);
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSave = async () => {
+    if (!selectedFile) {
+      toast.error('Vui lòng chọn ảnh trước khi lưu');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const token = localStorage.getItem('accessToken');
+
+      const response = await api.post('upload-image/avatar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data && response.data.data.success) {
+        toast.success('Cập nhật ảnh đại diện thành công');
+
+        await refetchUser();
+
+        window.dispatchEvent(new CustomEvent('avatar-updated'));
+
+        handleCancelPreview();
+      } else {
+        toast.error('Có lỗi xảy ra khi cập nhật ảnh đại diện');
+      }
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      console.log(error);
+      toast.error('Có lỗi xảy ra khi cập nhật ảnh đại diện');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -36,7 +84,7 @@ export default function ProfilePhotoPage() {
         <div className="bg-white border border-gray-200 shadow-custom">
           <div className="flex flex-col md:flex-row">
             {/* Sidebar */}
-            <ProfileSidebar firstName={firstName} lastName={lastName} />
+            <ProfileSidebar />
 
             {/* Main content */}
             <div className="w-full md:w-3/4 p-6 mx-0 md:mx-10">
@@ -48,13 +96,21 @@ export default function ProfilePhotoPage() {
               {/* Image Preview Section */}
               <div className="mb-8 cursor-pointer">
                 <h2 className="text-base font-normal mb-4">Xem trước ảnh</h2>
-                <div className="border border-gray-300 rounded w-full mx-auto h-[260px] flex items-center justify-center">
+                <div className="border border-gray-300 rounded w-full mx-auto h-[260px] flex flex-col items-center justify-center">
                   {previewImage ? (
-                    <img
-                      src={previewImage}
-                      alt="Preview"
-                      className="max-h-full max-w-full object-contain"
-                    />
+                    <>
+                      <img
+                        src={previewImage}
+                        alt="Preview"
+                        className="max-h-[220px] max-w-full object-contain"
+                      />
+                      <button
+                        onClick={handleCancelPreview}
+                        className="mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded-md text-sm"
+                      >
+                        Hủy chọn ảnh
+                      </button>
+                    </>
                   ) : (
                     <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center ">
                       <svg
@@ -90,22 +146,32 @@ export default function ProfilePhotoPage() {
                       className="w-full focus:outline-none"
                       readOnly
                       placeholder="Không có tệp nào được chọn"
-                      value={previewImage ? 'Ảnh đã chọn' : ''}
+                      value={selectedFile ? selectedFile.name : ''}
                     />
                   </div>
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
                     className="hidden"
                     onChange={handleFileChange}
                   />
                   <button
                     onClick={handleUploadClick}
                     className="w-full sm:w-auto bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-4 rounded mt-2 sm:mt-0"
+                    disabled={isUploading}
                   >
                     Tải ảnh lên
                   </button>
+                  {previewImage && (
+                    <button
+                      onClick={handleCancelPreview}
+                      className="w-full sm:w-auto bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-4 rounded mt-2 sm:mt-0"
+                      disabled={isUploading}
+                    >
+                      Hủy
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -113,9 +179,17 @@ export default function ProfilePhotoPage() {
               <div>
                 <button
                   onClick={handleSave}
-                  className="bg-[#00FF84] hover:bg-[#00FF84]/80 text-black py-2 px-6 rounded transition-colors duration-300"
+                  className="bg-[#00FF84] hover:bg-[#00FF84]/80 text-black py-2 px-6 rounded transition-colors duration-300 flex items-center"
+                  disabled={isUploading || !selectedFile}
                 >
-                  Lưu
+                  {isUploading ? (
+                    <>
+                      <div className="w-5 h-5 border-t-2 border-black rounded-full animate-spin mr-2"></div>
+                      Đang tải lên...
+                    </>
+                  ) : (
+                    'Lưu'
+                  )}
                 </button>
               </div>
             </div>

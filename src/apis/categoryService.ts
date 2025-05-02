@@ -113,10 +113,6 @@ export const CategoryService = {
         categoryId: '3',
         categoryType: CategoryType.FINANCE,
       },
-      {
-        categoryId: '4',
-        categoryType: CategoryType.BUSSINESS,
-      },
     ];
   },
 };

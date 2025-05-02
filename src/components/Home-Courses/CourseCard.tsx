@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Course } from '@/interfaces/homepage-course';
 import Button from '../Button/Button';
+import { StarRating } from './StarRating';
 
 interface CourseCardProps {
   course: Course;
@@ -15,10 +16,10 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
 
   return (
     <div className="w-full group relative">
-      <Link href={`/courses/${course.id}`}>
+      <Link href={`/courses/${course.id || course.courseId}`}>
         <div className="relative overflow-hidden rounded-lg w-full aspect-video cursor-pointer">
           <Image
-            src={course.image}
+            src={course.image || course.thumbnail || ''}
             alt={course.title}
             width={330}
             height={200}
@@ -28,27 +29,26 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
         <div className="info">
           <div className="head">
             <Link
-              href={`/courses/${course.id}`}
+              href={`/courses/${course.id || course.courseId}`}
               className="font-bold text-base sm:text-lg mt-2 text-[#303141] line-clamp-2"
             >
               {course.title}
             </Link>
           </div>
           <p className="mt-1 text-sm sm:text-base">{course.instructor}</p>
-          <div className="flex gap-x-1 items-center">
-            <span className="flex gap-x-1">
-              {course.rating} <Image src="/star.svg" alt="star" width={16} height={16} />
-            </span>
-            <span className="text-[#595c73] ml-1 text-sm">({course.reviews || 0})</span>
+          <div className="flex items-center gap-2">
+            {course.rating}
+            <StarRating rating={course.rating} />
+            <span className="text-[#595c73] text-sm">({course.reviews || 0})</span>
           </div>
-          <div className="flex gap-x-4 text-sm sm:text-base">
-            <span className="">{course.currentPrice}</span>
+          <div className="flex gap-x-4 text-sm sm:text-base mt-1">
+            <span className="">₫{course.currentPrice || course.price}</span>
             <span className="line-through">{course.originalPrice}</span>
           </div>
           {course.isBestSeller && (
             <Button
-              href={`/courses/${course.id}`}
-              backgroundColor="#3A10E5"
+              href={`/courses/${course.id || course.courseId}`}
+              backgroundColor="#29cc60"
               textColor="#ffffff"
               minWidth={90}
               className="mt-3 text-sm sm:text-base"
@@ -105,8 +105,8 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             </div>
 
             <div className="mt-4">
-              <button 
-                className="bg-[#3A10E5] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+              <button
+                className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
                 onClick={(e) => onAddToCart(course.id, e)}
               >
                 Thêm vào giỏ hàng
@@ -119,4 +119,4 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
   );
 };
 
-export default CourseCard; 
+export default CourseCard;

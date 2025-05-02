@@ -12,7 +12,7 @@ import api from '@/apis/api';
 
 const registerSchema = z.object({
   email: z.string().email('Email không hợp lệ'),
-  password: z.string().min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
+  password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
   fullName: z.string().min(1, 'Vui lòng nhập họ tên'),
 });
 
@@ -76,7 +76,6 @@ const Register = () => {
 
   return (
     <>
-      {/* <Header /> */}
       <div className="flex justify-center items-center min-h-screen bg-white">
         <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto overflow-hidden">
           {/* Left side - Image */}
@@ -187,6 +186,12 @@ const Register = () => {
                     </>
                   )}
                 </button>
+
+                <div className="mt-3 text-center">
+                  <Link href="/forgot-password" className="text-[#1dbe70] hover:underline">
+                    Quên mật khẩu?
+                  </Link>
+                </div>
               </form>
 
               <div className="mt-6 text-center text-sm text-gray-600">

@@ -151,6 +151,12 @@ const Login = () => {
                   </>
                 )}
               </button>
+
+              <div className="mt-3 text-center">
+                <Link href="/forgot-password" className="text-[#1dbe70] hover:underline">
+                  Quên mật khẩu?
+                </Link>
+              </div>
             </form>
 
             <div className="mt-8 relative flex items-center">

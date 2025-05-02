@@ -80,10 +80,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
     >
       <div className="p-4 bg-slate-300 h-[150px]"></div>
       <div className="pt-5 grid grid-cols-3 gap-4">
-        <Button
-          className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]"
-          onClick={handleAddToCart}
-        >
+        <Button className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]">
           Thêm vào giỏ hàng
         </Button>
         <Button

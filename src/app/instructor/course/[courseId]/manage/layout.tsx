@@ -13,14 +13,13 @@ export default function ManageCourseLayout({ children }: { children: React.React
   const [isMobile, setIsMobile] = useState(false);
 
   // Xác định bước hiện tại dựa trên pathname
-  const getCurrentStep = () => {
-    if (pathname.includes('/goals')) return 'intended-learners';
-    if (pathname.includes('/setup-test')) return 'setup-test';
-    // Thêm các bước khác tại đây
-    return 'intended-learners'; // Mặc định
-  };
+  const currentStep = pathname.includes('/goals')
+    ? 'intended-learners'
+    : pathname.includes('/setup-test')
+      ? 'setup-test'
+      : 'intended-learners';
 
-  // Kiểm tra kích thước màn hình để xác định thiết bị
+  // Kiểm tra kích thước màn hình và đóng menu khi chuyển trang
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -32,14 +31,17 @@ export default function ManageCourseLayout({ children }: { children: React.React
     // Thêm event listener để kiểm tra khi thay đổi kích thước màn hình
     window.addEventListener('resize', checkIfMobile);
 
+    // Đóng menu khi chuyển trang
+    setIsMobileMenuOpen(false);
+
     // Cleanup
     return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
-
-  // Đóng menu khi chuyển trang trên thiết bị di động
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  // Kiểm tra nếu pathname chứa quiz thì không render layout
+  if (pathname.includes('/quiz')) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -66,7 +68,7 @@ export default function ManageCourseLayout({ children }: { children: React.React
             isMobile ? (isMobileMenuOpen ? 'block' : 'hidden') : 'block'
           } md:block fixed md:static w-64 h-[calc(100vh-60px)] z-30`}
         >
-          <ManageCourseSidebar courseId={courseId} currentStep={getCurrentStep()} />
+          <ManageCourseSidebar courseId={courseId} currentStep={currentStep} />
         </div>
 
         {/* Main content */}

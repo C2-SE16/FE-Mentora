@@ -1,5 +1,6 @@
 import { Curricula } from '@/types/curricula';
-
+import { Question } from '@/types/question';
+import { QuizAttempt } from '@/types/quiz_attempt';
 export interface Quiz {
   quizId: string | null;
   curriculumId?: string | null;
@@ -11,4 +12,6 @@ export interface Quiz {
   createdAt?: Date | null;
   updatedAt?: Date | null;
   curricula?: Curricula | null;
+  questions?: Question[] | null;
+  quizAttempts?: QuizAttempt[] | null;
 }

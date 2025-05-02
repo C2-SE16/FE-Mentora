@@ -35,8 +35,8 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                 {(module.curricula ?? []).length > 0 ? (
                   (module.curricula ?? []).map((curriculum) => (
                     <div key={curriculum.curriculumId}>
-                      {/* <p className="text-sm font-semibold text-black">{curriculum.title}</p> */}
-                      {(curriculum.lectures ?? []).length > 0 ? (
+                      {/* Lectures */}
+                      {(curriculum.lectures ?? []).length > 0 &&
                         (curriculum.lectures ?? []).map((lecture) => (
                           <div
                             key={lecture.lectureId}
@@ -50,15 +50,38 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                               >
                                 {lecture.title}
                               </Link>
-
                               {lecture.isFree && (
                                 <span className="text-green-600 text-xs ml-2">Miễn phí</span>
                               )}
                             </div>
                             <span className="text-black">{lecture.duration} phút</span>
                           </div>
-                        ))
-                      ) : (
+                        ))}
+
+                      {/* Quizzes */}
+                      {(curriculum.quizzes ?? []).length > 0 &&
+                        (curriculum.quizzes ?? []).map((quiz) => (
+                          <div
+                            key={quiz.quizId}
+                            className="flex justify-between items-center text-sm text-blue-700 pl-4"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold">Quiz:</span>
+                              <Link
+                                href={`/courses/${courseId}/curricula/quiz/${quiz.quizId}`}
+                                className="underline text-blue-600"
+                              >
+                                {quiz.title || 'Quiz'}
+                              </Link>
+                            </div>
+                            <span className="text-blue-700">
+                              {quiz.passingScore ? `Điểm đạt: ${quiz.passingScore}` : ''}
+                            </span>
+                          </div>
+                        ))}
+
+                      {/* Chỉ hiện nếu không có lecture và không có quiz */}
+                      {curriculum.lectures?.length === 0 && curriculum.quizzes?.length === 0 && (
                         <p className="text-sm text-gray-500 pl-4">Không có bài giảng nào</p>
                       )}
                     </div>

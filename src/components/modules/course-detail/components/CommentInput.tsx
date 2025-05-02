@@ -6,7 +6,8 @@ import { Course } from '@/types/courses';
 import { Star } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
-
+import { decodeJWT } from '@/utils/jwt';
+import router from 'next/router';
 interface CommentInputProps {
   courseId: string;
   setCourse: React.Dispatch<React.SetStateAction<Course | null>>;
@@ -21,11 +22,22 @@ const CommentInput: React.FC<CommentInputProps> = ({ courseId, setCourse }) => {
       toast.error('Hãy nhập bình luận và đánh giá sao!');
       return;
     }
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      toast.error('Vui lòng đăng nhập để bình luận');
+      router.push('/login');
+      return;
+    }
+
+    const decodedToken = decodeJWT(token);
+    if (!decodedToken || !decodedToken.sub) {
+      throw new Error('Invalid token');
+    }
 
     const newReview: Partial<CourseReview> = {
       reviewId: crypto.randomUUID(), // Tạo ID ngẫu nhiên (tránh trùng lặp)
       courseId: courseId,
-      userId: 'd5c246e4-bd68-46c2-a48a-f94c4e8557a6',
+      userId: decodedToken.sub,
       rating: stars,
       comment: comment,
       createdAt: new Date(),

@@ -1,104 +1,137 @@
 'use client';
 
+import { Module } from '@/types/module';
 import { useState } from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { ModuleNavigationProps } from '@/types/lessons';
-import { LessonType } from '@/types/courses';
+import { usePathname } from 'next/navigation';
+
+interface ModuleNavigationProps {
+  courseId?: string;
+  modules?: Module[];
+  currentLessonId?: string;
+}
 
 export default function ModuleNavigation({
   courseId,
-  modules,
+  modules = [],
   currentLessonId,
 }: ModuleNavigationProps) {
-  const [expandedModules, setExpandedModules] = useState<string[]>(modules.map((m) => m.moduleId));
+  const [expandedModules, setExpandedModules] = useState<{ [key: string]: boolean }>({});
+  const pathname = usePathname();
 
   const toggleModule = (moduleId: string) => {
-    setExpandedModules((prev) =>
-      prev.includes(moduleId) ? prev.filter((id) => id !== moduleId) : [...prev, moduleId]
-    );
+    setExpandedModules((prev) => ({
+      ...prev,
+      [moduleId]: !prev[moduleId],
+    }));
   };
 
   return (
-    <div>
+    <div className="divide-y divide-gray-200">
       {modules.map((module) => (
-        <div key={module.moduleId} className="border-b">
-          <div
-            className="p-3 bg-gray-100 flex items-center justify-between cursor-pointer"
+        <div key={module.moduleId} className="py-2">
+          <button
             onClick={() => toggleModule(module.moduleId)}
+            className="w-full flex items-center justify-between px-4 py-2 text-left hover:bg-gray-50"
           >
-            <span className="font-medium">
-              {expandedModules.includes(module.moduleId) ? '▼' : '►'} {module.title}
-            </span>
-          </div>
+            <span className="font-medium">{module.title}</span>
+            <svg
+              className={`w-5 h-5 transform transition-transform ${
+                expandedModules[module.moduleId] ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
 
-          {expandedModules.includes(module.moduleId) && (
-            <div className="bg-white">
-              {module.lessons?.map((lesson) => (
-                <Link
-                  key={lesson.lessonId}
-                  href={`/courses/${courseId}/lessons/${lesson.lessonId}`}
-                >
-                  <div
-                    className={cn(
-                      'p-3 border-t flex items-center hover:bg-gray-50 cursor-pointer',
-                      currentLessonId === lesson.lessonId && 'bg-blue-50'
-                    )}
-                  >
-                    <div className="mr-3">
-                      {lesson.contentType === LessonType.VIDEO ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-500"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ) : lesson.contentType === LessonType.QUIZ ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-500"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-500"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm">{lesson.title}</p>
-                      {lesson.isFree && <span className="text-xs text-green-600">Miễn phí</span>}
-                    </div>
-                    {lesson.duration && (
-                      <span className="text-xs text-gray-500">
-                        {Math.floor(lesson.duration / 60)}:
-                        {(lesson.duration % 60).toString().padStart(2, '0')}
-                      </span>
-                    )}
+          {expandedModules[module.moduleId] && (
+            <div className="pl-4 space-y-1">
+              {module.curricula?.map((curriculum) => (
+                <div key={curriculum.curriculumId} className="py-1">
+                  <div className="font-medium text-sm text-gray-700 mb-1">{curriculum.title}</div>
+                  <div className="space-y-1">
+                    {curriculum.lectures?.map((lecture) => (
+                      <Link
+                        key={lecture.lectureId}
+                        href={`/course/${courseId}/lecture/${lecture.lectureId}`}
+                        className={`block px-4 py-2 text-sm rounded-md ${
+                          lecture.lectureId === currentLessonId
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span>{lecture.title}</span>
+                          {lecture.isFree && (
+                            <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">
+                              Miễn phí
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                    {curriculum.quizzes?.map((quiz) => (
+                      <Link
+                        key={quiz.quizId}
+                        href={`/course/${courseId}/quiz/${quiz.quizId}`}
+                        className={`block px-4 py-2 text-sm rounded-md ${
+                          quiz.quizId === currentLessonId
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                            />
+                          </svg>
+                          <span>{quiz.title}</span>
+                          {quiz.isFree && (
+                            <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">
+                              Miễn phí
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

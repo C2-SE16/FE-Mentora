@@ -29,53 +29,53 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
   // Danh sách các bước cần hoàn thành
   const checklistSections: ChecklistSection[] = [
     {
-      title: 'Plan your course',
+      title: 'Lập kế hoạch khóa học',
       items: [
         {
           id: 'intended-learners',
-          title: 'Intended learners',
+          title: 'Đối tượng học viên',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/goals`,
         },
         {
           id: 'course-structure',
-          title: 'Course structure',
+          title: 'Cấu trúc khóa học',
           isCompleted: true,
           path: `/instructor/course/${courseId}/manage/structure`,
         },
         {
           id: 'setup-test',
-          title: 'Setup & test video',
+          title: 'Thiết lập & kiểm tra video',
           isCompleted: true,
           path: `/instructor/course/${courseId}/manage/setup-test`,
         },
       ],
     },
     {
-      title: 'Create your content',
+      title: 'Tạo nội dung',
       items: [
         {
           id: 'film-edit',
-          title: 'Film & edit',
+          title: 'Quay & chỉnh sửa',
           isCompleted: true,
           path: `/instructor/course/${courseId}/manage/film-edit`,
         },
         {
           id: 'curriculum',
-          title: 'Curriculum',
+          title: 'Giáo trình',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/curriculum`,
         },
         {
           id: 'captions',
-          title: 'Captions',
+          title: 'Phụ đề',
           isCompleted: false,
           isOptional: true,
           path: `/instructor/course/${courseId}/manage/captions`,
         },
         {
           id: 'accessibility',
-          title: 'Accessibility',
+          title: 'Khả năng tiếp cận',
           isCompleted: true,
           isOptional: true,
           path: `/instructor/course/${courseId}/manage/accessibility`,
@@ -83,29 +83,29 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
       ],
     },
     {
-      title: 'Publish your course',
+      title: 'Xuất bản khóa học',
       items: [
         {
           id: 'course-landing-page',
-          title: 'Course landing page',
+          title: 'Trang đích khóa học',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/landing-page`,
         },
         {
           id: 'pricing',
-          title: 'Pricing',
+          title: 'Định giá',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/pricing`,
         },
         {
           id: 'promotions',
-          title: 'Promotions',
+          title: 'Khuyến mãi',
           isCompleted: true,
           path: `/instructor/course/${courseId}/manage/promotions`,
         },
         {
           id: 'course-messages',
-          title: 'Course messages',
+          title: 'Tin nhắn khóa học',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/messages`,
         },
@@ -193,7 +193,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
                 : 'bg-purple-300 cursor-not-allowed'
             }`}
           >
-            Submit for Review
+            Gửi để xét duyệt
           </button>
         </div>
       </div>

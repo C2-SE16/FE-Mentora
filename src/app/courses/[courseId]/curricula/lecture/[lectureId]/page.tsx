@@ -44,7 +44,7 @@ export default function LecturePage() {
       }
     };
     fetchCourse();
-  });
+  }, [courseId, lectureId]);
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <LectureHeader

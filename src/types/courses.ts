@@ -1,5 +1,4 @@
 import { Category } from './categories';
-import { Instructor } from './instructors';
 import { Favorite } from './favorites';
 import { TargetAudience } from '@/types/target_audiences';
 import { Requirement } from '@/types/requirements';
@@ -8,7 +7,6 @@ import { ApproveEnum } from '@/types/enum';
 import { Module as ImportedModule } from '@/types/module';
 import { CourseReview as ImportedCourseReview } from './course_review';
 import { CourseEnrollment as ImportedCourseEnrollment } from '@/types/course_enrollment';
-import { CourseCategory } from '@/types/course_category';
 import { CartItem } from '@/types/cart_item';
 import { OrderDetail } from '@/types/order_detail';
 
@@ -27,14 +25,22 @@ export interface Rating {
 export interface Instructor {
   instructorId: string;
   userId: string;
-  instructorName: string | null;
   bio: string;
   profilePicture: string;
   experience: string;
-  average_rating: Rating;
+  averageRating: number;
   isVerified: boolean;
   createdAt: string;
   updatedAt: string;
+  user: {
+    userId: string;
+    email: string;
+    fullName: string;
+    avatar: string | null;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface CourseCategory {
@@ -76,7 +82,7 @@ export interface Course {
   favorites?: Favorite[];
   orderDetails?: OrderDetail[];
   learningObjectives: LearningObjective[];
-  targetAudiences?: TargetAudience[];
+  targetAudience?: TargetAudience[];
   requirements?: Requirement[];
 }
 

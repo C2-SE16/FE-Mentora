@@ -76,7 +76,7 @@ export default function DetailCourse() {
             </h2>
             <div className="flex flex-row items-center space-x-2 pt-3">
               <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed">
-                {course?.rating}
+                {typeof course?.rating === 'number' ? course.rating : ''}
               </h2>
               <Star className="w-4 h-4 stroke-white fill-transparent stroke-[1.5]" />
               <h2 className="text-[15px] text-[#00FF84] font-normal font-robotoCondensed">
@@ -89,7 +89,8 @@ export default function DetailCourse() {
             <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed py-3">
               Tạo bởi :{' '}
               <u className="text-[#00FF84]">
-                {course?.instructor?.user?.lastName} {course?.instructor?.user?.firstName}
+                {(course as any)?.instructor?.user?.lastName}{' '}
+                {(course as any)?.instructor?.user?.firstName}
               </u>
             </h2>
           </div>

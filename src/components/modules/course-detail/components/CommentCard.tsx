@@ -19,7 +19,7 @@ interface CommentCardProps {
   review: CourseReview;
   setCourse?: React.Dispatch<React.SetStateAction<Course | null>>;
 }
-interface DecodedToken {
+export interface DecodedToken {
   sub: string;
   email: string;
   role: string;

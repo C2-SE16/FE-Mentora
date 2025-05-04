@@ -5,6 +5,7 @@ import VideoPlayer from './components/VideoPlayer';
 import ModuleNavigation from './components/ModuleNavigation';
 import { Course, LessonType } from '@/types/courses';
 import { Lecture } from '@/types/lecture';
+import DiscussingTab from './components/DiscussingTab';
 
 interface LectureContentProps {
   lecture?: Lecture;
@@ -29,17 +30,17 @@ interface LectureContentProps {
 
 export default function LectureContent({ lecture, course }: LectureContentProps) {
   const [progress, setProgress] = useState<number>(0);
-  const [activeTab, setActiveTab] = useState<'requirements' | 'targetAudience' | 'questions'>(
+  const [activeTab, setActiveTab] = useState<'requirements' | 'targetAudience' | 'discussing'>(
     'requirements'
   );
-  console.log(`http://localhost:9090/videos/${course?.courseId}/${lecture?.lectureId}.mp4`);
   // Xử lý khi tiến trình video thay đổi
   const handleProgress = (progress: number) => {
     setProgress(progress);
 
     // Trong thực tế, bạn sẽ lưu tiến trình xem video vào database
   };
-
+  console.log('lecture', lecture);
+  console.log('curriculumId', lecture?.curriculumId);
   return (
     <div className="flex flex-col md:flex-row w-full">
       {/* Video Player và Nội dung bài học */}
@@ -78,10 +79,10 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
                 Đối tượng học viên
               </button>
               <button
-                className={`px-4 py-2 font-medium ${activeTab === 'questions' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
-                onClick={() => setActiveTab('questions')}
+                className={`px-4 py-2 font-medium ${activeTab === 'discussing' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
+                onClick={() => setActiveTab('discussing')}
               >
-                Hỏi đáp
+                Thảo luận
               </button>
             </div>
           </div>
@@ -113,6 +114,10 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
                   </ul>
                 </div>
               </div>
+            )}
+
+            {activeTab === 'discussing' && lecture && (
+              <DiscussingTab curriculumId={lecture.curriculumId || ''} />
             )}
           </div>
         </div>

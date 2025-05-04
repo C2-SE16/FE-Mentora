@@ -89,7 +89,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
           id: 'course-landing-page',
           title: 'Trang đích khóa học',
           isCompleted: false,
-          path: `/instructor/course/${courseId}/manage/landing-page`,
+          path: `/instructor/course/${courseId}/manage/basics`,
         },
         {
           id: 'pricing',

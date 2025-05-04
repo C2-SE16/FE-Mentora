@@ -33,7 +33,7 @@ const InstructorRegisterPage = () => {
 
         if (response.isInstructor) {
           setIsInstructor(true);
-          router.push('/instructor/courses'); // Chuyển hướng nếu đã là instructor
+          router.push('/instructor/manage/courses'); // Chuyển hướng nếu đã là instructor
         }
       } catch (error) {
         console.error('Lỗi khi kiểm tra trạng thái instructor:', error);
@@ -77,7 +77,7 @@ const InstructorRegisterPage = () => {
         setSuccess('Đăng ký thành công! Bạn sẽ được chuyển hướng sau vài giây...');
         // Chuyển hướng sau 3 giây
         setTimeout(() => {
-          router.push('/instructor/courses');
+          router.push('/instructor/manage/courses');
         }, 3000);
       }
     } catch (error: any) {
@@ -86,7 +86,7 @@ const InstructorRegisterPage = () => {
         if (error.response.status === 409) {
           setError('Bạn đã là giảng viên. Đang chuyển hướng...');
           setTimeout(() => {
-            router.push('/instructor/courses');
+            router.push('/instructor/manage/courses');
           }, 2000);
         } else {
           setError(error.response.data.message);

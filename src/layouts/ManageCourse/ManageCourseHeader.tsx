@@ -66,7 +66,7 @@ const ManageCourseHeader = ({
     if (onBack) {
       onBack();
     } else {
-      router.push('/instructor/courses');
+      router.push('/instructor/course');
     }
   };
 

@@ -30,7 +30,7 @@ export const InstructorService = {
       if (response.data && response.data.data) {
         return response.data.data; // Trả về phần data trong phản hồi API
       }
-      
+
       // Nếu không có cấu trúc data.data, trả về mặc định
       return { isInstructor: false };
     } catch (error) {
@@ -59,5 +59,5 @@ export const InstructorService = {
       console.error('Lỗi khi đăng ký instructor:', error);
       throw error;
     }
-  }
-}; 
+  },
+};

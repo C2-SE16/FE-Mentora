@@ -11,4 +11,4 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-grow">{children}</main>
     </div>
   );
-} 
+}

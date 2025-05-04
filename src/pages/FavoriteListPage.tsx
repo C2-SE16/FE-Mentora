@@ -80,7 +80,9 @@ export default function FavoriteList() {
               <CourseItem key={course.courseId} course={course} index={index} />
             ))
           ) : (
-            <p className="text-center col-span-3">Không có khóa học yêu thích nào.</p>
+            <div className="h-[200px] flex  justify-center col-span-3">
+              <p className="text-center col-span-3 ">Không có khóa học yêu thích nào.</p>
+            </div>
           )}
         </div>
       </div>

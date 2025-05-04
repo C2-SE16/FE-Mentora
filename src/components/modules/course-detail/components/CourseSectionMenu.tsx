@@ -35,8 +35,8 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                 {(module.curricula ?? []).length > 0 ? (
                   (module.curricula ?? []).map((curriculum) => (
                     <div key={curriculum.curriculumId}>
-                      {/* <p className="text-sm font-semibold text-black">{curriculum.title}</p> */}
-                      {(curriculum.lectures ?? []).length > 0 ? (
+                      {/* Lectures */}
+                      {(curriculum.lectures ?? []).length > 0 &&
                         (curriculum.lectures ?? []).map((lecture) => (
                           <div
                             key={lecture.lectureId}
@@ -50,15 +50,55 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                               >
                                 {lecture.title}
                               </Link>
-
                               {lecture.isFree && (
                                 <span className="text-green-600 text-xs ml-2">Miễn phí</span>
                               )}
                             </div>
                             <span className="text-black">{lecture.duration} phút</span>
                           </div>
-                        ))
-                      ) : (
+                        ))}
+
+                      {/* Quizzes */}
+                      {(curriculum.quizzes ?? []).length > 0 &&
+                        (curriculum.quizzes ?? []).map((quiz) => (
+                          <div
+                            key={quiz.quizId}
+                            className="flex justify-between items-center text-sm text-blue-700 pl-4"
+                          >
+                            <div className="flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                width="20"
+                                fill="currentColor"
+                              >
+                                <path d="M14.59 2.59c-.38-.38-.89-.59-1.42-.59H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8.83c0-.53-.21-1.04-.59-1.41l-4.82-4.83zM15 18H9c-.55 0-1-.45-1-1s.45-1 1-1h6c.55 0 1 .45 1 1s-.45 1-1 1zm0-4H9c-.55 0-1-.45-1-1s.45-1 1-1h6c.55 0 1 .45 1 1s-.45 1-1 1zm-2-6V3.5L18.5 9H14c-.55 0-1-.45-1-1z" />
+                              </svg>
+                              <Link
+                                href={`/courses/${courseId}/curricula/quiz/${quiz.quizId}`}
+                                className="hover:text-blue-800 transition-colors duration-200"
+                              >
+                                {quiz.title || 'Quiz'}
+                              </Link>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                width="20"
+                                fill="currentColor"
+                              >
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2h1.5v3l2-3h1.7l-2 3 2 3h-1.7l-2-3v3H12V5zM7 7.25h2.5V6.5H7V5h4v3.75H8.5v.75H11V11H7V7.25zM19 13l-6 6-4-4-4 4v-2.5l4-4 4 4 6-6V13z" />
+                              </svg>
+                              <span className="text-blue-700">{quiz.passingScore || 0}</span>
+                            </div>
+                          </div>
+                        ))}
+
+                      {/* Chỉ hiện nếu không có lecture và không có quiz */}
+                      {curriculum.lectures?.length === 0 && curriculum.quizzes?.length === 0 && (
                         <p className="text-sm text-gray-500 pl-4">Không có bài giảng nào</p>
                       )}
                     </div>

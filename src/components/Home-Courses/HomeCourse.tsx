@@ -37,8 +37,6 @@ const HomeCourse = () => {
     mentors: [],
   });
   const router = useRouter();
-  console.log('searchHistory:::', searchHistory);
-  console.log('searchResults:::', searchResults);
   const fetchHomepageData = async () => {
     try {
       setIsLoading(true);

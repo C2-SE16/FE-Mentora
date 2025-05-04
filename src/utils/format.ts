@@ -3,4 +3,4 @@ export const formatCurrency = (amount: number): string => {
     style: 'currency',
     currency: 'VND',
   }).format(amount);
-}; 
+};

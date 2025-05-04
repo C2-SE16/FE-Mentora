@@ -98,14 +98,11 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Giỏ hàng</h1>
-      
+
       {!cart?.data?.courses?.length ? (
         <div className="text-center py-8">
           <p className="text-gray-500">Giỏ hàng của bạn đang trống</p>
-          <Button 
-            onClick={() => router.push('/')}
-            className="mt-4"
-          >
+          <Button onClick={() => router.push('/')} className="mt-4">
             Khám phá khóa học
           </Button>
         </div>
@@ -114,13 +111,9 @@ export default function CartPage() {
           <div className="flex flex-col md:flex-row gap-6">
             <div className="md:w-2/3">
               {cart.data.courses.map((course) => (
-                <CartItem
-                  key={course.courseId}
-                  course={course}
-                  onRemove={handleRemoveItem}
-                />
+                <CartItem key={course.courseId} course={course} onRemove={handleRemoveItem} />
               ))}
-              
+
               <Button
                 variant="ghost"
                 onClick={handleClearCart}
@@ -144,4 +137,4 @@ export default function CartPage() {
       )}
     </div>
   );
-} 
+}

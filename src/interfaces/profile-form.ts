@@ -1,4 +1,4 @@
- export interface ProfileFormData {
+export interface ProfileFormData {
   fullName: string;
   title: string;
   description: string;

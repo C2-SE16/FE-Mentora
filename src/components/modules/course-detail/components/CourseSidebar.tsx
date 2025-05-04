@@ -9,8 +9,7 @@ import React from 'react';
 import { cartService } from '@/apis/cartService';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-
-
+import { decodeJWT } from '@/utils/jwt';
 
 const contents = [
   '  37 hours on-demand video',
@@ -27,7 +26,6 @@ interface CourseSidebarProps {
 }
 
 const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [] }) => {
-
   const router = useRouter();
 
   const handleAddToCart = async () => {
@@ -52,9 +50,20 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
   };
 
   const handleAddFavorite = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      toast.error('Vui lòng đăng nhập để thêm khóa học vào danh sách yêu thích');
+      router.push('/login');
+      return;
+    }
+
+    const decodedToken = decodeJWT(token);
+    if (!decodedToken || !decodedToken.sub) {
+      throw new Error('Invalid token');
+    }
     const message = await FavoriteService.addFavorite({
-      userId: '69ec3c08-793e-45c8-9975-5bb70f4e48d5',
-      courseId: '05b88570-e7e1-4b3e-8b97-15f1b4139a38',
+      userId: decodedToken.sub,
+      courseId: courseId,
     });
     if (message) {
       toast.success(message); // thông báo thành công

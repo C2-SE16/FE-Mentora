@@ -4,6 +4,7 @@ import { Curriculum, CurriculumType, Lecture, Quiz } from '@/types/courses';
 import LectureService from '@/apis/lectureService';
 import { toast } from 'react-hot-toast';
 import LectureContentUploader from './LectureContentUploader';
+import { useRouter } from 'next/navigation';
 
 interface CurriculumItemProps {
   curriculum: Curriculum;
@@ -46,6 +47,7 @@ export default function CurriculumItem({
   const [isUpdating, setIsUpdating] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
   const [title, setTitle] = useState(curriculum.title || '');
+  const router = useRouter();
 
   // Lấy thông tin từ lecture hoặc quiz
   const getLectureOrQuizInfo = () => {
@@ -194,7 +196,13 @@ export default function CurriculumItem({
     if (curriculum.type === 'LECTURE') {
       setShowUploader(true);
     } else if (curriculum.type === 'QUIZ') {
-      toast('Tính năng chỉnh sửa quiz sẽ được phát triển sau');
+      console.log('curriculum', curriculum);
+      const quizContent = curriculum.content as Quiz;
+      if (quizContent && 'quizId' in quizContent) {
+        router.push(`/instructor/course/${courseId}/manage/curriculum/quiz/${quizContent.quizId}`);
+      } else {
+        toast.error('Không tìm thấy thông tin bài kiểm tra');
+      }
     }
   };
 

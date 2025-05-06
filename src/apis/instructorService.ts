@@ -17,24 +17,44 @@ interface Instructor {
 }
 
 /**
+ * Kết quả kiểm tra trạng thái instructor
+ */
+interface InstructorStatusResponse {
+  isInstructor: boolean;
+  instructorId: string | null;
+}
+
+/**
  * Service để tương tác với API instructor
  */
 export const InstructorService = {
   /**
    * Kiểm tra trạng thái instructor của người dùng hiện tại
    */
-  async checkInstructorStatus(): Promise<{ isInstructor: boolean }> {
+  async checkInstructorStatus(): Promise<InstructorStatusResponse> {
     try {
       const response = await axiosInstance.get('/instructor/check');
       // Phân tích response để trả về đúng định dạng dữ liệu
       if (response.data && response.data.data) {
-        return response.data.data; // Trả về phần data trong phản hồi API
+        const instructorData = response.data.data as InstructorStatusResponse;
+        
+        // Lưu instructorId vào localStorage nếu người dùng là instructor
+        if (instructorData.isInstructor && instructorData.instructorId) {
+          localStorage.setItem('instructorId', instructorData.instructorId);
+        } else {
+          // Xóa instructorId khỏi localStorage nếu không phải instructor
+          localStorage.removeItem('instructorId');
+        }
+        
+        return instructorData;
       }
 
       // Nếu không có cấu trúc data.data, trả về mặc định
-      return { isInstructor: false };
+      localStorage.removeItem('instructorId');
+      return { isInstructor: false, instructorId: null };
     } catch (error) {
       console.error('Lỗi khi kiểm tra trạng thái instructor:', error);
+      localStorage.removeItem('instructorId');
       throw error;
     }
   },
@@ -52,12 +72,26 @@ export const InstructorService = {
       const response = await axiosInstance.post('/instructor/register', instructorData);
       // Phân tích response để trả về đúng định dạng dữ liệu
       if (response.data && response.data.data) {
-        return response.data.data; // Trả về phần data trong phản hồi API
+        const newInstructorData = response.data.data as Instructor;
+        
+        // Lưu instructorId vào localStorage sau khi đăng ký thành công
+        if (newInstructorData.instructorId) {
+          localStorage.setItem('instructorId', newInstructorData.instructorId);
+        }
+        
+        return newInstructorData;
       }
       return response.data;
     } catch (error) {
       console.error('Lỗi khi đăng ký instructor:', error);
       throw error;
     }
+  },
+  
+  /**
+   * Xóa dữ liệu instructor khỏi localStorage khi đăng xuất
+   */
+  clearInstructorData(): void {
+    localStorage.removeItem('instructorId');
   },
 };

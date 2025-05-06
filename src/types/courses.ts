@@ -69,6 +69,7 @@ export interface Course {
   isBestSeller: boolean;
   isRecommended: boolean;
   thumbnail: string;
+  publicId?: string;
   tbl_course_categories: CourseCategory[];
   tbl_instructors: Instructor;
 

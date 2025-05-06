@@ -151,7 +151,7 @@ const Header = () => {
       // Kiểm tra giá trị isInstructor từ response
       if (response && response.isInstructor === true) {
         // Nếu đã là instructor, chuyển đến dashboard
-        router.push('/instructor/dashboard');
+        router.push('/instructor/manage/courses');
       } else {
         // Nếu chưa là instructor hoặc có lỗi, chuyển đến trang đăng ký
         router.push('/instructor/register');

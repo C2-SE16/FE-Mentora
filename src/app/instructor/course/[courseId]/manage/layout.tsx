@@ -47,7 +47,7 @@ export default function ManageCourseLayout({ children }: { children: React.React
     <div className="min-h-screen flex flex-col">
       <ManageCourseHeader
         courseId={courseId}
-        onBack={() => router.push('/instructor/courses')}
+        onBack={() => router.push('/instructor/manage/courses')}
         onMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         isMobile={isMobile}
       />

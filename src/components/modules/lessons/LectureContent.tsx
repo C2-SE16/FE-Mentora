@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import VideoPlayer from './components/VideoPlayer';
 import ModuleNavigation from './components/ModuleNavigation';
 import { Course, LessonType } from '@/types/courses';
 import { Lecture } from '@/types/lecture';
 import DiscussingTab from './components/DiscussingTab';
+import { ProgressService } from '@/apis/progressService';
+import { decodeJWT } from '@/utils/jwt';
 
 interface LectureContentProps {
   lecture?: Lecture;
@@ -33,14 +35,7 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
   const [activeTab, setActiveTab] = useState<'requirements' | 'targetAudience' | 'discussing'>(
     'requirements'
   );
-  // Xử lý khi tiến trình video thay đổi
-  const handleProgress = (progress: number) => {
-    setProgress(progress);
 
-    // Trong thực tế, bạn sẽ lưu tiến trình xem video vào database
-  };
-  console.log('lecture', lecture);
-  console.log('curriculumId', lecture?.curriculumId);
   return (
     <div className="flex flex-col md:flex-row w-full">
       {/* Video Player và Nội dung bài học */}

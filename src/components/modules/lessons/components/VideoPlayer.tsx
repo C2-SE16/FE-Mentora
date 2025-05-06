@@ -5,8 +5,14 @@ interface VideoPlayerProps {
   videoUrl?: string;
   lectureId?: string;
   onProgress?: number;
+  onVideoEnd?: () => void;
 }
-export default function VideoPlayer({ videoUrl, lectureId, onProgress }: VideoPlayerProps) {
+export default function VideoPlayer({
+  videoUrl,
+  lectureId,
+  onProgress,
+  onVideoEnd,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,16 +42,24 @@ export default function VideoPlayer({ videoUrl, lectureId, onProgress }: VideoPl
       setIsFullscreen(Boolean(document.fullscreenElement));
     };
 
+    const handleEnded = () => {
+      if (onVideoEnd) {
+        onVideoEnd();
+      }
+    };
+
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('ended', handleEnded);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('ended', handleEnded);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [onProgress]);
+  }, []);
 
   const togglePlay = () => {
     const video = videoRef.current;

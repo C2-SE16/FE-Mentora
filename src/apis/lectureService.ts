@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/api/axios';
-import { Lecture } from '@/types/courses';
+import { Lecture } from '@/types/lecture';
 
 interface ApiResponse<T> {
   data: {

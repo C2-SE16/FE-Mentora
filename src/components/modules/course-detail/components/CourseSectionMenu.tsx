@@ -5,16 +5,55 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Module } from '@/types/module';
-import { MonitorPlay } from 'lucide-react';
+import { CheckCircle2, MonitorPlay } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import ProgressService from '@/apis/progressService';
 
 interface CourseSectionMenuProps {
   modules?: Module[];
   courseId?: string;
 }
 
+interface UserProgress {
+  data: {
+    curriculumProgress: Array<{
+      progressId: string;
+      userId: string;
+      curriculumId: string;
+      status: string;
+      completedAt: string;
+    }>;
+  };
+  statusCode: number;
+}
+
 const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], courseId }) => {
+  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+
+  useEffect(() => {
+    const fetchUserProgress = async () => {
+      try {
+        const progress = await ProgressService.getUserProgress();
+        console.log('progress: ', progress);
+        if (progress && progress.data) {
+          setUserProgress(progress);
+        }
+      } catch (error) {
+        console.error('Error fetching user progress:', error);
+      }
+    };
+
+    fetchUserProgress();
+  }, []);
+
+  const isCurriculumCompleted = (curriculumId: string | null) => {
+    if (!curriculumId || !userProgress?.data?.curriculumProgress) return false;
+    return userProgress.data.curriculumProgress.some(
+      (progress) => progress.curriculumId === curriculumId && progress.status === 'COMPLETED'
+    );
+  };
+
   return (
     <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 pb-4 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
       <div className="col-span-2 w-full">
@@ -43,7 +82,11 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                             className="flex justify-between items-center text-sm text-black pl-4"
                           >
                             <div className="flex items-center gap-2">
-                              <MonitorPlay className="w-4 h-4 text-gray-600" />
+                              {isCurriculumCompleted(curriculum.curriculumId) ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <MonitorPlay className="w-4 h-4 text-gray-600" />
+                              )}
                               <Link
                                 href={`/courses/${courseId}/curricula/lecture/${lecture.lectureId}`}
                                 className="underline text-green-600"

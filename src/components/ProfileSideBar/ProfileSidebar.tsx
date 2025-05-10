@@ -51,7 +51,10 @@ export default function ProfileSidebar() {
               </Link>
             </li>
             <li className="py-1">
-              <Link href="#!" className="block font-normal hover:text-[#1dbe70]">
+              <Link
+                href="/profile/public-profile"
+                className={`block font-normal ${isActive('/profile/public-profile') ? 'text-[#1dbe70]' : 'hover:text-[#1dbe70]'}`}
+              >
                 Xem hồ sơ công khai
               </Link>
             </li>
@@ -64,12 +67,18 @@ export default function ProfileSidebar() {
               </Link>
             </li>
             <li className="py-1">
-              <Link href="#!" className="block font-normal hover:text-[#1dbe70]">
+              <Link
+                href="/profile/edit-subscription"
+                className={`block font-normal ${isActive('/profile/edit-subscription') ? 'text-[#1dbe70]' : 'hover:text-[#1dbe70]'}`}
+              >
                 Gói đăng ký
               </Link>
             </li>
             <li className="py-1">
-              <Link href="#!" className="block font-normal hover:text-[#1dbe70]">
+              <Link
+                href="/profile/edit-payment-method"
+                className={`block font-normal ${isActive('/profile/edit-payment-method') ? 'text-[#1dbe70]' : 'hover:text-[#1dbe70]'}`}
+              >
                 Phương thức thanh toán
               </Link>
             </li>

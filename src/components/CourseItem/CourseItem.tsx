@@ -88,7 +88,7 @@ export const CourseItem: React.FC<CourseItemInterface> = ({ course, index = 0 })
             </div>
 
             <div className="mt-4">
-              <button className="bg-[#3A10E5] text-white py-2 px-4 rounded-md w-full font-medium">
+              <button className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium">
                 Thêm vào giỏ hàng
               </button>
             </div>

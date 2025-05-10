@@ -21,7 +21,8 @@ export default function RootLayout({
     pathname?.startsWith('/register') ||
     pathname?.startsWith('/verify-email') ||
     pathname?.startsWith('/reset-password') ||
-    pathname?.startsWith('/forgot-password');
+    pathname?.startsWith('/forgot-password') ||
+    pathname?.startsWith('/payment');
 
   return (
     <html lang="en">

@@ -60,7 +60,7 @@ export interface Course {
   description: string;
   overview: string;
   durationTime: number;
-  price: Price;
+  price: Price | string | number;
   approved: string;
   rating: number;
   comment: string | null;

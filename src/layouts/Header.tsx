@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/apis/api';
@@ -12,12 +12,31 @@ import SubHeader from '@/components/Header/SubHeader';
 const Header = () => {
   const { user, isLoggedIn, isLoading, logout, refetchUser } = useAuth();
   const router = useRouter();
+  const [activeSiteWideVoucher, setActiveSiteWideVoucher] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [avatarKey, setAvatarKey] = useState(Date.now());
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  const checkActiveSiteWideVoucher = async () => {
+    try {
+      const response = await api.get('voucher/active-site-voucher');
+      if (response.data.data.success && response.data.data.hasActiveVoucher) {
+        setActiveSiteWideVoucher(response.data.data.voucher);
+      } else {
+        setActiveSiteWideVoucher(null);
+      }
+      console.log('response active Voucher:::', response);
+    } catch (error) {
+      console.log('Error checking active voucher', error);
+    }
+  };
+
+  useEffect(() => {
+    checkActiveSiteWideVoucher();
+  }, []);
 
   useEffect(() => {
     const handleClickOutSide = (e: MouseEvent) => {
@@ -163,8 +182,133 @@ const Header = () => {
     }
   };
 
+  const calculateTimeRemaining = (endDateStr: string) => {
+    const now = new Date();
+    const endDate = new Date(endDateStr);
+    const diffTime = endDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) {
+      return 'Hết hạn';
+    } else if (diffDays < 30) {
+      return `${diffDays} ngày nữa`;
+    } else if (diffDays < 365) {
+      const months = Math.floor(diffDays / 30);
+      return `${months} tháng nữa`;
+    } else {
+      const years = Math.floor(diffDays / 365);
+      const remainingMonths = Math.floor((diffDays % 365) / 30);
+
+      if (remainingMonths > 0) {
+        return `${years} năm ${remainingMonths} tháng nữa`;
+      } else {
+        return `${years} năm nữa`;
+      }
+    }
+  };
+
+  const timeRemaining = useMemo(() => {
+    if (!activeSiteWideVoucher || !activeSiteWideVoucher.endDate) return 'Không xác định';
+    return calculateTimeRemaining(activeSiteWideVoucher.endDate);
+  }, [activeSiteWideVoucher]);
+
   return (
     <>
+      {/* Promo banner */}
+      {activeSiteWideVoucher && (
+        <div className="bg-[#002333] py-3 relative border-b border-gray-700 shadow-md">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div className="flex items-center">
+                  <span className="inline-flex items-center justify-center p-1 bg-red-500 rounded-full w-5 h-5 mr-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3 w-3 text-white"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </span>
+                  <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold px-2 py-1 rounded text-xs uppercase tracking-wider">
+                    Flash Sale
+                  </span>
+                </div>
+                <p className="text-white text-center sm:text-left font-medium">
+                  <span className="inline-block animate-pulse bg-white/10 rounded px-1.5 py-0.5 mr-1 text-yellow-300 font-semibold">
+                    {activeSiteWideVoucher.discountType === 'Percentage'
+                      ? `${activeSiteWideVoucher.discountValue}%`
+                      : `₫${Number(activeSiteWideVoucher.discountValue).toLocaleString()}`}
+                  </span>
+                  giảm giá cho tất cả khóa học!
+                </p>
+              </div>
+
+              <div className="flex items-center mt-2 sm:mt-0 gap-2">
+                <div className="flex items-center space-x-1 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 text-yellow-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-300 font-medium">Kết thúc sau</span>
+                    <span className="text-xs font-bold text-yellow-300">{timeRemaining}</span>
+                  </div>
+                </div>
+
+                <Link
+                  href="/courses"
+                  className="group ml-2 px-4 py-1.5 bg-yellow-500 text-gray-900 font-bold rounded-lg text-sm hover:bg-yellow-400 transition-all duration-200 flex items-center"
+                >
+                  Xem ngay
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+
+                <button
+                  onClick={() => setActiveSiteWideVoucher(null)}
+                  className="ml-1 text-gray-400 hover:text-white p-1 bg-white/5 hover:bg-white/10 rounded-full transition-colors"
+                  aria-label="Đóng thông báo"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <header className="h-auto md:h-[72px] bg-white shadow-custom relative">
         <div className="flex flex-col md:flex-row md:px-6">
           <div className="flex items-center justify-between px-6 py-4 md:hidden">

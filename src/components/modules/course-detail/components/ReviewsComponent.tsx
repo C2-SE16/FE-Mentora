@@ -60,7 +60,7 @@ export const AllReviewsComponent = () => {
               </div>
 
               {/* Phần trăm */}
-              <div className="w-[40px] text-purple-700 font-medium">{percent}%</div>
+              <div className="w-[40px] text-[#00FF84] font-medium">{percent}%</div>
             </div>
           );
         })}

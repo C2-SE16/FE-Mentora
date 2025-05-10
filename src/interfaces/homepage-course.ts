@@ -22,6 +22,9 @@ export interface Course {
   subtitle?: boolean;
   thumbnail?: string;
   price?: string;
+  hasDiscount?: boolean;
+  discountPercentage?: number;
+  voucherCode?: string;
 }
 
 export interface Topic {

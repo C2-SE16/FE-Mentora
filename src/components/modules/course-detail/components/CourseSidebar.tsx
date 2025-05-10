@@ -10,6 +10,7 @@ import { cartService } from '@/apis/cartService';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { decodeJWT } from '@/utils/jwt';
+import Image from 'next/image';
 
 const contents = [
   '  37 hours on-demand video',
@@ -23,9 +24,10 @@ const contents = [
 interface CourseSidebarProps {
   courseId: string;
   learningObject?: LearningObjective[];
+  image: string;
 }
 
-const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [] }) => {
+const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject = [], image }) => {
   const router = useRouter();
 
   const handleAddToCart = async () => {
@@ -78,7 +80,15 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
      md:grid-cols-1 md:col-span-3 md:px-6 
      lg:fixed lg:top-[10vh] lg:right-[10%] lg:w-[280px]"
     >
-      <div className="p-4 bg-slate-300 h-[150px]"></div>
+      <div className=" bg-slate-300 h-[150px]">
+        <Image
+          src={image}
+          alt="course image"
+          width={150}
+          height={150}
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="pt-5 grid grid-cols-3 gap-4">
         <Button className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]">
           Thêm vào giỏ hàng
@@ -90,7 +100,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
           <Heart className="w-8 h-8 text-[rgba(0,255,132,0.85)]" />
         </Button>
 
-        <Button className="col-span-3 h-14 text-[16px] font-oswald text-black font-normal border border-[rgba(0,255,132,0.85)] bg-white hover:bg-slate-100">
+        <Button className="col-span-3 h-14 text-[16px] font-oswald text-black font-normal border border-[#00ff84d9] bg-white hover:bg-slate-100">
           Mua ngay
         </Button>
       </div>

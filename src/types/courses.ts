@@ -62,7 +62,7 @@ export interface Course {
   durationTime: number;
   price: Price;
   approved: string;
-  rating: Rating;
+  rating: number;
   comment: string | null;
   createdAt: string;
   updatedAt: string;

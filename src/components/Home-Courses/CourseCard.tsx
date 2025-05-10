@@ -43,10 +43,20 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             <StarRating rating={course.rating} />
             <span className="text-[#595c73] text-sm">({course.reviews || 0})</span>
           </div>
+          {course.hasDiscount && course.discountPercentage && (
+            <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded-md">
+              -{course.discountPercentage}%
+            </span>
+          )}
           <div className="flex gap-x-4 text-sm sm:text-base mt-1">
-            <span className="">₫{course.currentPrice || course.price}</span>
-            <span className="line-through">{course.originalPrice}</span>
+            <span className={course.hasDiscount ? 'font-semibold text-black' : ''}>
+              {course.currentPrice}
+            </span>
+            {course.hasDiscount && (
+              <span className="line-through text-gray-500">{course.originalPrice}</span>
+            )}
           </div>
+
           {course.isBestSeller && (
             <Button
               href={`/courses/${course.id || course.courseId}`}

@@ -42,7 +42,7 @@ export default function PublicProfilePage() {
               <div className="border border-gray-200 rounded-lg p-6 mb-8">
                 <div className="flex flex-col items-center mb-6">
                   <Image
-                    src={user?.avatar || '/avatar.jpg'}
+                    src={user?.avatar || '/avatar.png'}
                     alt="Avatar"
                     width={120}
                     height={120}

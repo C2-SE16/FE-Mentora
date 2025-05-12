@@ -71,7 +71,7 @@ const BecomeTutorBanner = () => {
                 <div className="flex items-center mb-2">
                   <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
                     <Image
-                      src="/avatar.jpg"
+                      src="/avatar.png"
                       alt="Instructor"
                       width={10}
                       height={10}

@@ -52,7 +52,7 @@ const HeaderInfo = () => {
     <div className="flex items-center gap-3 py-2">
       <div className="relative rounded-full w-[64px] h-[64px]">
         <Image
-          src={user.avatar || '/avatar.jpg'}
+          src={user.avatar || '/avatar.png'}
           alt="Profile"
           width={48}
           height={48}

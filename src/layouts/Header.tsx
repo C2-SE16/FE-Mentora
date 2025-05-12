@@ -28,7 +28,6 @@ const Header = () => {
       } else {
         setActiveSiteWideVoucher(null);
       }
-      console.log('response active Voucher:::', response);
     } catch (error) {
       console.log('Error checking active voucher', error);
     }
@@ -641,7 +640,7 @@ const Header = () => {
                         </div>
                       ) : (
                         <Image
-                          src={`${user?.avatar || '/avatar.jpg'}?v=${avatarKey}`}
+                          src={`${user?.avatar || '/avatar.png'}?v=${avatarKey}`}
                           alt="avatar"
                           width={32}
                           height={32}
@@ -659,7 +658,7 @@ const Header = () => {
                             className="flex items-center gap-x-3 px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black"
                           >
                             <Image
-                              src={`${user?.avatar || '/avatar.jpg'}?v=${avatarKey}`}
+                              src={`${user?.avatar || '/avatar.png'}?v=${avatarKey}`}
                               alt="avatar"
                               width={50}
                               height={50}

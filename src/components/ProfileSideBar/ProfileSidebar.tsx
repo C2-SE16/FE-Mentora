@@ -22,7 +22,7 @@ export default function ProfileSidebar() {
           </div>
         ) : (
           <Image
-            src={user?.avatar || '/avatar.jpg'}
+            src={user?.avatar || '/avatar.png'}
             alt="Avatar"
             width={40}
             height={40}

@@ -25,7 +25,7 @@ const MentorList = ({ mentors, isLoading }: MentorListProps) => {
             <div className="pt-[30px] px-[30px] pb-4 flex flex-col items-center justify-center h-full">
               <div className="overflow-hidden rounded-full w-[120px] h-[120px] sm:w-[165px] sm:h-[165px]">
                 <Image
-                  src={mentor.avatar || '/avatar.jpg'}
+                  src={mentor.avatar || '/avatar.png'}
                   alt={`${mentor.name} avatar`}
                   width={165}
                   height={165}

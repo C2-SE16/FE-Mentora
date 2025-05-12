@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import api from '@/apis/api';
-import { mockCategories, mockCourses } from '@/data/courses';
+import { mockCourses } from '@/data/courses';
 import { CourseCarousel } from '@/components/CourseItem/CourseCarousel';
+import { Pagination } from '@/components/Pagination';
+import SkeletonCourseCard from '@/components/CourseItem/SkeletonCourseCard';
 
 // Types (same as your existing ones)
 interface Instructor {
@@ -27,6 +29,8 @@ interface Course {
   totalReviews?: number;
   tbl_instructors?: Instructor;
   categoryType?: string;
+  isBestSeller?: boolean;
+  isRecommended?: boolean;
   level?: string;
 }
 
@@ -39,30 +43,34 @@ interface Category {
 
 // Define mapping between URL slugs and API category types
 const slugToCategoryMap: Record<string, string> = {
-  development: 'DEVELOPMENT',
-  business: 'BUSINESS',
-  'finance-accounting': 'FINANCE_ACCOUNTING',
-  'it-software': 'IT_SOFTWARE',
-  'office-productivity': 'OFFICE_PRODUCTIVITY',
-  'personal-development': 'PERSONAL_DEVELOPMENT',
-  design: 'DESIGN',
+  information_technology: 'INFORMATION_TECHNOLOGY',
   marketing: 'MARKETING',
-  'health-fitness': 'HEALTH_FITNESS',
+  finance: 'FINANCE',
+  bussiness: 'BUSSINESS', // Chú ý chính tả "BUSSINESS" có 2 chữ 's'
+  design: 'DESIGN',
+  lifestyle: 'LIFESTYLE',
+  personal_development: 'PERSONAL_DEVELOPMENT',
+  health: 'HEALTH',
   music: 'MUSIC',
+  language: 'LANGUAGE',
+  science: 'SCIENCE',
+  math: 'MATH',
 };
 
 // Define mapping from API category types to human-readable names
 const categoryNameMap: Record<string, string> = {
-  DEVELOPMENT: 'Phát triển',
-  BUSINESS: 'Kinh doanh',
-  FINANCE_ACCOUNTING: 'Tài chính & Kế toán',
-  IT_SOFTWARE: 'CNTT & Phần mềm',
-  OFFICE_PRODUCTIVITY: 'Năng suất văn phòng',
-  PERSONAL_DEVELOPMENT: 'Phát triển cá nhân',
-  DESIGN: 'Thiết kế',
+  INFORMATION_TECHNOLOGY: 'Công nghệ thông tin',
   MARKETING: 'Marketing',
-  HEALTH_FITNESS: 'Sức khỏe & Thể dục',
+  FINANCE: 'Tài chính',
+  BUSSINESS: 'Kinh doanh',
+  DESIGN: 'Thiết kế',
+  LIFESTYLE: 'Phong cách sống',
+  PERSONAL_DEVELOPMENT: 'Phát triển cá nhân',
+  HEALTH: 'Sức khỏe',
   MUSIC: 'Âm nhạc',
+  LANGUAGE: 'Ngôn ngữ',
+  SCIENCE: 'Khoa học',
+  MATH: 'Toán học',
 };
 
 // Define the reverse mapping from API category types to URL slugs
@@ -141,15 +149,44 @@ export default function CategoryPage() {
     }).format(price);
   };
 
+  // Thêm state cho pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(8); // Mặc định: 8 items/trang
+
+  // Tính toán các course hiển thị trên trang hiện tại
+  const indexOfLastCourse = currentPage * itemsPerPage;
+  const indexOfFirstCourse = indexOfLastCourse - itemsPerPage;
+  const currentCourses = useMemo(() => {
+    return courses.slice(indexOfFirstCourse, indexOfLastCourse);
+  }, [courses, indexOfFirstCourse, indexOfLastCourse]);
+
+  // Thêm state để quản lý riêng trạng thái loading của pagination
+  const [pageChanging, setPageChanging] = useState(false);
+
+  // Tham chiếu đến container danh sách khóa học
+  const courseListRef = useRef<HTMLDivElement>(null);
+
+  // Xử lý khi thay đổi trang
+  const handlePageChange = (pageNumber: number) => {
+    // Đánh dấu đang chuyển trang
+    setPageChanging(true);
+    setCurrentPage(pageNumber);
+
+    // Cuộn đến danh sách khóa học một cách mượt mà
+    if (courseListRef.current) {
+      courseListRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
   useEffect(() => {
-    // Replace API call with mock data
     const fetchCategories = async () => {
       try {
-        // Comment out the actual API call
-        // const response = await api.get('categories');
+        const response = await api.get('categories');
 
-        // Use mock data instead
-        setCategories(mockCategories);
+        setCategories(response.data.data.data || []);
         setError(null);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -162,53 +199,115 @@ export default function CategoryPage() {
   }, []);
 
   useEffect(() => {
-    // Replace API call with mock data and filtering
+    // Đảm bảo categories đã được load và categoryType hợp lệ
+    if (!categories.length || !categoryType) {
+      setLoading(false);
+      setPageChanging(false);
+      return;
+    }
+
     const fetchCourses = async () => {
-      setLoading(true);
+      // Nếu đây là lần tải đầu tiên, đặt loading full page
+      // Nếu chỉ là thay đổi trang, sử dụng pageChanging
+      if (!pageChanging) {
+        setLoading(true);
+      }
+
       setError(null);
 
       try {
-        // Comment out the actual API call
-        // const response = await api.get(url);
+        // Tìm categoryId dựa trên categoryType
+        const category = categories.find((cat: Category) => cat.categoryType === categoryType);
 
-        // Use mock data and filtering based on categoryType
-        let filteredCourses = mockCourses;
-
-        if (categoryType) {
-          filteredCourses = mockCourses.filter((course) => course.categoryType === categoryType);
+        if (!category) {
+          console.error(`Cannot find category with type ${categoryType}`);
+          setCourses([]);
+          setTotalCourses(0);
+          setLoading(false);
+          setPageChanging(false);
+          return;
         }
 
+        // Gọi API getCoursesByCategory với pagination
+        const response = await api.get(`categories/${category.categoryId}/courses`, {
+          params: {
+            page: currentPage,
+            limit: itemsPerPage,
+          },
+        });
+
+        // Xử lý dữ liệu từ API
+        let coursesData = [];
+        let totalCoursesCount = 0;
+
+        if (response.data.data.courses && Array.isArray(response.data.data.courses)) {
+          coursesData = response.data.data.courses
+            .map((item: any) => {
+              if (!item || !item.tbl_courses) return null;
+
+              // Format tbl_courses object
+              return {
+                courseId: item.tbl_courses.courseId,
+                title: item.tbl_courses.title,
+                shortDescription: item.tbl_courses.description,
+                thumbnail: item.tbl_courses.thumbnail,
+                // Convert decimal objects to numbers
+                price:
+                  typeof item.tbl_courses.price === 'object'
+                    ? parseFloat(item.tbl_courses.price.toString())
+                    : item.tbl_courses.price || 0,
+                rating:
+                  typeof item.tbl_courses.rating === 'object'
+                    ? parseFloat(item.tbl_courses.rating.toString())
+                    : item.tbl_courses.rating || 0,
+                // Additional data - Sử dụng giá trị cố định hoặc từ API thay vì random
+                isBestSeller: item.tbl_courses.isBestSeller,
+                isRecommended: item.tbl_courses.isRecommended,
+                tbl_instructors: item.tbl_courses.tbl_instructors,
+                // Sử dụng giá trị cố định thay vì random
+                totalStudents: 100,
+                totalReviews: 5,
+              };
+            })
+            .filter(Boolean);
+          totalCoursesCount = response.data.data.total || coursesData.length;
+        }
         // Apply sorting
         if (sortBy === 'newest') {
-          // Just use the array as is (assuming it's already sorted by newest)
+          // Already sorted by newest
         } else if (sortBy === 'popular') {
-          filteredCourses = [...filteredCourses].sort(
+          coursesData = [...coursesData].sort(
             (a, b) => (b.totalStudents || 0) - (a.totalStudents || 0)
           );
         } else if (sortBy === 'price-low') {
-          filteredCourses = [...filteredCourses].sort((a, b) => a.price - b.price);
+          coursesData = [...coursesData].sort((a, b) => a.price - b.price);
         } else if (sortBy === 'price-high') {
-          filteredCourses = [...filteredCourses].sort((a, b) => b.price - a.price);
+          coursesData = [...coursesData].sort((a, b) => b.price - a.price);
         } else if (sortBy === 'rating') {
-          filteredCourses = [...filteredCourses].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          coursesData = [...coursesData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
         }
 
-        setCourses(filteredCourses);
-        setTotalCourses(filteredCourses.length);
+        // Thêm timeout nhỏ để tạo hiệu ứng mượt mà hơn khi chuyển trang
+        setTimeout(() => {
+          setCourses(coursesData);
+          setTotalCourses(totalCoursesCount);
+          setLoading(false);
+          setPageChanging(false);
+        }, 300);
       } catch (err) {
         console.error('Error fetching courses:', err);
         setError('Không thể tải danh sách khóa học.');
-      } finally {
+        setCourses([]);
+        setTotalCourses(0);
         setLoading(false);
+        setPageChanging(false);
       }
     };
 
     fetchCourses();
-  }, [categoryType, sortBy]);
+  }, [categories, categoryType, sortBy, currentPage, itemsPerPage]);
 
   const coursesForCarousel = useMemo(() => mockCourses, []);
-
-  const categoryName = categoryType ? categoryNameMap[categoryType] : 'Tất cả khóa học';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -216,8 +315,11 @@ export default function CategoryPage() {
         {/* Page Header with Category Title */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold font-oswald text-gray-900">
-            {categoryType ? `Khóa học ${categoryName}` : 'Tất cả khóa học'}
+            {categoryType && categoryNameMap[categoryType]
+              ? `Khóa học ${categoryNameMap[categoryType]}`
+              : 'Tất cả khóa học'}
           </h1>
+          {totalCourses > 0 && <p className="text-gray-600 mt-2">{totalCourses} khóa học có sẵn</p>}
         </div>
 
         {/* Add new section for recommended courses carousel */}
@@ -777,240 +879,261 @@ export default function CategoryPage() {
               </div>
             </div>
 
-            {/* Courses List - Horizontal Layout */}
-            {loading ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="w-12 h-12 border-t-4 border-[#1dbe70] border-solid rounded-full animate-spin"></div>
-              </div>
-            ) : error ? (
-              <div className="text-center py-16">
-                <p className="text-red-500 mb-4">{error}</p>
-                <button
-                  onClick={() => setLoading(true)}
-                  className="bg-[#1dbe70] text-white px-4 py-2 rounded hover:bg-[#18a862]"
-                >
-                  Thử lại
-                </button>
-              </div>
-            ) : courses.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-lg shadow-sm">
-                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    className="w-8 h-8 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                    />
-                  </svg>
+            {/* Course List Container - Thêm ref và chiều cao cố định */}
+            <div ref={courseListRef} className="min-h-[800px] relative courses-container">
+              {loading ? (
+                <div className="flex justify-center items-center py-16">
+                  <div className="w-12 h-12 border-t-4 border-[#1dbe70] border-solid rounded-full animate-spin"></div>
                 </div>
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Không tìm thấy khóa học</h3>
-                <p className="text-gray-500">
-                  Không có khóa học nào phù hợp với tiêu chí tìm kiếm của bạn.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {courses.map((course) => (
-                  <div key={course.courseId} className="group relative">
-                    <Link
-                      href={`/courses/${course.courseId}`}
-                      className="flex flex-col md:flex-row bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              ) : error ? (
+                <div className="text-center py-16">
+                  <p className="text-red-500 mb-4">{error}</p>
+                  <button
+                    onClick={() => setLoading(true)}
+                    className="bg-[#1dbe70] text-white px-4 py-2 rounded hover:bg-[#18a862]"
+                  >
+                    Thử lại
+                  </button>
+                </div>
+              ) : courses.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-lg shadow-sm">
+                  <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      {/* Course Image */}
-                      <div className="w-full md:w-64 h-48 md:h-auto relative">
-                        {course.thumbnail ? (
-                          <Image
-                            src={course.thumbnail}
-                            alt={course.title}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                            <span className="text-gray-400">Không có ảnh</span>
-                          </div>
-                        )}
-                      </div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-700 mb-2">
+                    Không tìm thấy khóa học
+                  </h3>
+                  <p className="text-gray-500">
+                    Không có khóa học nào thuộc danh mục{' '}
+                    {categoryNameMap[categoryType] || categoryType || 'này'}.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className="space-y-4 transition-opacity duration-300"
+                  style={{ opacity: pageChanging ? 0.6 : 1 }}
+                >
+                  {/* Khi đang thay đổi trang, hiển thị skeleton */}
+                  {pageChanging
+                    ? Array(itemsPerPage)
+                        .fill(0)
+                        .map((_, index) => <SkeletonCourseCard key={`skeleton-${index}`} />)
+                    : // Hiển thị các khóa học thực tế
+                      currentCourses.map((course) => (
+                        <div
+                          key={course.courseId}
+                          className="group relative transition-all duration-300"
+                        >
+                          <Link
+                            href={`/courses/${course.courseId}`}
+                            className="flex flex-col md:flex-row bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                          >
+                            {/* Course Image */}
+                            <div className="w-full md:w-64 h-48 md:h-auto relative">
+                              {course.thumbnail ? (
+                                <Image
+                                  src={course.thumbnail}
+                                  alt={course.title || 'Khóa học'}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <span className="text-gray-400">Không có ảnh</span>
+                                </div>
+                              )}
+                              {course.isBestSeller && (
+                                <div className="absolute top-2 left-2 bg-[#f69c08] text-white text-xs px-2 py-1 rounded">
+                                  Bán chạy
+                                </div>
+                              )}
+                            </div>
 
-                      {/* Course Content */}
-                      <div className="flex-1 p-4 flex flex-col">
-                        {/* Title and Price Row */}
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-xl font-bold text-gray-900 hover:text-[#1dbe70] transition-colors line-clamp-2 flex-1 pr-3">
-                            {course.title}
-                          </h3>
-                          <div className="text-xl font-bold text-black whitespace-nowrap">
-                            {course.discountPrice !== undefined &&
-                            course.discountPrice < course.price ? (
-                              <div className="flex flex-col items-end">
-                                <span>{formatPrice(course.discountPrice)}</span>
-                                <span className="text-sm text-gray-500 line-through">
-                                  {formatPrice(course.price)}
+                            {/* Course Content */}
+                            <div className="flex-1 p-4 flex flex-col">
+                              {/* Title and Price Row */}
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="text-xl font-bold text-gray-900 hover:text-[#1dbe70] transition-colors line-clamp-2 flex-1 pr-3">
+                                  {course.title || 'Khóa học không tên'}
+                                </h3>
+                                <div className="text-xl font-bold text-black whitespace-nowrap">
+                                  {formatPrice(course.price || 0)}
+                                </div>
+                              </div>
+
+                              {course.shortDescription && (
+                                <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                  {course.shortDescription}
+                                </p>
+                              )}
+
+                              <p className="text-sm text-gray-700 mb-1">
+                                {course.tbl_instructors?.instructorName || 'Bùi Minh Kha'}
+                              </p>
+
+                              <div className="flex items-center mb-2">
+                                <span className="text-[#e59819] font-bold mr-1">
+                                  {course.rating ? course.rating.toFixed(1) : '5.0'}
+                                </span>
+                                <div className="flex">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <svg
+                                      key={star}
+                                      className={`w-4 h-4 ${star <= Math.round(course.rating || 5) ? 'text-[#e59819]' : 'text-gray-300'}`}
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                  ))}
+                                </div>
+                                <span className="text-xs text-gray-500 ml-1">
+                                  ({course.totalReviews || 0})
                                 </span>
                               </div>
-                            ) : (
-                              <span>{formatPrice(course.price)}</span>
-                            )}
+
+                              <div className="text-xs text-gray-500 mb-2">
+                                Tổng số 5 giờ • 20 bài giảng • Tất cả các cấp độ
+                              </div>
+
+                              {/* Tag for course at bottom */}
+                              <div className="mt-auto">
+                                <span className="inline-block bg-[#d1e7dd] text-[#0f5132] text-xs px-2 py-0.5 rounded">
+                                  Mới
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+
+                          {/* Course Hover Popup */}
+                          <div className="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out z-10 w-96 bg-white shadow-lg rounded-lg left-1/2 bottom-full mb-4 transform -translate-x-1/2">
+                            {/* Arrow pointer - now pointing down */}
+                            <div className="absolute w-3 h-3 bg-white transform rotate-45 left-1/2 -bottom-1.5 -ml-1.5"></div>
+
+                            <div className="p-6">
+                              <h4 className="font-semibold text-gray-800 mb-3">
+                                Những kiến thức bạn sẽ học
+                              </h4>
+
+                              <ul className="mb-5 space-y-2">
+                                <li className="flex items-start">
+                                  <svg
+                                    className="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                  <span className="text-sm text-gray-700">
+                                    Xác định đối tượng trình bày
+                                  </span>
+                                </li>
+                                <li className="flex items-start">
+                                  <svg
+                                    className="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                  <span className="text-sm text-gray-700">
+                                    Kỹ năng sử dụng đồ thị hiệu quả
+                                  </span>
+                                </li>
+                                <li className="flex items-start">
+                                  <svg
+                                    className="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                  <span className="text-sm text-gray-700">
+                                    Xác định mạch câu chuyện và tạo ra câu chuyện
+                                  </span>
+                                </li>
+                              </ul>
+
+                              <div className="flex items-center justify-between">
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    // Thêm logic thêm vào giỏ hàng ở đây
+                                  }}
+                                  className="bg-[#29cc60] hover:bg-[#1ba047] text-white font-medium py-2 px-4 rounded transition-colors duration-200 flex-grow mr-2"
+                                >
+                                  Thêm vào giỏ hàng
+                                </button>
+
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    // Thêm logic thêm vào danh sách yêu thích
+                                  }}
+                                  className="p-2 rounded-full border border-gray-300 hover:border-[#29cc60] hover:text-[#29cc60] transition-colors duration-200"
+                                >
+                                  <svg
+                                    className="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
+                      ))}
 
-                        {course.shortDescription && (
-                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                            {course.shortDescription}
-                          </p>
-                        )}
-
-                        <p className="text-sm text-gray-700 mb-1">
-                          {course.tbl_instructors?.instructorName || 'Bùi Minh Kha'}
-                        </p>
-
-                        <div className="flex items-center mb-2">
-                          <span className="text-[#e59819] font-bold mr-1">
-                            {course.rating ? course.rating.toFixed(1) : '5.0'}
-                          </span>
-                          <div className="flex">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <svg
-                                key={star}
-                                className="w-4 h-4 text-[#e59819]"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                              </svg>
-                            ))}
-                          </div>
-                          <span className="text-xs text-gray-500 ml-1">
-                            ({course.totalReviews || 3})
-                          </span>
-                        </div>
-
-                        <div className="text-xs text-gray-500 mb-2">
-                          Tổng số {Math.floor(Math.random() * 8) + 4} giờ •{' '}
-                          {Math.floor(Math.random() * 30) + 20} bài giảng • Tất cả các cấp độ
-                        </div>
-
-                        {/* Tag for course at bottom */}
-                        <div className="mt-auto">
-                          <span className="inline-block bg-[#d1e7dd] text-[#0f5132] text-xs px-2 py-0.5 rounded">
-                            Mới
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-
-                    {/* Course Hover Popup */}
-                    <div className="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out z-10 w-96 bg-white shadow-lg rounded-lg left-1/2 bottom-full mb-4 transform -translate-x-1/2">
-                      {/* Arrow pointer - now pointing down */}
-                      <div className="absolute w-3 h-3 bg-white transform rotate-45 left-1/2 -bottom-1.5 -ml-1.5"></div>
-
-                      <div className="p-6">
-                        <h4 className="font-semibold text-gray-800 mb-3">
-                          Những kiến thức bạn sẽ học
-                        </h4>
-
-                        <ul className="mb-5 space-y-2">
-                          <li className="flex items-start">
-                            <svg
-                              className="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="text-sm text-gray-700">
-                              Xác định đối tượng trình bày
-                            </span>
-                          </li>
-                          <li className="flex items-start">
-                            <svg
-                              className="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="text-sm text-gray-700">
-                              Kỹ năng sử dụng đồ thị hiệu quả
-                            </span>
-                          </li>
-                          <li className="flex items-start">
-                            <svg
-                              className="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="text-sm text-gray-700">
-                              Xác định mạch câu chuyện và tạo ra câu chuyện
-                            </span>
-                          </li>
-                        </ul>
-
-                        <div className="flex items-center justify-between">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              // Thêm logic thêm vào giỏ hàng ở đây
-                            }}
-                            className="bg-[#29cc60] hover:bg-[#1ba047] text-white font-medium py-2 px-4 rounded transition-colors duration-200 flex-grow mr-2"
-                          >
-                            Thêm vào giỏ hàng
-                          </button>
-
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              // Thêm logic thêm vào danh sách yêu thích
-                            }}
-                            className="p-2 rounded-full border border-gray-300 hover:border-[#29cc60] hover:text-[#29cc60] transition-colors duration-200"
-                          >
-                            <svg
-                              className="w-6 h-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                  {/* Pagination Component */}
+                  <div className="mt-8 transition-none">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalItems={totalCourses} // Sử dụng totalCourses từ API thay vì courses.length
+                      itemsPerPage={itemsPerPage}
+                      onPageChange={handlePageChange}
+                    />
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

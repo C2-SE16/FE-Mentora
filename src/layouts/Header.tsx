@@ -741,7 +741,23 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="/profile/payment-methods"
+                            href="#!"
+                            className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                          >
+                            Bảo mật tài khoản
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="#!"
+                            className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
+                          >
+                            Gói đăng ký
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="#!"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Phương thức thanh toán
@@ -768,6 +784,15 @@ const Header = () => {
                         </li>
                         <li>
                           <div className="flex items-center gap-4">
+                            <Link href="/cart" className="cursor-pointer">
+                              <Image
+                                src="/shopping-cart.svg"
+                                alt="shopping-cart"
+                                width={24}
+                                height={24}
+                                className="cursor-pointer"
+                              />
+                            </Link>
                             <button
                               onClick={handleLogout}
                               className="bg-[#1dbe70] text-white px-4 py-2 rounded-lg hover:bg-[#18a862] transition-colors"

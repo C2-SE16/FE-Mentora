@@ -266,14 +266,40 @@ export const CustomerPaymentService = {
    * @param payload Thông tin khởi tạo thanh toán
    */
   async initPayment(payload: InitPaymentRequest): Promise<InitPaymentResponse> {
-    try {
-      const response = await axiosInstance.post('/customer-payment/init', payload);
-      console.log('Init payment response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Lỗi khi khởi tạo thanh toán:', error);
-      throw error;
+    const maxRetries = 2;
+    let retries = 0;
+    
+    while (retries <= maxRetries) {
+      try {
+        console.log(`Đang khởi tạo thanh toán, lần thử ${retries + 1}/${maxRetries + 1}`);
+        const response = await axiosInstance.post('/customer-payment/init', payload);
+        console.log('Init payment response:', response.data);
+        return response.data;
+      } catch (error: any) {
+        console.error(`Lỗi khi khởi tạo thanh toán (lần ${retries + 1}):`, error);
+        
+        // Nếu lỗi timeout hoặc network và chưa thử lại hết số lần
+        if ((error.code === 'ECONNABORTED' || !error.response) && retries < maxRetries) {
+          retries++;
+          console.log(`Thử lại khởi tạo thanh toán, lần ${retries + 1}...`);
+          
+          // Đợi thêm 1 giây trước khi thử lại
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          continue;
+        }
+        
+        // Ghi log chi tiết về lỗi
+        if (error.response) {
+          console.error('Chi tiết lỗi response:', error.response.data);
+        } else if (error.request) {
+          console.error('Không nhận được phản hồi từ server');
+        }
+        
+        throw error;
+      }
     }
+    
+    throw new Error('Vượt quá số lần thử lại khởi tạo thanh toán');
   },
 
   /**

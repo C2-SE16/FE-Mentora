@@ -4,14 +4,35 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const SubHeader = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const categoriesContainerRef = useRef<HTMLDivElement>(null);
 
   const fetchCategories = async () => {
-    const response = await api.get('categories');
-    setCategories(response.data.data.data);
+    try {
+      const response = await api.get('categories');
+      console.log('Dữ liệu categories nhận được:', response.data);
+      
+      // Kiểm tra cấu trúc dữ liệu trả về
+      if (response.data && response.data.data) {
+        // Kiểm tra xem data.data có phải là mảng không
+        const categoriesData = response.data.data.data || response.data.data;
+        
+        if (Array.isArray(categoriesData)) {
+          setCategories(categoriesData);
+        } else {
+          console.error('Dữ liệu categories không phải mảng:', categoriesData);
+          setCategories([]);
+        }
+      } else {
+        console.error('Cấu trúc dữ liệu không hợp lệ:', response.data);
+        setCategories([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh mục:', error);
+      setCategories([]);
+    }
   };
 
   useEffect(() => {
@@ -91,15 +112,19 @@ const SubHeader = () => {
           className="flex space-x-6 py-2 px-8 overflow-x-auto scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {categories.map((category: any) => (
-            <Link
-              key={category.categoryId}
-              href={`/categories/${category.categoryType.toLowerCase()}`}
-              className="whitespace-nowrap text-base font-normal py-1 px-2 transition-colors duration-200 hover:text-[#1dbe70] text-gray-700 flex-shrink-0"
-            >
-              {getCategoryDisplayName(category.categoryType)}
-            </Link>
-          ))}
+          {Array.isArray(categories) && categories.length > 0 ? (
+            categories.map((category: any) => (
+              <Link
+                key={category.categoryId}
+                href={`/categories/${category.categoryType.toLowerCase()}`}
+                className="whitespace-nowrap text-base font-normal py-1 px-2 transition-colors duration-200 hover:text-[#1dbe70] text-gray-700 flex-shrink-0"
+              >
+                {getCategoryDisplayName(category.categoryType)}
+              </Link>
+            ))
+          ) : (
+            <div className="text-gray-500">Đang tải danh mục...</div>
+          )}
         </div>
 
         {/* Nút mũi tên phải */}

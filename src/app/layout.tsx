@@ -21,20 +21,21 @@ export default function RootLayout({
     pathname?.startsWith('/register') ||
     pathname?.startsWith('/verify-email') ||
     pathname?.startsWith('/reset-password') ||
-    pathname?.startsWith('/forgot-password');
+    pathname?.startsWith('/forgot-password') ||
+    pathname?.startsWith('/payment');
 
   return (
     <html lang="en">
       <body className="font-robotoCondensed">
-        {isDifferentLayout ? (
-          children
-        ) : (
-          <Layout>
-            <AuthProvider>
+        <AuthProvider>
+          {isDifferentLayout ? (
+            children
+          ) : (
+            <Layout>
               <SearchProvider>{children}</SearchProvider>
-            </AuthProvider>
-          </Layout>
-        )}
+            </Layout>
+          )}
+        </AuthProvider>
       </body>
     </html>
   );

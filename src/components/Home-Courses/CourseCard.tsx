@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { Course } from '@/interfaces/homepage-course';
 import Button from '../Button/Button';
 import { StarRating } from './StarRating';
+import { useEffect, useState } from 'react';
+import { checkCourseAccess, CourseAccessResponse, ensureString } from '@/apis/courseAccessService';
+import dynamic from 'next/dynamic';
 
 interface CourseCardProps {
   course: Course;
@@ -10,18 +13,215 @@ interface CourseCardProps {
   onAddToCart: (courseId: string, e: React.MouseEvent) => void;
 }
 
-const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
+// Tách hàm useClientRouter thành một hook riêng biệt
+const UseClientRouter = () => {
+  const [router, setRouter] = useState<any>(null);
+  
+  useEffect(() => {
+    console.log('Đang import useRouter');
+    // Chỉ import useRouter khi ở phía client
+    import('next/router').then((mod) => {
+      const { useRouter } = mod;
+      console.log('useRouter đã được import thành công');
+      setRouter(useRouter());
+    }).catch(err => {
+      console.error('Lỗi khi import useRouter:', err);
+    });
+  }, []);
+  
+  return router;
+};
+
+// Ảnh mặc định khi không có ảnh khóa học
+const DEFAULT_COURSE_IMAGE = '/images/default-course-image.jpg';
+
+// Sử dụng dynamic import với ssr: false để tránh lỗi NextRouter not mounted
+const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) => {
+  console.log('CourseCard render:', { courseId: course.id || course.courseId, title: course.title });
+  
   const isLastInRow = (index + 1) % 4 === 0;
   const popupPosition = isLastInRow ? 'right-full mr-4' : 'left-full ml-4';
+  const [courseAccess, setCourseAccess] = useState<CourseAccessResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Đảm bảo course.id hoặc course.courseId không undefined
+  const courseId = ensureString(course.id || course.courseId);
+  
+  // Xác định ảnh khóa học, sử dụng ảnh mặc định nếu không có
+  const courseImage: string = course.image || course.thumbnail || DEFAULT_COURSE_IMAGE;
+
+  // Logic kiểm tra quyền truy cập khóa học
+  useEffect(() => {
+    console.log('useEffect chạy với courseId:', courseId);
+    
+    let isMounted = true;
+    const controller = new AbortController();
+    
+    const fetchCourseAccess = async () => {
+      if (!courseId) {
+        console.log('courseId không hợp lệ, không gọi API');
+        return;
+      }
+      
+      console.log('Bắt đầu gọi API kiểm tra quyền truy cập');
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Gọi API
+        console.log('Gọi API checkCourseAccess với courseId:', courseId);
+        const result = await checkCourseAccess(courseId);
+        console.log('Kết quả từ API checkCourseAccess:', result);
+        
+        if (result.success && isMounted) {
+          console.log('API trả về thành công, cập nhật state:', result.data);
+          setCourseAccess(result.data);
+          
+          // Kiểm tra rõ ràng quyền truy cập
+          if (result.data.isInstructor) {
+            console.log('Người dùng là instructor của khóa học này');
+          } else if (result.data.isEnrolled) {
+            console.log('Người dùng đã mua khóa học này');
+          } else {
+            console.log('Người dùng chưa mua khóa học này');
+          }
+        } else if (isMounted) {
+          console.error('API trả về lỗi:', result.message);
+          setError(result.message || 'Lỗi không xác định');
+        }
+      } catch (error) {
+        console.error('Lỗi khi gọi API kiểm tra quyền truy cập:', error);
+        if (isMounted) {
+          setError('Đã xảy ra lỗi khi kiểm tra quyền truy cập');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCourseAccess();
+    
+    // Cleanup khi component unmount
+    return () => {
+      console.log('Cleanup useEffect - courseId:', courseId);
+      isMounted = false;
+      controller.abort();
+    };
+  }, [courseId]);
+
+  // Xử lý navigation sử dụng window.location thay vì router
+  const navigateTo = (path: string) => {
+    console.log('Điều hướng đến:', path);
+    window.location.href = path;
+  };
+
+  const handleCourseAction = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    console.log('handleCourseAction called:', { courseAccess });
+    
+    if (!courseAccess) {
+      console.log('Thêm vào giỏ hàng vì không có thông tin truy cập');
+      onAddToCart(courseId, e);
+      return;
+    }
+
+    if (courseAccess.isInstructor) {
+      console.log('Chuyển hướng đến trang quản lý khóa học');
+      navigateTo(`/instructor/course/${courseId}/manage/goals`);
+    } else if (courseAccess.isEnrolled) {
+      console.log('Chuyển hướng đến trang học');
+      navigateTo(`/courses/${courseId}`);
+    } else {
+      console.log('Thêm vào giỏ hàng vì người dùng chưa mua khóa học');
+      onAddToCart(courseId, e);
+    }
+  };
+
+  const getActionButton = () => {
+    console.log('getActionButton called:', { loading, courseAccess, error });
+    
+    if (loading) {
+      return (
+        <button
+          className="bg-[#f3f4f6] text-gray-500 py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+          disabled
+        >
+          Đang tải...
+        </button>
+      );
+    }
+
+    if (error) {
+      console.log('Hiển thị nút thêm vào giỏ hàng do lỗi:', error);
+      return (
+        <button
+          className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+          onClick={(e) => onAddToCart(courseId, e)}
+        >
+          Thêm vào giỏ hàng
+        </button>
+      );
+    }
+
+    if (!courseAccess) {
+      console.log('Hiển thị nút thêm vào giỏ hàng vì không có thông tin truy cập');
+      return (
+        <button
+          className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+          onClick={(e) => onAddToCart(courseId, e)}
+        >
+          Thêm vào giỏ hàng
+        </button>
+      );
+    }
+
+    if (courseAccess.isInstructor) {
+      console.log('Hiển thị nút quản lý khóa học vì người dùng là instructor');
+      return (
+        <button
+          className="bg-[#1e40af] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+          onClick={handleCourseAction}
+        >
+          Quản lý khóa học
+        </button>
+      );
+    }
+
+    if (courseAccess.isEnrolled) {
+      console.log('Hiển thị nút vào học ngay vì người dùng đã mua khóa học');
+      return (
+        <button
+          className="bg-[#6366f1] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+          onClick={handleCourseAction}
+        >
+          Vào học ngay
+        </button>
+      );
+    }
+
+    console.log('Hiển thị nút thêm vào giỏ hàng theo mặc định');
+    return (
+      <button
+        className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
+        onClick={(e) => onAddToCart(courseId, e)}
+      >
+        Thêm vào giỏ hàng
+      </button>
+    );
+  };
 
   return (
     <div className="w-full group relative">
       <div>
         <div className="relative overflow-hidden rounded-lg w-full aspect-video cursor-pointer">
-          <Link href={`/courses/${course.id || course.courseId}`}>
+          <Link href={`/courses/${courseId}`}>
             <Image
-              src={course.image || course.thumbnail || ''}
-              alt={course.title}
+              src={courseImage}
+              alt={course.title || "Khóa học"}
               width={330}
               height={200}
               className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
@@ -31,7 +231,7 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
         <div className="info">
           <div className="head">
             <Link
-              href={`/courses/${course.id || course.courseId}`}
+              href={`/courses/${courseId}`}
               className="font-bold text-base sm:text-lg mt-2 text-[#303141] line-clamp-2"
             >
               {course.title}
@@ -43,23 +243,13 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             <StarRating rating={course.rating} />
             <span className="text-[#595c73] text-sm">({course.reviews || 0})</span>
           </div>
-          {course.hasDiscount && course.discountPercentage && (
-            <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded-md">
-              -{course.discountPercentage}%
-            </span>
-          )}
           <div className="flex gap-x-4 text-sm sm:text-base mt-1">
-            <span className={course.hasDiscount ? 'font-semibold text-black' : ''}>
-              {course.currentPrice}
-            </span>
-            {course.hasDiscount && (
-              <span className="line-through text-gray-500">{course.originalPrice}</span>
-            )}
+            <span className="">₫{course.currentPrice || course.price}</span>
+            <span className="line-through">{course.originalPrice}</span>
           </div>
-
           {course.isBestSeller && (
             <Button
-              href={`/courses/${course.id || course.courseId}`}
+              href={`/courses/${courseId}`}
               backgroundColor="#29cc60"
               textColor="#ffffff"
               minWidth={90}
@@ -117,12 +307,7 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
             </div>
 
             <div className="mt-4">
-              <button
-                className="bg-[#29cc60] text-white py-2 px-4 rounded-md w-full font-medium text-sm sm:text-base"
-                onClick={(e) => onAddToCart(course.id, e)}
-              >
-                Thêm vào giỏ hàng
-              </button>
+              {getActionButton()}
             </div>
           </div>
         </div>
@@ -130,5 +315,8 @@ const CourseCard = ({ course, index, onAddToCart }: CourseCardProps) => {
     </div>
   );
 };
+
+// Sử dụng dynamic import với ssr: false để tránh lỗi NextRouter not mounted
+const CourseCard = dynamic(() => Promise.resolve(CourseCardComponent), { ssr: false });
 
 export default CourseCard;

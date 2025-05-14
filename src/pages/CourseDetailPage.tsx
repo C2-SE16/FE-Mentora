@@ -12,9 +12,10 @@ import { CourseService } from '@/apis/courseService';
 import { useEffect, useState } from 'react';
 import { Course } from '@/types/courses';
 import { formatDuration } from '@/utils/time';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { AllReviewsComponent } from '@/components/modules/course-detail/components/ReviewsComponent';
 import { StarRating } from '@/components/Home-Courses/StarRating';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function DetailCourse() {
   const [course, setCourse] = useState<Course | null>(null);
@@ -22,6 +23,8 @@ export default function DetailCourse() {
   const [error, setError] = useState(null);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const params = useParams();
+  const searchParams = useSearchParams();
+  const accessDenied = searchParams?.get('accessDenied') === 'true';
   const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
 
   console.log(courseId); // Kiểm tra giá trị courseId
@@ -45,7 +48,7 @@ export default function DetailCourse() {
       }
     };
     fetchCourse();
-  }, []);
+  }, [courseId]);
 
   if (loading) return <p className="text-center text-white">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
@@ -59,6 +62,15 @@ export default function DetailCourse() {
                lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full lg:gap-4"
         >
           <div className="col-span-2">
+            {accessDenied && (
+              <Alert className="mt-4 border-red-300 bg-red-50">
+                <AlertTitle className="text-red-800">Truy cập bị từ chối</AlertTitle>
+                <AlertDescription className="text-red-700">
+                  Bạn cần đăng ký khóa học này để xem nội dung. Vui lòng mua khóa học để tiếp tục.
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <nav className="flex text-[#00FF84] font-oswald text-[20px] font-medium space-x-2 pt-4">
               <Link href="/development" className="hover:underline ">
                 Development
@@ -116,7 +128,7 @@ export default function DetailCourse() {
           <CourseSidebar
             courseId={course?.courseId || ''}
             learningObject={course?.learningObjectives || []}
-            image={course?.thumbnail}
+            image={course?.thumbnail || ''}
           />
         </div>
       </div>

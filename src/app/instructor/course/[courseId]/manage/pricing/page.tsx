@@ -35,8 +35,10 @@ export default function CoursePricingPage() {
         const courseData = await CourseService.getCourseInDetail(courseId);
         if (courseData) {
           setCourse(courseData);
-          if (courseData.price) {
+          if (courseData.price && typeof courseData.price === 'object' && 'd' in courseData.price) {
             setPrice(courseData.price.d?.[0] || 0);
+          } else if (typeof courseData.price === 'number') {
+            setPrice(courseData.price);
           }
         }
         

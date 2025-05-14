@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import api from '@/apis/api';
+import { useAuth } from '@/contexts/AuthContext';
+import Cookies from 'js-cookie';
 
 const loginSchema = z.object({
   email: z.string().email('Email không hợp lệ'),
@@ -26,6 +28,9 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const { refetchUser } = useAuth();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams?.get('redirectTo') || '/';
 
   const {
     handleSubmit,
@@ -51,16 +56,36 @@ const Login = () => {
         password: data.password,
       };
 
+      console.log('[Login] Attempting to login with:', { email: data.email });
+      
       const response = await api.post('auth/login', loginData);
-      console.log('response', response);
+      console.log('[Login] Login response:', response.data ? 'success' : 'failed');
+      
       if (response.data) {
         const accessToken = response.data.data.accessToken;
+        console.log('[Login] Token received, storing in localStorage and cookies');
+        
+        // Lưu token vào cả hai vị trí trong localStorage
         localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('token', accessToken);
+        
+        // Lưu token vào cookies
+        Cookies.set('accessToken', accessToken, { path: '/' });
+        Cookies.set('token', accessToken, { path: '/' });
+        
+        console.log('[Login] Token saved to localStorage and cookies');
+        
         setSuccess(true);
-        router.push('/');
+        
+        // Cập nhật thông tin người dùng
+        await refetchUser();
+        
+        // Chuyển hướng người dùng đến trang họ đang cố truy cập trước đó hoặc trang chủ
+        console.log('[Login] Redirecting to:', redirectTo);
+        router.push(redirectTo);
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('[Login] Login error:', err);
 
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || 'Đăng nhập thất bại, vui lòng thử lại.');
@@ -95,6 +120,12 @@ const Login = () => {
             <h1 className="text-3xl font-bold mb-8 text-center">Đăng nhập</h1>
 
             {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{error}</div>}
+            
+            {redirectTo !== '/' && (
+              <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-md">
+                Vui lòng đăng nhập để tiếp tục truy cập nội dung.
+              </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>

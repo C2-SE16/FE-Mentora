@@ -28,13 +28,15 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-robotoCondensed">
         <AuthProvider>
-          {isDifferentLayout ? (
-            children
-          ) : (
-            <Layout>
-              <SearchProvider>{children}</SearchProvider>
-            </Layout>
-          )}
+          <SearchProvider>
+            {isDifferentLayout ? (
+              children
+            ) : (
+              <Layout>
+                {children}
+              </Layout>
+            )}
+          </SearchProvider>
         </AuthProvider>
       </body>
     </html>

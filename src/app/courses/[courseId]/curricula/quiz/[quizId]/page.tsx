@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import QuizAttemptService from '@/apis/quizAttemptService';
 import QuizService from '@/apis/quizService';
 import { decodeJWT } from '@/utils/jwt';
 import toast from 'react-hot-toast';
-import router from 'next/router';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { checkCourseAccess } from '@/apis/courseAccessService';
 
 interface QuizAttempt {
   id: string;
@@ -86,6 +87,10 @@ interface QuizResult {
 
 export default function QuizPage() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const requireAuth = searchParams?.get('requireAuth') === 'true';
+  
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -97,6 +102,52 @@ export default function QuizPage() {
   const [result, setResult] = useState<any>(null);
   const [isStarted, setIsStarted] = useState(false);
   const [quizMeta, setQuizMeta] = useState<{ timeLimit: number; title: string } | null>(null);
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [accessLoading, setAccessLoading] = useState(true);
+
+  const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
+  const quizId = Array.isArray(params?.quizId) ? params?.quizId[0] : params?.quizId || '';
+
+  // Kiểm tra quyền truy cập vào quiz
+  useEffect(() => {
+    const checkAccess = async () => {
+      setAccessLoading(true);
+      try {
+        if (!courseId) return;
+        
+        // Kiểm tra xem người dùng có quyền truy cập vào khóa học không
+        const accessResponse = await checkCourseAccess(courseId);
+        console.log('Access response:', accessResponse);
+        
+        if (accessResponse && accessResponse.data) {
+          const { hasAccess: canAccess, isEnrolled, isInstructor } = accessResponse.data;
+          
+          // Trong trường hợp là instructor hoặc đã đăng ký
+          if (isInstructor || isEnrolled) {
+            setHasAccess(true);
+          } 
+          // Hoặc có quyền khác
+          else if (canAccess) {
+            setHasAccess(true);
+          }
+          else {
+            console.log('No access to course:', { canAccess, isEnrolled, isInstructor });
+            setHasAccess(false);
+            // Không chuyển hướng ngay ở đây, để hiển thị thông báo lỗi trước
+          }
+        } else {
+          setHasAccess(false);
+        }
+      } catch (error) {
+        console.error('Error checking access:', error);
+        setHasAccess(false);
+      } finally {
+        setAccessLoading(false);
+      }
+    };
+    
+    checkAccess();
+  }, [courseId]);
 
   useEffect(() => {
     if (!params?.quizId) {
@@ -307,6 +358,29 @@ export default function QuizPage() {
     console.log('Current timeLeft:', timeLeft);
     console.log('Current quizMeta:', quizMeta);
   }, [timeLeft, quizMeta]);
+
+  // Thêm loading state
+  if (accessLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <p className="text-gray-700">Đang kiểm tra quyền truy cập...</p>
+      </div>
+    );
+  }
+
+  if (hasAccess === false) {
+    // Chuyển hướng đến trang khóa học với thông báo
+    router.push(`/courses/${courseId}?accessDenied=true`);
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <Alert className="max-w-xl border-red-300 bg-red-50">
+          <AlertDescription className="text-red-700">
+            Bạn không có quyền truy cập vào bài quiz này. Vui lòng đăng ký khóa học để tiếp tục.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (error) {
     return (

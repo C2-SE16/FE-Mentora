@@ -1,3 +1,5 @@
+'use client';
+
 import api from '@/apis/api';
 import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
@@ -8,17 +10,17 @@ const SubHeader = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const categoriesContainerRef = useRef<HTMLDivElement>(null);
-
+  
   const fetchCategories = async () => {
     try {
       const response = await api.get('categories');
-      console.log('Dữ liệu categories nhận được:', response.data);
       
+
       // Kiểm tra cấu trúc dữ liệu trả về
-      if (response.data && response.data.data) {
+      if (response.data.data.data.data && response.data.data) {
         // Kiểm tra xem data.data có phải là mảng không
-        const categoriesData = response.data.data.data || response.data.data;
-        
+        const categoriesData = response.data.data.data.data || response.data.data;
+
         if (Array.isArray(categoriesData)) {
           setCategories(categoriesData);
         } else {
@@ -74,7 +76,7 @@ const SubHeader = () => {
   };
 
   // Hàm chuyển đổi categoryType sang tên hiển thị tiếng Việt
-  const getCategoryDisplayName = (categoryType: string) => {
+  const getCategoryDisplayName = (name: string) => {
     const categoryMap: Record<string, string> = {
       INFORMATION_TECHNOLOGY: 'Công nghệ thông tin',
       MARKETING: 'Marketing',
@@ -90,7 +92,7 @@ const SubHeader = () => {
       MATH: 'Toán học',
     };
 
-    return categoryMap[categoryType as keyof typeof categoryMap] || categoryType;
+    return categoryMap[name as keyof typeof categoryMap] || name;
   };
 
   return (
@@ -116,10 +118,10 @@ const SubHeader = () => {
             categories.map((category: any) => (
               <Link
                 key={category.categoryId}
-                href={`/categories/${category.categoryType.toLowerCase()}`}
+                href={`/categories/${category.name.toLowerCase()}`}
                 className="whitespace-nowrap text-base font-normal py-1 px-2 transition-colors duration-200 hover:text-[#1dbe70] text-gray-700 flex-shrink-0"
               >
-                {getCategoryDisplayName(category.categoryType)}
+                {getCategoryDisplayName(category.name)}
               </Link>
             ))
           ) : (

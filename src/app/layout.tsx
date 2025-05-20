@@ -25,17 +25,11 @@ export default function RootLayout({
     pathname?.startsWith('/payment');
 
   return (
-    <html lang="en">
-      <body className="font-robotoCondensed">
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className="font-robotoCondensed" suppressHydrationWarning={true}>
         <AuthProvider>
           <SearchProvider>
-            {isDifferentLayout ? (
-              children
-            ) : (
-              <Layout>
-                {children}
-              </Layout>
-            )}
+            {isDifferentLayout ? children : <Layout>{children}</Layout>}
           </SearchProvider>
         </AuthProvider>
       </body>

@@ -36,7 +36,7 @@ interface Course {
 
 interface Category {
   categoryId: string;
-  categoryType: string;
+  name: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -73,15 +73,6 @@ const categoryNameMap: Record<string, string> = {
   MATH: 'Toán học',
 };
 
-// Define the reverse mapping from API category types to URL slugs
-const categoryToSlugMap: Record<string, string> = Object.entries(slugToCategoryMap).reduce(
-  (acc, [slug, category]) => {
-    acc[category] = slug;
-    return acc;
-  },
-  {} as Record<string, string>
-);
-
 export default function CategoryPage() {
   const params = useParams();
   const categorySlug = params?.categorySlug as string;
@@ -93,7 +84,7 @@ export default function CategoryPage() {
   const [totalCourses, setTotalCourses] = useState(0);
   const [sortBy, setSortBy] = useState('newest');
   const [error, setError] = useState<string | null>(null);
-
+  console.log('categories::', categories);
   // New filter states
   const [durationFilters, setDurationFilters] = useState({
     '0-1': false,
@@ -102,11 +93,6 @@ export default function CategoryPage() {
     '6-17': false,
     '17+': false,
   });
-  const [topicFilter, setTopicFilter] = useState('');
-  const [levelFilter, setLevelFilter] = useState('');
-  const [languageFilter, setLanguageFilter] = useState('');
-  const [priceFilter, setPriceFilter] = useState('');
-  const [featuresFilter, setFeaturesFilter] = useState('');
 
   // New rating filter state
   const [ratingFilter, setRatingFilter] = useState<string>('');
@@ -185,8 +171,7 @@ export default function CategoryPage() {
     const fetchCategories = async () => {
       try {
         const response = await api.get('categories');
-
-        setCategories(response.data.data.data || []);
+        setCategories(response.data.data.data.data || []);
         setError(null);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -217,7 +202,7 @@ export default function CategoryPage() {
 
       try {
         // Tìm categoryId dựa trên categoryType
-        const category = categories.find((cat: Category) => cat.categoryType === categoryType);
+        const category = categories.find((cat: Category) => cat.name === categoryType);
 
         if (!category) {
           console.error(`Cannot find category with type ${categoryType}`);
@@ -235,42 +220,45 @@ export default function CategoryPage() {
             limit: itemsPerPage,
           },
         });
+        console.log('find response:::', response);
 
         // Xử lý dữ liệu từ API
         let coursesData = [];
         let totalCoursesCount = 0;
 
-        if (response.data.data.courses && Array.isArray(response.data.data.courses)) {
-          coursesData = response.data.data.courses
+        if (response.data && response.data.data) {
+          // Dữ liệu trả về là mảng các object
+          coursesData = response.data.data
             .map((item: any) => {
               if (!item || !item.tbl_courses) return null;
 
-              // Format tbl_courses object
               return {
                 courseId: item.tbl_courses.courseId,
                 title: item.tbl_courses.title,
                 shortDescription: item.tbl_courses.description,
                 thumbnail: item.tbl_courses.thumbnail,
-                // Convert decimal objects to numbers
                 price:
                   typeof item.tbl_courses.price === 'object'
                     ? parseFloat(item.tbl_courses.price.toString())
                     : item.tbl_courses.price || 0,
+                discountPrice: item.tbl_courses.discountPrice,
                 rating:
                   typeof item.tbl_courses.rating === 'object'
                     ? parseFloat(item.tbl_courses.rating.toString())
                     : item.tbl_courses.rating || 0,
-                // Additional data - Sử dụng giá trị cố định hoặc từ API thay vì random
-                isBestSeller: item.tbl_courses.isBestSeller,
-                isRecommended: item.tbl_courses.isRecommended,
-                tbl_instructors: item.tbl_courses.tbl_instructors,
-                // Sử dụng giá trị cố định thay vì random
-                totalStudents: 100,
-                totalReviews: 5,
+                totalStudents: item.tbl_courses.totalStudents || 0,
+                totalReviews: item.tbl_courses.totalReviews || 0,
+                isBestSeller: item.tbl_courses.isBestSeller || false,
+                isRecommended: item.tbl_courses.isRecommended || false,
+                tbl_instructors: item.tbl_courses.tbl_instructors || null,
+                durationTime: item.tbl_courses.durationTime,
+                overview: item.tbl_courses.overview,
               };
             })
-            .filter(Boolean);
-          totalCoursesCount = response.data.data.total || coursesData.length;
+            .filter(Boolean); // Lọc bỏ các giá trị null
+
+          // Nếu API trả về tổng số khóa học
+          totalCoursesCount = response.data.total || coursesData.length;
         }
         // Apply sorting
         if (sortBy === 'newest') {

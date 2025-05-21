@@ -8,6 +8,9 @@ import { decodeJWT } from '@/utils/jwt';
 import toast from 'react-hot-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { checkCourseAccess } from '@/apis/courseAccessService';
+import { Course } from '@/types/courses';
+import { CourseService } from '@/apis/courseService';
+import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
 
 interface QuizAttempt {
   id: string;
@@ -104,9 +107,25 @@ export default function QuizPage() {
   const [quizMeta, setQuizMeta] = useState<{ timeLimit: number; title: string } | null>(null);
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
+  const [course, setCourse] = useState<Course | null>(null);
 
   const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
   const quizId = Array.isArray(params?.quizId) ? params?.quizId[0] : params?.quizId || '';
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const courseData = await CourseService.getCourseInDetail(courseId);
+        setCourse(courseData);
+      } catch (error) {
+        console.error('Error fetching course:', error);
+      }
+    };
+
+    if (courseId) {
+      fetchCourse();
+    }
+  }, [courseId]);
 
   // Kiểm tra quyền truy cập vào quiz
   useEffect(() => {
@@ -154,37 +173,58 @@ export default function QuizPage() {
       setError('Không tìm thấy thông tin bài quiz');
       return;
     }
+    // Chỉ lấy thông tin thời gian của quiz, không tải dữ liệu quiz
     getTimeQuiz();
-    loadQuizData();
+    // QUAN TRỌNG: Không gọi loadQuizData() ở đây nữa
   }, [params]);
-  // useEffect(() => {
-  //   if (!isStarted) {
-  //     getTimeQuiz();
-  //   }
-  // }, [params, isStarted]);
+
   const getTimeQuiz = async () => {
     try {
       const quizId = Array.isArray(params?.quizId) ? params?.quizId[0] : params?.quizId;
+      console.log('Gọi API lấy thời gian cho quizId:', quizId);
       const response = await QuizService.getTime(quizId || '');
-      console.log('Time limit response:', response); // Debug log
+      console.log('Time limit response chi tiết:', JSON.stringify(response, null, 2)); // Log chi tiết hơn
 
       // Lấy timeLimit từ cấu trúc response đúng
       const timeLimit = response?.data?.timeLimit;
       console.log('Extracted time limit:', timeLimit); // Debug log
 
-      if (!timeLimit || isNaN(Number(timeLimit))) {
+      // Chấp nhận timeLimit = 0 hoặc số dương
+      if (timeLimit === undefined || timeLimit === null || isNaN(Number(timeLimit))) {
         console.error('Invalid time limit:', timeLimit);
+        console.error('Cấu trúc response:', JSON.stringify(response, null, 2));
+        // Thử tìm timeLimit từ các vị trí khác trong response nếu có
+        const alternativeTimeLimit = response?.timeLimit || response?.data?.data?.timeLimit;
+        if (alternativeTimeLimit !== undefined && !isNaN(Number(alternativeTimeLimit))) {
+          console.log('Tìm thấy timeLimit ở vị trí khác:', alternativeTimeLimit);
+          setTimeLeft(Number(alternativeTimeLimit) * 60);
+          setQuizMeta({ timeLimit: Number(alternativeTimeLimit), title: response?.data?.title || '' });
+          return;
+        }
+        
+        // Nếu không tìm thấy, sử dụng giá trị mặc định
+        setTimeLeft(15 * 60); // 15 phút mặc định
+        setQuizMeta({ timeLimit: 15, title: response?.data?.title || '' });
         return;
       }
 
+      // Thời gian là 0 hoặc số dương đều hợp lệ
       const timeInSeconds = Number(timeLimit) * 60;
       console.log('Time in seconds:', timeInSeconds); // Debug log
 
       setTimeLeft(timeInSeconds);
-      setQuizMeta({ timeLimit: Number(timeLimit), title: '' });
+      setQuizMeta({ timeLimit: Number(timeLimit), title: response?.data?.title || '' });
     } catch (error) {
       console.error('Error getting time limit:', error);
-      setError('Không thể lấy thời gian làm bài');
+      // Log chi tiết hơn về lỗi
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      // Đặt giá trị mặc định cho timeLimit nếu không lấy được
+      setTimeLeft(15 * 60); // 15 phút
+      setQuizMeta({ timeLimit: 15, title: '' });
+      setError('Không thể lấy thời gian làm bài, đặt mặc định 15 phút');
     }
   };
 
@@ -255,14 +295,34 @@ export default function QuizPage() {
   };
 
   const startQuiz = async () => {
-    if (!quizMeta) return;
-    setIsStarted(true);
-    setTimeLeft(quizMeta.timeLimit * 60);
     try {
+      console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
+      console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
+      
+      // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
+      setIsStarted(true);
+      
+      // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
+      let timeLimit = 15;
+      
+      // Nếu có quizMeta và timeLimit là 0 hoặc số dương
+      if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
+        timeLimit = quizMeta.timeLimit;
+      }
+      
+      console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
+      setTimeLeft(timeLimit * 60);
+      
+      // Tải dữ liệu bài quiz
+      console.log('Bắt đầu tải dữ liệu quiz...');
       await loadQuizData();
+      console.log('Đã tải xong dữ liệu quiz');
     } catch (error: any) {
-      console.error('Error starting quiz:', error);
+      console.error('Lỗi khi bắt đầu quiz:', error);
       setError(error.response?.data?.message || 'Có lỗi xảy ra khi bắt đầu bài quiz');
+      
+      // Đặt lại trạng thái nếu có lỗi
+      setIsStarted(false);
     }
   };
 
@@ -391,46 +451,134 @@ export default function QuizPage() {
     );
   }
 
-  if (!quizData) {
+  // Kiểm tra nếu đang ở trạng thái loading ban đầu
+  if (!quizData && isStarted) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <div className="w-full max-w-2xl p-8 bg-white rounded-lg shadow-md">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
             <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6 mb-6"></div>
+            <div className="space-y-3">
+              <div className="h-6 bg-gray-200 rounded w-full"></div>
+              <div className="h-6 bg-gray-200 rounded w-full"></div>
+              <div className="h-6 bg-gray-200 rounded w-full"></div>
+              <div className="h-6 bg-gray-200 rounded w-full"></div>
+            </div>
           </div>
         </div>
+        <p className="mt-4 text-blue-600 font-medium">Đang tải bài quiz...</p>
       </div>
     );
   }
 
+  // Nếu chưa bắt đầu làm bài (chưa nhấn nút), hiển thị màn hình bắt đầu 
   if (!isStarted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-2xl p-8 bg-white rounded-lg shadow-md">
-          <h1 className="text-3xl font-bold mb-4">Quiz</h1>
-          <div className="mb-8 text-gray-600">
-            <p className="mb-4">Nhấn nút bên dưới để bắt đầu làm bài quiz.</p>
+      <div className="flex flex-col md:flex-row w-full">
+        <div className="w-full md:w-3/4 p-4">
+          <div className="bg-white rounded-lg shadow-md">
+            <div className="p-8">
+              <h1 className="text-3xl font-bold mb-4">Quiz: {quizMeta?.title || 'Bài kiểm tra'}</h1>
+              <div className="mb-8 text-gray-600">
+                <p className="mb-4">Nhấn nút bên dưới để bắt đầu làm bài quiz.</p>
+                {quizMeta?.timeLimit !== undefined && (
+                  <p className="text-sm text-gray-500">
+                    Thời gian làm bài: {quizMeta.timeLimit} phút
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log('Người dùng nhấn nút Bắt đầu làm bài');
+                  try {
+                    console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
+                    console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
+                    
+                    // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
+                    setIsStarted(true);
+                    
+                    // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
+                    let timeLimit = 15;
+                    
+                    // Nếu có quizMeta và timeLimit là 0 hoặc số dương
+                    if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
+                      timeLimit = quizMeta.timeLimit;
+                    }
+                    
+                    console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
+                    setTimeLeft(timeLimit * 60);
+                    
+                    // Tải dữ liệu bài quiz
+                    console.log('Bắt đầu tải dữ liệu quiz...');
+                    loadQuizData();
+                    console.log('Đã bắt đầu tải dữ liệu quiz');
+                  } catch (err) {
+                    console.error('Lỗi khi xử lý sự kiện click:', err);
+                    setIsStarted(false); // Reset trạng thái nếu có lỗi
+                  }
+                }}
+                className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-lg flex items-center justify-center gap-2"
+              >
+                <span>Bắt đầu làm bài</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-          <button
-            onClick={startQuiz}
-            className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-lg flex items-center justify-center gap-2"
-          >
-            <span>Bắt đầu làm bài</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+        </div>
+
+        {/* Sidebar với Module Navigation */}
+        <div className="w-full md:w-1/4 bg-gray-100 p-4">
+          <div className="bg-white shadow-md rounded-md overflow-hidden">
+            <div className="p-3 bg-gray-50 border-b">
+              <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
+              <p className="text-sm text-gray-600">
+                {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
+              </p>
+            </div>
+
+            <ModuleNavigation
+              courseId={courseId}
+              modules={course?.modules || []}
+              currentLessonId={quizId}
+            />
+          </div>
+
+          <div className="mt-4 bg-white shadow-md rounded-md p-4">
+            <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
+                {course?.tbl_instructors?.user?.avatar && (
+                  <img
+                    src={course.tbl_instructors.user.avatar}
+                    alt={course.tbl_instructors.user.fullName}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                )}
+              </div>
+              <div>
+                <p className="font-medium">{course?.tbl_instructors?.user?.fullName}</p>
+                <p className="text-sm text-gray-600">Giảng viên</p>
+              </div>
+            </div>
+            <button className="mt-3 w-full border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50">
+              Xem thông tin
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -474,85 +622,123 @@ export default function QuizPage() {
     );
   }
 
-  const currentQuestion = quizData.questions[currentQuestionIndex];
+  const currentQuestion = quizData?.questions[currentQuestionIndex];
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col md:flex-row w-full">
       {/* Main content */}
-      <div className="flex-1 p-6">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold">Part {currentQuestionIndex + 1}</h1>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-600">Thời gian làm bài:</p>
-                <p className="text-xl font-bold">{formatTime(timeLeft)}</p>
+      <div className="w-full md:w-3/4 p-4">
+        <div className="bg-white shadow-md rounded-md overflow-hidden">
+          <div className="p-4 border-b">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-bold">Câu hỏi {currentQuestionIndex + 1}</h1>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-sm text-gray-600">Thời gian còn lại:</p>
+                  <p className="text-xl font-bold">{formatTime(timeLeft)}</p>
+                </div>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className={`px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed`}
+                >
+                  {isSubmitting ? 'Đang nộp bài...' : 'NỘP BÀI'}
+                </button>
               </div>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className={`px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed`}
-              >
-                {isSubmitting ? 'Đang nộp bài...' : 'NỘP BÀI'}
-              </button>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="mb-6">
-            <p className="text-lg">
-              <span className="font-medium">{currentQuestionIndex + 1}. </span>
-              {currentQuestion.content}
-            </p>
-          </div>
+          <div className="p-6">
+            {currentQuestion ? (
+              <>
+                <div className="mb-6">
+                  <p className="text-lg">
+                    <span className="font-medium">{currentQuestionIndex + 1}. </span>
+                    {currentQuestion.content}
+                  </p>
+                </div>
 
-          <div className="space-y-4">
-            {currentQuestion.answers.map((answer) => (
-              <label
-                key={`${currentQuestion.id}-${answer.id}`}
-                className="flex items-start gap-3 p-3 border rounded hover:bg-gray-50 cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  name={`question-${currentQuestion.id}`}
-                  checked={selectedAnswers[currentQuestion.id] === answer.id}
-                  onChange={() => handleAnswer(currentQuestion.id, answer.id)}
-                  className="mt-1"
-                />
-                <span>{answer.content}</span>
-              </label>
-            ))}
+                <div className="space-y-4">
+                  {currentQuestion.answers.map((answer) => (
+                    <label
+                      key={`${currentQuestion.id}-${answer.id}`}
+                      className="flex items-start gap-3 p-3 border rounded hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={`question-${currentQuestion.id}`}
+                        checked={selectedAnswers[currentQuestion.id] === answer.id}
+                        onChange={() => handleAnswer(currentQuestion.id, answer.id)}
+                        className="mt-1"
+                      />
+                      <span>{answer.content}</span>
+                    </label>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Không tìm thấy câu hỏi</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Sidebar */}
-      <div className="w-64 p-6 border-l">
-        <div className="mb-4">
-          <h2 className="font-medium mb-2">Part {currentQuestionIndex + 1}</h2>
-          <div className="grid grid-cols-5 gap-2">
-            {quizData.questions.map((question, index) => (
-              <button
-                key={index}
-                onClick={() => handleQuestionChange(index)}
-                className={`p-2 text-center border rounded ${
-                  currentQuestionIndex === index
-                    ? 'bg-blue-500 text-white'
-                    : selectedAnswers[question.id]
-                      ? 'bg-gray-100'
-                      : ''
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
+      <div className="w-full md:w-1/4 bg-gray-100 p-4">
+        <div className="bg-white shadow-md rounded-md overflow-hidden">
+          <div className="p-3 bg-gray-50 border-b">
+            <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
+            <p className="text-sm text-gray-600">
+              {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
+            </p>
           </div>
+
+          <ModuleNavigation
+            courseId={courseId}
+            modules={course?.modules || []}
+            currentLessonId={quizId}
+          />
         </div>
 
-        <div className="text-sm text-gray-600">
-          <p className="text-red-500 mb-2">Khôi phục/lưu bài làm</p>
-          <p>Chú ý: bạn có thể click vào số thứ tự câu hỏi trong bài để đánh dấu review</p>
+        <div className="mt-4 bg-white shadow-md rounded-md p-4">
+          <div className="mb-4">
+            <h2 className="font-medium mb-2">Danh sách câu hỏi</h2>
+            {quizData && quizData.questions && quizData.questions.length > 0 ? (
+              <div className="grid grid-cols-5 gap-2">
+                {quizData.questions.map((question, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleQuestionChange(index)}
+                    className={`p-2 text-center border rounded ${
+                      currentQuestionIndex === index
+                        ? 'bg-blue-500 text-white'
+                        : selectedAnswers[question.id]
+                          ? 'bg-gray-100'
+                          : ''
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">Đang tải danh sách câu hỏi...</p>
+            )}
+          </div>
+
+          <div className="text-sm text-gray-600">
+            <p className="mb-2">Chú thích:</p>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-4 h-4 bg-blue-500 rounded"></div>
+              <span>Câu hỏi hiện tại</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gray-100 border rounded"></div>
+              <span>Đã trả lời</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

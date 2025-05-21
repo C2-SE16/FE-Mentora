@@ -58,24 +58,31 @@ const Login = () => {
 
       console.log('[Login] Attempting to login with:', { email: data.email });
 
+
       const response = await api.post('auth/login', loginData);
       console.log('[Login] Login response:', response.data ? 'success' : 'failed');
+
 
       if (response.data) {
         const accessToken = response.data.data.accessToken;
         console.log('[Login] Token received, storing in localStorage and cookies');
 
+
         // Lưu token vào cả hai vị trí trong localStorage
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('token', accessToken);
+
 
         // Lưu token vào cookies
         Cookies.set('accessToken', accessToken, { path: '/' });
         Cookies.set('token', accessToken, { path: '/' });
 
+
         console.log('[Login] Token saved to localStorage and cookies');
 
+
         setSuccess(true);
+
 
         // Cập nhật thông tin người dùng
         await refetchUser();
@@ -85,7 +92,15 @@ const Login = () => {
 
         // Chuyển hướng người dùng đến trang họ đang cố truy cập trước đó hoặc trang chủ
         console.log('[Login] Redirecting to:', redirectTo);
-        router.push(redirectTo);
+
+        // Thêm logic để reload trang sau khi chuyển hướng
+        if (redirectTo === '/') {
+          // Nếu chuyển về trang chủ, sử dụng window.location để đảm bảo trang được tải lại
+          window.location.href = redirectTo;
+        } else {
+          // Với các trang khác, sử dụng router.push như bình thường
+          router.push(redirectTo);
+        }
       }
     } catch (err) {
       console.error('[Login] Login error:', err);

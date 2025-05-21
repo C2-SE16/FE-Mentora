@@ -61,7 +61,7 @@ export default function ModuleNavigation({
                     {curriculum.lectures?.map((lecture) => (
                       <Link
                         key={lecture.lectureId}
-                        href={`/course/${courseId}/lecture/${lecture.lectureId}`}
+                        href={`/courses/${courseId}/curricula/lecture/${lecture.lectureId}`}
                         className={`block px-4 py-2 text-sm rounded-md ${
                           lecture.lectureId === currentLessonId
                             ? 'bg-blue-50 text-blue-600'
@@ -97,10 +97,11 @@ export default function ModuleNavigation({
                         </div>
                       </Link>
                     ))}
+                    
                     {curriculum.quizzes?.map((quiz) => (
                       <Link
                         key={quiz.quizId}
-                        href={`/course/${courseId}/quiz/${quiz.quizId}`}
+                        href={`/courses/${courseId}/curricula/quiz/${quiz.quizId}`}
                         className={`block px-4 py-2 text-sm rounded-md ${
                           quiz.quizId === currentLessonId
                             ? 'bg-blue-50 text-blue-600'

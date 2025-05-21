@@ -266,7 +266,7 @@ export const CustomerPaymentService = {
    * @param payload Thông tin khởi tạo thanh toán
    */
   async initPayment(payload: InitPaymentRequest): Promise<InitPaymentResponse> {
-    const maxRetries = 2;
+    const maxRetries = 3;
     let retries = 0;
     
     while (retries <= maxRetries) {
@@ -283,8 +283,9 @@ export const CustomerPaymentService = {
           retries++;
           console.log(`Thử lại khởi tạo thanh toán, lần ${retries + 1}...`);
           
-          // Đợi thêm 1 giây trước khi thử lại
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Tăng thời gian đợi theo cấp số nhân (2 giây, 4 giây, 8 giây)
+          const delayTime = 2000 * Math.pow(2, retries - 1);
+          await new Promise(resolve => setTimeout(resolve, delayTime));
           continue;
         }
         

@@ -8,7 +8,7 @@ import { Lecture } from '@/types/lecture';
 import DiscussingTab from './components/DiscussingTab';
 import { ProgressService } from '@/apis/progressService';
 import { decodeJWT } from '@/utils/jwt';
-import { formatDuration } from '@/utils/time';
+import { formatDuration, formatDurationToMinutesSeconds } from '@/utils/time';
 
 interface LectureContentProps {
   lecture?: Lecture;
@@ -56,7 +56,7 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
               <p className="text-sm text-gray-500 mt-1">
                 Thời lượng:{' '}
                 {lecture?.duration
-                  ? `${Math.floor(lecture?.duration / 60)}:${(lecture?.duration % 60).toString().padStart(2, '0')}`
+                  ? formatDurationToMinutesSeconds(lecture.duration)
                   : 'N/A'}
               </p>
             </div>

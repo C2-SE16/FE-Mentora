@@ -58,24 +58,31 @@ const Login = () => {
 
       console.log('[Login] Attempting to login with:', { email: data.email });
 
+
       const response = await api.post('auth/login', loginData);
       console.log('[Login] Login response:', response.data ? 'success' : 'failed');
+
 
       if (response.data) {
         const accessToken = response.data.data.accessToken;
         console.log('[Login] Token received, storing in localStorage and cookies');
 
+
         // Lưu token vào cả hai vị trí trong localStorage
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('token', accessToken);
+
 
         // Lưu token vào cookies
         Cookies.set('accessToken', accessToken, { path: '/' });
         Cookies.set('token', accessToken, { path: '/' });
 
+
         console.log('[Login] Token saved to localStorage and cookies');
 
+
         setSuccess(true);
+
 
         // Cập nhật thông tin người dùng
         await refetchUser();

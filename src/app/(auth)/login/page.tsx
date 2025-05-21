@@ -57,29 +57,32 @@ const Login = () => {
       };
 
       console.log('[Login] Attempting to login with:', { email: data.email });
-      
+
       const response = await api.post('auth/login', loginData);
       console.log('[Login] Login response:', response.data ? 'success' : 'failed');
-      
+
       if (response.data) {
         const accessToken = response.data.data.accessToken;
         console.log('[Login] Token received, storing in localStorage and cookies');
-        
+
         // Lưu token vào cả hai vị trí trong localStorage
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('token', accessToken);
-        
+
         // Lưu token vào cookies
         Cookies.set('accessToken', accessToken, { path: '/' });
         Cookies.set('token', accessToken, { path: '/' });
-        
+
         console.log('[Login] Token saved to localStorage and cookies');
-        
+
         setSuccess(true);
-        
+
         // Cập nhật thông tin người dùng
         await refetchUser();
-        
+
+        // Phát ra sự kiện đăng nhập thành công
+        window.dispatchEvent(new Event('user-login-success'));
+
         // Chuyển hướng người dùng đến trang họ đang cố truy cập trước đó hoặc trang chủ
         console.log('[Login] Redirecting to:', redirectTo);
         router.push(redirectTo);
@@ -120,7 +123,7 @@ const Login = () => {
             <h1 className="text-3xl font-bold mb-8 text-center">Đăng nhập</h1>
 
             {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{error}</div>}
-            
+
             {redirectTo !== '/' && (
               <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-md">
                 Vui lòng đăng nhập để tiếp tục truy cập nội dung.

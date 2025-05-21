@@ -65,6 +65,20 @@ const Header = () => {
     };
   }, [refetchUser]);
 
+  useEffect(() => {
+    // Lắng nghe sự kiện đăng nhập thành công
+    const handleLoginSuccess = () => {
+      console.log('Login success event detected in Header');
+      refetchUser();
+    };
+
+    window.addEventListener('user-login-success', handleLoginSuccess);
+
+    return () => {
+      window.removeEventListener('user-login-success', handleLoginSuccess);
+    };
+  }, [refetchUser]);
+
   const debounce = <T extends (...args: any[]) => any>(func: T, delay: number) => {
     let timer: NodeJS.Timeout;
     return function (this: any, ...args: Parameters<T>) {
@@ -770,7 +784,7 @@ const Header = () => {
                           <div className="flex items-center gap-4">
                             <button
                               onClick={handleLogout}
-                              className="bg-[#1dbe70] text-white px-4 py-2 rounded-lg hover:bg-[#18a862] transition-colors"
+                              className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                             >
                               Đăng xuất
                             </button>

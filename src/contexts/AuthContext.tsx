@@ -16,16 +16,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       console.log('[AuthContext] Fetching user data...');
-      
+
       // Kiểm tra cả hai loại token
       const accessToken = localStorage.getItem('accessToken');
       const token = localStorage.getItem('token');
-      
-      console.log('[AuthContext] Token check:', { 
-        accessTokenExists: !!accessToken, 
-        tokenExists: !!token
+
+      console.log('[AuthContext] Token check:', {
+        accessTokenExists: !!accessToken,
+        tokenExists: !!token,
       });
-      
+
       // Nếu không có token nào, người dùng chưa đăng nhập
       if (!accessToken && !token) {
         console.log('[AuthContext] No token found, user is not logged in');
@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         return;
       }
-      
+
       // Ưu tiên sử dụng accessToken
       const activeToken = accessToken || token;
       console.log('[AuthContext] Using active token type:', accessToken ? 'accessToken' : 'token');
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('[AuthContext] Copying accessToken to token in localStorage');
           localStorage.setItem('token', accessToken);
         }
-        
+
         // Cập nhật cookies
         console.log('[AuthContext] Synchronizing tokens to cookies');
         Cookies.set('accessToken', activeToken, { path: '/' });
@@ -79,13 +79,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (err: any) {
       console.error('[AuthContext] Error fetching user data:', err);
-      
+
       // Kiểm tra lỗi 401 để xử lý token hết hạn
       if (err.response && err.response.status === 401) {
         console.log('[AuthContext] Token expired or invalid, logging out');
         logout();
       }
-      
+
       setError(err.message || 'Có lỗi xảy ra khi lấy thông tin người dùng');
       setIsLoggedIn(false);
     } finally {
@@ -97,27 +97,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('[AuthContext] Logging out, removing tokens from localStorage and cookies');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('token');
-    
+
     // Xóa cookies
     Cookies.remove('accessToken', { path: '/' });
     Cookies.remove('token', { path: '/' });
-    
+
     setIsLoggedIn(false);
     setUser(null);
   };
 
   useEffect(() => {
     fetchUser();
-    
+
     // Kiểm tra token mỗi khi có thay đổi ở localStorage
     const handleStorageChange = () => {
       console.log('[AuthContext] Storage changed, re-checking auth state');
       fetchUser();
     };
-    
+
+    // Lắng nghe sự kiện đăng nhập thành công
+    const handleLoginSuccess = () => {
+      console.log('[AuthContext] Login success event detected');
+      fetchUser();
+    };
+
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('user-login-success', handleLoginSuccess);
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('user-login-success', handleLoginSuccess);
     };
   }, []);
 

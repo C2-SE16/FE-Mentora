@@ -84,7 +84,7 @@ export default function CategoryPage() {
   const [totalCourses, setTotalCourses] = useState(0);
   const [sortBy, setSortBy] = useState('newest');
   const [error, setError] = useState<string | null>(null);
-  console.log('categories::', categories);
+
   // New filter states
   const [durationFilters, setDurationFilters] = useState({
     '0-1': false,
@@ -139,13 +139,6 @@ export default function CategoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8); // Mặc định: 8 items/trang
 
-  // Tính toán các course hiển thị trên trang hiện tại
-  const indexOfLastCourse = currentPage * itemsPerPage;
-  const indexOfFirstCourse = indexOfLastCourse - itemsPerPage;
-  const currentCourses = useMemo(() => {
-    return courses.slice(indexOfFirstCourse, indexOfLastCourse);
-  }, [courses, indexOfFirstCourse, indexOfLastCourse]);
-
   // Thêm state để quản lý riêng trạng thái loading của pagination
   const [pageChanging, setPageChanging] = useState(false);
 
@@ -167,6 +160,25 @@ export default function CategoryPage() {
     }
   };
 
+  // Thay đổi hàm setRatingFilter thành handleRatingFilterChange
+  const handleRatingFilterChange = (rating: string) => {
+    // Nếu đang chọn rating đó rồi, bỏ chọn (toggle)
+    if (ratingFilter === rating) {
+      setRatingFilter('');
+    } else {
+      setRatingFilter(rating);
+    }
+    // Reset về trang 1 khi thay đổi filter
+    setCurrentPage(1);
+  };
+
+  const [ratingCounts, setRatingCounts] = useState({
+    '4.5': 0,
+    '4.0': 0,
+    '3.5': 0,
+    '3.0': 0,
+  });
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -182,6 +194,15 @@ export default function CategoryPage() {
 
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (categories.length > 0 && categoryType) {
+      const category = categories.find((cat: Category) => cat.name === categoryType);
+      if (category) {
+        fetchRatingCounts(category.categoryId);
+      }
+    }
+  }, [categories, categoryType]);
 
   useEffect(() => {
     // Đảm bảo categories đã được load và categoryType hợp lệ
@@ -214,21 +235,28 @@ export default function CategoryPage() {
         }
 
         // Gọi API getCoursesByCategory với pagination
+        const queryParams = {
+          page: currentPage,
+          limit: itemsPerPage,
+          minRating: ratingFilter,
+        };
+
+        // Thêm minRating vào query params nếu có
+        if (ratingFilter) {
+          queryParams.minRating = ratingFilter;
+        }
+
         const response = await api.get(`categories/${category.categoryId}/courses`, {
-          params: {
-            page: currentPage,
-            limit: itemsPerPage,
-          },
+          params: queryParams,
         });
-        console.log('find response:::', response);
 
         // Xử lý dữ liệu từ API
         let coursesData = [];
         let totalCoursesCount = 0;
 
-        if (response.data && response.data.data) {
+        if (response.data && response.data.data.data) {
           // Dữ liệu trả về là mảng các object
-          coursesData = response.data.data
+          coursesData = response.data.data.data
             .map((item: any) => {
               if (!item || !item.tbl_courses) return null;
 
@@ -258,7 +286,7 @@ export default function CategoryPage() {
             .filter(Boolean); // Lọc bỏ các giá trị null
 
           // Nếu API trả về tổng số khóa học
-          totalCoursesCount = response.data.total || coursesData.length;
+          totalCoursesCount = response.data.data.total;
         }
         // Apply sorting
         if (sortBy === 'newest') {
@@ -293,9 +321,30 @@ export default function CategoryPage() {
     };
 
     fetchCourses();
-  }, [categories, categoryType, sortBy, currentPage, itemsPerPage]);
+  }, [categories, categoryType, sortBy, currentPage, itemsPerPage, ratingFilter]);
 
   const coursesForCarousel = useMemo(() => mockCourses, []);
+
+  // Thêm hàm để lấy số lượng khóa học theo rating
+  const fetchRatingCounts = async (categoryId: string) => {
+    try {
+      // Gọi API để lấy tất cả khóa học (không phân trang) để đếm số lượng
+      const response = await api.get(`categories/${categoryId}/rating-counts`);
+      if (response.data && response.data.data.counts) {
+        const courses = response.data.data.counts;
+        const counts = {
+          '4.5': courses['4.5'],
+          '4.0': courses['4.0'],
+          '3.5': courses['3.5'],
+          '3.0': courses['3.0'],
+        };
+
+        setRatingCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error fetching rating counts:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -413,12 +462,34 @@ export default function CategoryPage() {
           <div className="w-full md:w-1/4">
             {/* Rating Filter - New Section */}
             <div className="mb-6">
-              <div
-                className="flex justify-between items-center mb-4 cursor-pointer"
-                onClick={() => toggleSection('ratings')}
-              >
-                <h3 className="font-medium text-lg">Xếp hạng</h3>
-                <button type="button">
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center">
+                  <h3 className="font-medium text-lg">Xếp hạng</h3>
+                  {ratingFilter && (
+                    <span className="ml-2 text-xs font-medium text-white bg-[#1dbe70] px-2 py-1 rounded-full flex items-center">
+                      {ratingFilter}+
+                      <button
+                        onClick={() => setRatingFilter('')}
+                        className="ml-1 hover:text-gray-200"
+                        title="Xóa bộ lọc"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3 w-3"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </span>
+                  )}
+                </div>
+                <button type="button" onClick={() => toggleSection('ratings')}>
                   <svg
                     className={`w-5 h-5 transition-transform ${expandedSections.ratings ? 'rotate-180' : ''}`}
                     viewBox="0 0 20 20"
@@ -433,6 +504,31 @@ export default function CategoryPage() {
                 </button>
               </div>
 
+              {ratingFilter && (
+                <div className="mb-3">
+                  <button
+                    onClick={() => setRatingFilter('')}
+                    className="text-sm text-[#1dbe70] hover:underline flex items-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    Xóa bộ lọc
+                  </button>
+                </div>
+              )}
+
               {expandedSections.ratings && (
                 <div className="space-y-3">
                   <div className="flex items-center">
@@ -440,11 +536,11 @@ export default function CategoryPage() {
                       type="radio"
                       id="rating-4.5"
                       name="rating-filter"
-                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70]"
+                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70] cursor-pointer"
                       checked={ratingFilter === '4.5'}
-                      onChange={() => setRatingFilter('4.5')}
+                      onChange={() => handleRatingFilterChange('4.5')}
                     />
-                    <label htmlFor="rating-4.5" className="ml-2 flex items-center">
+                    <label htmlFor="rating-4.5" className="ml-2 flex items-center cursor-pointer">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <svg
@@ -457,7 +553,9 @@ export default function CategoryPage() {
                           </svg>
                         ))}
                       </div>
-                      <span className="ml-2 text-gray-700">Từ 4.5 trở lên (10,000)</span>
+                      <span className="ml-2 text-gray-700">
+                        Từ 4.5 trở lên ({ratingCounts['4.5']})
+                      </span>
                     </label>
                   </div>
 
@@ -466,11 +564,11 @@ export default function CategoryPage() {
                       type="radio"
                       id="rating-4.0"
                       name="rating-filter"
-                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70]"
+                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70] cursor-pointer"
                       checked={ratingFilter === '4.0'}
-                      onChange={() => setRatingFilter('4.0')}
+                      onChange={() => handleRatingFilterChange('4.0')}
                     />
-                    <label htmlFor="rating-4.0" className="ml-2 flex items-center">
+                    <label htmlFor="rating-4.0" className="ml-2 flex items-center cursor-pointer">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <svg
@@ -483,7 +581,9 @@ export default function CategoryPage() {
                           </svg>
                         ))}
                       </div>
-                      <span className="ml-2 text-gray-700">Từ 4.0 trở lên (10,000)</span>
+                      <span className="ml-2 text-gray-700">
+                        Từ 4.0 trở lên ({ratingCounts['4.0']})
+                      </span>
                     </label>
                   </div>
 
@@ -492,11 +592,11 @@ export default function CategoryPage() {
                       type="radio"
                       id="rating-3.5"
                       name="rating-filter"
-                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70]"
+                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70] cursor-pointer"
                       checked={ratingFilter === '3.5'}
-                      onChange={() => setRatingFilter('3.5')}
+                      onChange={() => handleRatingFilterChange('3.5')}
                     />
-                    <label htmlFor="rating-3.5" className="ml-2 flex items-center">
+                    <label htmlFor="rating-3.5" className="ml-2 flex items-center cursor-pointer">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <svg
@@ -515,7 +615,9 @@ export default function CategoryPage() {
                           </svg>
                         ))}
                       </div>
-                      <span className="ml-2 text-gray-700">Từ 3.5 trở lên (10,000)</span>
+                      <span className="ml-2 text-gray-700">
+                        Từ 3.5 trở lên ({ratingCounts['3.5']})
+                      </span>
                     </label>
                   </div>
 
@@ -524,11 +626,11 @@ export default function CategoryPage() {
                       type="radio"
                       id="rating-3.0"
                       name="rating-filter"
-                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70]"
+                      className="h-4 w-4 text-[#1dbe70] border-gray-300 focus:ring-[#1dbe70] cursor-pointer"
                       checked={ratingFilter === '3.0'}
-                      onChange={() => setRatingFilter('3.0')}
+                      onChange={() => handleRatingFilterChange('3.0')}
                     />
-                    <label htmlFor="rating-3.0" className="ml-2 flex items-center">
+                    <label htmlFor="rating-3.0" className="ml-2 flex items-center cursor-pointer">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <svg
@@ -541,7 +643,9 @@ export default function CategoryPage() {
                           </svg>
                         ))}
                       </div>
-                      <span className="ml-2 text-gray-700">Từ 3.0 trở lên (10,000)</span>
+                      <span className="ml-2 text-gray-700">
+                        Từ 3.0 trở lên ({ratingCounts['3.0']})
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -919,7 +1023,7 @@ export default function CategoryPage() {
                         .fill(0)
                         .map((_, index) => <SkeletonCourseCard key={`skeleton-${index}`} />)
                     : // Hiển thị các khóa học thực tế
-                      currentCourses.map((course) => (
+                      courses.map((course) => (
                         <div
                           key={course.courseId}
                           className="group relative transition-all duration-300"
@@ -1111,14 +1215,16 @@ export default function CategoryPage() {
                       ))}
 
                   {/* Pagination Component */}
-                  <div className="mt-8 transition-none">
-                    <Pagination
-                      currentPage={currentPage}
-                      totalItems={totalCourses} // Sử dụng totalCourses từ API thay vì courses.length
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={handlePageChange}
-                    />
-                  </div>
+                  {totalCourses > itemsPerPage && (
+                    <div className="mt-8 transition-none">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalItems={totalCourses}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>

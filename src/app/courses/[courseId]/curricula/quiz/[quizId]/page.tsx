@@ -8,9 +8,6 @@ import { decodeJWT } from '@/utils/jwt';
 import toast from 'react-hot-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { checkCourseAccess } from '@/apis/courseAccessService';
-import Link from 'next/link';
-import CourseProgressService, { CourseProgressResponse } from '@/apis/courseProgressService';
-import { useAuth } from '@/contexts/AuthContext';
 import { Course } from '@/types/courses';
 import { CourseService } from '@/apis/courseService';
 import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
@@ -544,7 +541,6 @@ export default function QuizPage() {
             </div>
           </div>
         </div>
-        <p className="mt-4 text-blue-600 font-medium">Đang tải bài quiz...</p>
         <p className="mt-4 text-blue-600 font-medium">Đang tải bài quiz...</p>
       </div>
     );

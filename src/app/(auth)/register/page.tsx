@@ -58,7 +58,7 @@ const Register = () => {
         localStorage.setItem('accessToken', response.data.data.accessToken);
         setSuccess(true);
         setTimeout(() => {
-          router.push('/');
+          window.location.href = '/';
         }, 1000);
       }
     } catch (err) {

@@ -8,6 +8,7 @@ import { Lecture } from '@/types/lecture';
 import DiscussingTab from './components/DiscussingTab';
 import { ProgressService } from '@/apis/progressService';
 import { decodeJWT } from '@/utils/jwt';
+import { formatDuration } from '@/utils/time';
 
 interface LectureContentProps {
   lecture?: Lecture;
@@ -122,9 +123,12 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
 
       <div className="w-full md:w-1/4 bg-gray-100 p-4">
         <div className="bg-white shadow-md rounded-md overflow-hidden">
-          <div className="p-3 bg-gray-800 text-white">
-            <h3 className="font-medium">Nội dung module</h3>
-            <p className="text-sm mt-1">{}</p>
+          <div className="p-3 bg-gray-50 border-b">
+            <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
+            <p className="text-sm text-gray-600">
+              {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng -{' '}
+              {course?.durationTime ? formatDuration(course.durationTime) : 'N/A'}
+            </p>
           </div>
 
           <ModuleNavigation

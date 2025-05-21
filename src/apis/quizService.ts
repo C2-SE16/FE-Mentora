@@ -156,18 +156,25 @@ export const QuizService = {
   },
   async getTime(quizId: string): Promise<any> {
     try {
+      console.log('Đang gọi API lấy thời gian cho quizId:', quizId);
       const response: any = await axiosInstance.get(`/quizzes/${quizId}/time`);
-      console.log('Get result response:', response);
+      console.log('Get time API raw response:', response);
+      console.log('Get time API data:', JSON.stringify(response?.data, null, 2));
 
-      if (response.status === 200) {
-        const result = response.data;
-
-        return result;
+      // Nếu không có response data, hoặc không có timeLimit, trả về giá trị mặc định
+      if (!response?.data) {
+        console.warn('Không có dữ liệu trả về từ API, sử dụng thời gian mặc định');
+        return { data: { timeLimit: 15, title: 'Bài quiz' } };
       }
-      throw new Error('Lỗi khi lấy kết quả');
+
+      return response.data;
     } catch (error: any) {
-      console.error('Lỗi khi lấy kết quả:', error);
-      throw error;
+      console.error('Lỗi khi lấy thời gian quiz:', error);
+      console.error('Error response:', error.response);
+      console.error('Error message:', error.message);
+      
+      // Trả về giá trị mặc định khi có lỗi
+      return { data: { timeLimit: 15, title: 'Bài quiz' } };
     }
   },
 };

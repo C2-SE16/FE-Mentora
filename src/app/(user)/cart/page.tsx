@@ -221,14 +221,26 @@ export default function CartPage() {
       
       // Hiển thị thông báo lỗi chi tiết hơn
       if (error.code === 'ECONNABORTED') {
-        toast.error('Quá thời gian kết nối tới cổng thanh toán. Vui lòng thử lại sau hoặc chọn phương thức thanh toán khác.');
+        toast.error('Quá thời gian kết nối tới cổng thanh toán. Máy chủ có thể đang bận, vui lòng thử lại sau.');
+        
+        // Hiển thị thêm hướng dẫn hoặc lựa chọn
+        setTimeout(() => {
+          if (confirm('Bạn có muốn thử lại việc thanh toán không?')) {
+            handleCheckout(); // Thử lại thanh toán
+          }
+        }, 1500);
       } else if (!error.response) {
         toast.error('Không thể kết nối đến cổng thanh toán. Vui lòng kiểm tra kết nối mạng và thử lại.');
+        
+        // Kiểm tra kết nối mạng
+        if (!navigator.onLine) {
+          toast.error('Bạn đang offline. Vui lòng kiểm tra kết nối internet và thử lại.');
+        }
       } else if (error.response?.status === 401) {
         toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại để tiếp tục thanh toán');
         router.push('/login');
       } else {
-        toast.error('Đã xảy ra lỗi khi xử lý thanh toán. Vui lòng thử lại sau.');
+        toast.error(`Đã xảy ra lỗi khi xử lý thanh toán: ${error.message || 'Lỗi không xác định'}. Vui lòng thử lại sau.`);
       }
     } finally {
       setProcessingPayment(false);

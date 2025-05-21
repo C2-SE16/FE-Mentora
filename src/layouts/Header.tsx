@@ -164,7 +164,8 @@ const Header = () => {
     // Dispatch custom event để thông báo logout cho các component khác
     window.dispatchEvent(new Event('user-logout'));
 
-    router.push('/');
+    // Sử dụng window.location.href thay vì router.push để đảm bảo trang được tải lại
+    window.location.href = '/';
   };
 
   const handleTeachingClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {

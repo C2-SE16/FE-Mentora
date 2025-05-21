@@ -204,14 +204,6 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
             ))}
           </Accordion>
         )}
-        
-        {!isLoading && !hasAccess() && (
-          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-center text-yellow-800">
-              Bạn cần đăng ký khóa học này để xem toàn bộ nội dung. Các bài giảng miễn phí vẫn có thể truy cập.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

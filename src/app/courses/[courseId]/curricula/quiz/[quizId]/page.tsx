@@ -8,12 +8,12 @@ import { decodeJWT } from '@/utils/jwt';
 import toast from 'react-hot-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { checkCourseAccess } from '@/apis/courseAccessService';
-import { Course } from '@/types/courses';
-import { CourseService } from '@/apis/courseService';
-import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
 import Link from 'next/link';
 import CourseProgressService, { CourseProgressResponse } from '@/apis/courseProgressService';
 import { useAuth } from '@/contexts/AuthContext';
+import { Course } from '@/types/courses';
+import { CourseService } from '@/apis/courseService';
+import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
 
 interface QuizAttempt {
   id: string;
@@ -214,7 +214,6 @@ export default function QuizPage() {
           return;
         }
 
-
         // Nếu không tìm thấy, sử dụng giá trị mặc định
         setTimeLeft(15 * 60); // 15 phút mặc định
         setQuizMeta({ timeLimit: 15, title: response?.data?.title || '' });
@@ -312,24 +311,19 @@ export default function QuizPage() {
       console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
       console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
 
-
       // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
       setIsStarted(true);
 
-
       // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
       let timeLimit = 15;
-
 
       // Nếu có quizMeta và timeLimit là 0 hoặc số dương
       if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
         timeLimit = quizMeta.timeLimit;
       }
 
-
       console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
       setTimeLeft(timeLimit * 60);
-
 
       // Tải dữ liệu bài quiz
       console.log('Bắt đầu tải dữ liệu quiz...');
@@ -542,11 +536,12 @@ export default function QuizPage() {
           </div>
         </div>
         <p className="mt-4 text-blue-600 font-medium">Đang tải bài quiz...</p>
+        <p className="mt-4 text-blue-600 font-medium">Đang tải bài quiz...</p>
       </div>
     );
   }
 
-  // Nếu chưa bắt đầu làm bài (chưa nhấn nút), hiển thị màn hình bắt đầu
+  // Nếu chưa bắt đầu làm bài (chưa nhấn nút), hiển thị màn hình bắt đầu 
   if (!isStarted) {
     return (
       <div className="flex flex-col md:flex-row w-full">
@@ -571,24 +566,19 @@ export default function QuizPage() {
                     console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
                     console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
 
-
                     // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
                     setIsStarted(true);
 
-
                     // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
                     let timeLimit = 15;
-
 
                     // Nếu có quizMeta và timeLimit là 0 hoặc số dương
                     if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
                       timeLimit = quizMeta.timeLimit;
                     }
 
-
                     console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
                     setTimeLeft(timeLimit * 60);
-
 
                     // Tải dữ liệu bài quiz
                     console.log('Bắt đầu tải dữ liệu quiz...');
@@ -625,9 +615,7 @@ export default function QuizPage() {
             <div className="p-3 bg-gray-50 border-b">
               <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
               <p className="text-sm text-gray-600">
-                {course?.modules?.length} phần -{' '}
-                {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)}{' '}
-                bài giảng
+                {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
               </p>
             </div>
 
@@ -642,16 +630,16 @@ export default function QuizPage() {
             <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                {course?.instructor?.user?.avatar && (
+                {course?.tbl_instructors?.user?.avatar && (
                   <img
-                    src={course.instructor.user.avatar}
-                    alt={course.instructor.user.fullName}
+                    src={course.tbl_instructors.user.avatar}
+                    alt={course.tbl_instructors.user.fullName}
                     className="w-full h-full rounded-full object-cover"
                   />
                 )}
               </div>
               <div>
-                <p className="font-medium">{course?.instructor?.user?.fullName}</p>
+                <p className="font-medium">{course?.tbl_instructors?.user?.fullName}</p>
                 <p className="text-sm text-gray-600">Giảng viên</p>
               </div>
             </div>
@@ -860,9 +848,7 @@ export default function QuizPage() {
           <div className="p-3 bg-gray-50 border-b">
             <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
             <p className="text-sm text-gray-600">
-              {course?.modules?.length} phần -{' '}
-              {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)}{' '}
-              bài giảng
+              {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
             </p>
           </div>
 

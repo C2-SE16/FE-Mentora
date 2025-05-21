@@ -11,8 +11,18 @@ import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { decodeJWT } from '@/utils/jwt';
 import Image from 'next/image';
-import { checkCourseAccess, CourseAccessResponse } from '@/apis/courseAccessService';
+import { checkCourseAccess, CourseAccessResponse, ensureString } from '@/apis/courseAccessService';
+import type { Cart as CartType } from '@/types/cart';
 import type { Course } from '@/types/courses';
+
+const contents = [
+  '  37 hours on-demand video',
+  '8 articles',
+  '3 downloadable resources',
+  'Access on mobile and TV',
+  'Full lifetime access',
+  'Certificate of completion',
+];
 
 interface CourseSidebarProps {
   course?: Course;
@@ -28,6 +38,15 @@ interface CourseSidebarProps {
   lectures?: number;
   articles?: number;
   downloadableResources?: number;
+}
+
+interface CartItem {
+  courseId: string;
+  // thêm các trường khác nếu cần
+}
+
+interface Cart {
+  items: CartItem[];
 }
 
 const CourseSidebar: React.FC<CourseSidebarProps> = ({
@@ -127,7 +146,23 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
         return;
       }
 
+      if (courseAccess?.isInstructor) {
+        router.push(`/instructor/course/${courseId}/manage/goals`);
+        return;
+      }
+
+      if (courseAccess?.isEnrolled) {
+        router.push(`/courses/${courseId}`);
+        return;
+      }
+
+      if (isInCart) {
+        router.push('/cart');
+        return;
+      }
+
       await cartService.addToCart(courseId);
+      setIsInCart(true);
       setIsInCart(true);
       toast.success('Đã thêm khóa học vào giỏ hàng thành công!');
     } catch (error: any) {

@@ -10,6 +10,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import ProgressService from '@/apis/progressService';
 import { checkCourseAccess, CourseAccessResponse, ApiResponse } from '@/apis/courseAccessService';
+import { formatDurationToMinutesSeconds } from '@/utils/time';
 
 interface CourseSectionMenuProps {
   modules?: Module[];
@@ -46,7 +47,7 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
             setAccessStatus(accessResponse.data);
           }
         }
-        
+
         // Lấy tiến độ học tập của người dùng
         const progress = await ProgressService.getUserProgress();
         console.log('progress: ', progress);
@@ -69,15 +70,15 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
       (progress) => progress.curriculumId === curriculumId && progress.status === 'COMPLETED'
     );
   };
-  
+
   // Kiểm tra xem người dùng có quyền truy cập vào bài giảng hay không
   const hasAccess = (isFree: boolean | null | undefined = false): boolean => {
     // Nếu bài giảng miễn phí, cho phép truy cập
     if (isFree === true) return true;
-    
+
     // Nếu chưa có dữ liệu về quyền truy cập, đang tải hoặc có lỗi, mặc định không cho truy cập
     if (!accessStatus) return false;
-    
+
     // Cho phép truy cập nếu người dùng đã đăng ký khóa học hoặc là instructor
     return accessStatus.hasAccess || accessStatus.isEnrolled || accessStatus.isInstructor;
   };
@@ -122,7 +123,7 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                                 ) : (
                                   <Lock className="w-4 h-4 text-red-600" />
                                 )}
-                                
+
                                 {hasAccess(lecture.isFree) ? (
                                   <Link
                                     href={`/courses/${courseId}/curricula/lecture/${lecture.lectureId}`}
@@ -133,12 +134,12 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                                 ) : (
                                   <span className="text-gray-700">{lecture.title}</span>
                                 )}
-                                
+
                                 {lecture.isFree === true && (
                                   <span className="text-green-600 text-xs ml-2">Miễn phí</span>
                                 )}
                               </div>
-                              <span className="text-black">{lecture.duration} phút</span>
+                              <span className="text-black">{formatDurationToMinutesSeconds(lecture.duration)}</span>
                             </div>
                           ))}
 
@@ -163,7 +164,7 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                                 ) : (
                                   <Lock className="w-4 h-4 text-red-600" />
                                 )}
-                                
+
                                 {hasAccess() ? (
                                   <Link
                                     href={`/courses/${courseId}/curricula/quiz/${quiz.quizId}`}

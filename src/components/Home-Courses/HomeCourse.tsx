@@ -127,7 +127,7 @@ const HomeCourse = () => {
 
   return (
     <div className="mt-5">
-      <h1 className="text-3xl font-bold">Nên học cái gì tiếp theo</h1>
+      <h1 className="text-3xl font-bold">Nên học gì tiếp theo</h1>
       <h2 className="text-2xl mt-2 font-medium mb-5">Đề xuất cho bạn</h2>
       {/* Course list 1 */}
       <CourseList

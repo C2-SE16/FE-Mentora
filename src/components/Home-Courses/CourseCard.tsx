@@ -244,7 +244,7 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
             <span className="text-[#595c73] text-sm">({course.reviews || 0})</span>
           </div>
           <div className="flex gap-x-4 text-sm sm:text-base mt-1">
-            <span className="">₫{course.currentPrice || course.price}</span>
+            <span className="">{course.currentPrice || course.price}</span>
             <span className="line-through">{course.originalPrice}</span>
           </div>
           {course.isBestSeller && (

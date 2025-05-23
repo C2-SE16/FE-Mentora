@@ -84,7 +84,7 @@ export default function CategoryPage() {
   const [totalCourses, setTotalCourses] = useState(0);
   const [sortBy, setSortBy] = useState('newest');
   const [error, setError] = useState<string | null>(null);
-
+  console.log('courses:::', courses);
   // New filter states
   const [durationFilters, setDurationFilters] = useState({
     '0-1': false,
@@ -356,7 +356,7 @@ export default function CategoryPage() {
               ? `Khóa học ${categoryNameMap[categoryType]}`
               : 'Tất cả khóa học'}
           </h1>
-          {totalCourses > 0 && <p className="text-gray-600 mt-2">{totalCourses} khóa học có sẵn</p>}
+          {/* {totalCourses > 0 && <p className="text-gray-600 mt-2">{totalCourses} khóa học có sẵn</p>} */}
         </div>
 
         {/* Add new section for recommended courses carousel */}
@@ -1035,12 +1035,15 @@ export default function CategoryPage() {
                             {/* Course Image */}
                             <div className="w-full md:w-64 h-48 md:h-auto relative">
                               {course.thumbnail ? (
-                                <Image
-                                  src={course.thumbnail}
-                                  alt={course.title || 'Khóa học'}
-                                  fill
-                                  className="object-cover"
-                                />
+                                <div className="relative w-full h-full">
+                                  <Image
+                                    src={course.thumbnail}
+                                    alt={course.title || 'Khóa học'}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-30"></div>
+                                </div>
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <span className="text-gray-400">Không có ảnh</span>
@@ -1072,7 +1075,7 @@ export default function CategoryPage() {
                               )}
 
                               <p className="text-sm text-gray-700 mb-1">
-                                {course.tbl_instructors?.instructorName || 'Bùi Minh Kha'}
+                                {course.tbl_instructors?.instructorName || 'John Doe'}
                               </p>
 
                               <div className="flex items-center mb-2">

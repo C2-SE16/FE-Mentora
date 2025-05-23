@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -23,11 +22,10 @@ const Spinner = () => (
 );
 
 const Register = () => {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-
+  console.log('success:::', success);
   const {
     register,
     handleSubmit,
@@ -53,13 +51,13 @@ const Register = () => {
       };
 
       const response = await api.post('/auth/register', registerData);
-      console.log('response', response);
-      if (response.data) {
+
+      if (response.data.statusCode === 201) {
         localStorage.setItem('accessToken', response.data.data.accessToken);
         setSuccess(true);
         setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
+          window.location.href = '/login';
+        }, 2500);
       }
     } catch (err) {
       console.error('Register error:', err);
@@ -82,7 +80,7 @@ const Register = () => {
           <div className="hidden md:block md:w-1/2 lg:w-1/2">
             <div className="flex items-center justify-center h-full p-8">
               <Image
-                src="/authentication-picture.png"
+                src="/authentication.png"
                 alt="Registration"
                 width={600}
                 height={600}
@@ -113,7 +111,7 @@ const Register = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>Đăng kí thành công</span>
+                  <span>Vui lòng kiểm tra email để xác thực tài khoản</span>
                 </div>
               )}
 

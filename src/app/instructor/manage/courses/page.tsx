@@ -54,7 +54,7 @@ export default function InstructorCourses() {
     fetchCourses();
   }, []);
 
-  const filteredCourses = courses.filter(course => 
+  const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -99,20 +99,20 @@ export default function InstructorCourses() {
   // Chuyển sang dùng background color thay vì placeholder image
   const getCategoryColor = (categoryName: string) => {
     const colors: Record<string, string> = {
-      'INFORMATION_TECHNOLOGY': 'bg-blue-500',
-      'MARKETING': 'bg-green-500',
-      'BUSINESS': 'bg-yellow-500',
-      'DESIGN': 'bg-purple-500',
-      'PHOTOGRAPHY': 'bg-pink-500',
-      'MUSIC': 'bg-indigo-500',
-      'HEALTH': 'bg-red-500'
+      INFORMATION_TECHNOLOGY: 'bg-blue-500',
+      MARKETING: 'bg-green-500',
+      BUSINESS: 'bg-yellow-500',
+      DESIGN: 'bg-purple-500',
+      PHOTOGRAPHY: 'bg-pink-500',
+      MUSIC: 'bg-indigo-500',
+      HEALTH: 'bg-red-500',
     };
-    
+
     // Lấy category đầu tiên nếu có
     if (categoryName) {
       return colors[categoryName] || 'bg-gray-400';
     }
-    
+
     return 'bg-gray-400';
   };
 
@@ -124,13 +124,24 @@ export default function InstructorCourses() {
             <input
               type="text"
               placeholder="Tìm kiếm khóa học của bạn"
-              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2cbb78]"
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
             <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           </div>
@@ -138,10 +149,10 @@ export default function InstructorCourses() {
 
         <div className="flex gap-4 w-full sm:w-auto">
           <div className="w-full sm:w-40">
-            <select 
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            <select
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2cbb78]"
               value={sortOption}
-              onChange={e => setSortOption(e.target.value)}
+              onChange={(e) => setSortOption(e.target.value)}
             >
               <option value="Newest">Mới nhất</option>
               <option value="Oldest">Cũ nhất</option>
@@ -149,33 +160,36 @@ export default function InstructorCourses() {
               <option value="Z-A">Z-A</option>
             </select>
           </div>
-          <Link 
-            href="/courses/create/step1" 
-            className="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition duration-200"
+          <Link
+            href="/courses/create/step1"
+            className="flex items-center justify-center bg-[#2cbb78] hover:bg-[#54c78f] text-white py-2 px-4 rounded-md transition duration-200"
           >
             Tạo khóa học mới
           </Link>
         </div>
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
         </div>
       ) : error ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
           <strong className="font-bold">Lỗi! </strong>
           <span className="block sm:inline">{error}</span>
           <p className="mt-2">Vui lòng thử lại sau hoặc liên hệ với quản trị viên.</p>
           <div className="mt-4">
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               className="mr-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
             >
               Thử lại
             </button>
-            <Link 
-              href="/courses/create/step1" 
+            <Link
+              href="/courses/create/step1"
               className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
             >
               Tạo khóa học mới
@@ -184,14 +198,24 @@ export default function InstructorCourses() {
         </div>
       ) : sortedCourses.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-8 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+            />
           </svg>
           <h3 className="mt-2 text-lg font-medium text-gray-900">Không có khóa học nào</h3>
           <p className="mt-1 text-gray-500">Bắt đầu bằng cách tạo khóa học mới của bạn.</p>
           <div className="mt-6">
-            <Link 
-              href="/courses/create/step1" 
+            <Link
+              href="/courses/create/step1"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               Tạo khóa học mới
@@ -212,7 +236,9 @@ export default function InstructorCourses() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className={`w-full h-full flex items-center justify-center ${getCategoryColor(course.categories[0]?.name)}`}>
+                    <div
+                      className={`w-full h-full flex items-center justify-center ${getCategoryColor(course.categories[0]?.name)}`}
+                    >
                       <span className="text-white text-2xl font-bold">
                         {course.title.charAt(0).toUpperCase()}
                       </span>
@@ -225,34 +251,58 @@ export default function InstructorCourses() {
                       {course.title}
                     </h2>
                   </Link>
-                  <p className="text-gray-600 mt-2 line-clamp-2">{course.description || 'Chưa có mô tả'}</p>
+                  <p className="text-gray-600 mt-2 line-clamp-2">
+                    {course.description || 'Chưa có mô tả'}
+                  </p>
                   <div className="mt-4 flex items-center text-sm text-gray-500">
                     <span className="font-medium">Trạng thái: </span>
-                    <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
-                      course.approved === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                      course.approved === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-purple-100 text-purple-800'
-                    }`}>
-                      {course.approved === 'APPROVED' ? 'Đã phê duyệt' :
-                       course.approved === 'PENDING' ? 'Đang chờ duyệt' : 'Bản nháp'}
+                    <span
+                      className={`ml-2 px-2 py-1 rounded-full text-xs ${
+                        course.approved === 'APPROVED'
+                          ? 'bg-green-100 text-green-800'
+                          : course.approved === 'PENDING'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-purple-100 text-purple-800'
+                      }`}
+                    >
+                      {course.approved === 'APPROVED'
+                        ? 'Đã phê duyệt'
+                        : course.approved === 'PENDING'
+                          ? 'Đang chờ duyệt'
+                          : 'Bản nháp'}
                     </span>
                   </div>
                   <div className="mt-1 flex items-center text-sm text-gray-500">
                     <span className="font-medium">Giá: </span>
-                    <span className="ml-2">{course.price > 0 ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(course.price) : 'Miễn phí'}</span>
+                    <span className="ml-2">
+                      {course.price > 0
+                        ? new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND',
+                          }).format(course.price)
+                        : 'Miễn phí'}
+                    </span>
                   </div>
                   <div className="mt-1 flex items-center text-sm text-gray-500">
                     <span className="font-medium">Đánh giá: </span>
                     <span className="ml-2 flex items-center">
-                      <svg className="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="w-4 h-4 text-yellow-400 mr-1"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
-                      {course.rating > 0 ? course.rating.toFixed(1) : 'N/A'} ({course.reviewCount} đánh giá)
+                      {course.rating > 0 ? course.rating.toFixed(1) : 'N/A'} ({course.reviewCount}{' '}
+                      đánh giá)
                     </span>
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    {course.categories.map(category => (
-                      <span key={category.categoryId} className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                    {course.categories.map((category) => (
+                      <span
+                        key={category.categoryId}
+                        className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
+                      >
                         {category.name}
                       </span>
                     ))}
@@ -260,7 +310,9 @@ export default function InstructorCourses() {
                   <div className="mt-4">
                     <span className="text-sm font-medium text-gray-700">Hoàn thành khóa học</span>
                     <div className="mt-1 w-full bg-gray-200 rounded-full h-2.5">
-                      <div className={`h-2.5 rounded-full ${getProgressBarColor(course.approved)} ${getProgressBarWidth(course.approved)}`}></div>
+                      <div
+                        className={`h-2.5 rounded-full ${getProgressBarColor(course.approved)} ${getProgressBarWidth(course.approved)}`}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -271,4 +323,4 @@ export default function InstructorCourses() {
       )}
     </div>
   );
-} 
+}

@@ -8,6 +8,31 @@ import api from '@/apis/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { InstructorService } from '@/apis/instructorService';
 import SubHeader from '@/components/Header/SubHeader';
+import axiosInstance from '@/lib/api/axios';
+
+// Định nghĩa interface cho dữ liệu từ API
+interface Instructor {
+  instructorId: string;
+  instructorName: string;
+  profilePicture?: string;
+}
+
+interface Course {
+  courseId: string;
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  price?: number;
+  rating?: number;
+  instructor?: Instructor;
+}
+
+interface Enrollment {
+  enrollmentId: string;
+  enrolledAt: string;
+  course: Course;
+  progress?: number;
+}
 
 const Header = () => {
   const { user, isLoggedIn, isLoading, logout, refetchUser } = useAuth();
@@ -19,6 +44,8 @@ const Header = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const [enrolledCourses, setEnrolledCourses] = useState<Enrollment[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
 
   const checkActiveSiteWideVoucher = async () => {
     try {
@@ -159,6 +186,7 @@ const Header = () => {
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('token');
     logout();
 
     // Dispatch custom event để thông báo logout cho các component khác
@@ -225,6 +253,43 @@ const Header = () => {
     if (!activeSiteWideVoucher || !activeSiteWideVoucher.endDate) return 'Không xác định';
     return calculateTimeRemaining(activeSiteWideVoucher.endDate);
   }, [activeSiteWideVoucher]);
+
+  // Lấy danh sách khóa học đã đăng ký cho dropdown
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      if (!isLoggedIn) return;
+
+      try {
+        setLoadingCourses(true);
+        const response = await axiosInstance.get('enrollments/my-courses');
+
+        if (response.data.data.success) {
+          // Lấy và giới hạn 4 khóa học gần nhất
+          const enrollmentsWithProgress = response.data.data.data
+            .slice(0, 4) // Chỉ lấy 4 khóa học đầu tiên
+            .map((enrollment: any) => ({
+              enrollmentId: enrollment.enrollmentId,
+              enrolledAt: enrollment.enrolledAt,
+              course: {
+                courseId: enrollment.course.courseId,
+                title: enrollment.course.title,
+                thumbnail: enrollment.course.thumbnail,
+                instructor: enrollment.course.instructor,
+              },
+              progress: Math.floor(Math.random() * 100), // Giả lập progress, thay thế bằng dữ liệu thực khi có
+            }));
+
+          setEnrolledCourses(enrollmentsWithProgress);
+        }
+      } catch (error) {
+        console.error('Lỗi khi tải khóa học đã đăng ký:', error);
+      } finally {
+        setLoadingCourses(false);
+      }
+    };
+
+    fetchEnrolledCourses();
+  }, [isLoggedIn]);
 
   return (
     <>
@@ -587,7 +652,7 @@ const Header = () => {
                           <Link
                             href="#!"
                             onClick={handleTeachingClick}
-                            className="flex justify-center items-center tracking-[1px] border border-black text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-[#1dbe70] hover:bg-[#18a862] transition-colors"
+                            className="flex justify-center items-center tracking-[1px] border border-[#1dbe70] text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-[#1dbe70] hover:bg-[#18a862] transition-colors"
                           >
                             Bắt đầu
                           </Link>
@@ -596,28 +661,84 @@ const Header = () => {
                     </div>
                   </li>
                   <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
-                    <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                      Khoá học của tôi
-                    </span>
-                    <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
-                      <div className="bg-white min-w-[300px] p-5 shadow-custom rounded-md">
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate nisi,
-                          repellendus deleniti.
-                        </p>
-                        <div>
+                    <Link href="/my-course/learning">
+                      <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
+                        Khoá học của tôi
+                      </span>
+                      <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
+                        <div className="bg-white min-w-[300px] p-4 shadow-custom rounded-md">
+                          <div className="divide-y divide-gray-100">
+                            {loadingCourses ? (
+                              // Hiển thị skeleton loading khi đang tải
+                              Array(4)
+                                .fill(0)
+                                .map((_, index) => (
+                                  <div key={index} className="py-2 animate-pulse">
+                                    <div className="flex items-center gap-3">
+                                      <div className="h-12 w-12 flex-shrink-0 bg-gray-200 rounded"></div>
+                                      <div className="flex-1">
+                                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                        <div className="h-2 bg-gray-200 rounded w-1/2"></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))
+                            ) : enrolledCourses.length > 0 ? (
+                              // Hiển thị danh sách khóa học từ API
+                              enrolledCourses.map((enrollment) => (
+                                <div key={enrollment.enrollmentId} className="py-2">
+                                  <div className="flex items-center gap-3">
+                                    <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-100">
+                                      <Image
+                                        src={enrollment.course.thumbnail || ''}
+                                        alt={enrollment.course.title}
+                                        width={48}
+                                        height={48}
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                    <div className="flex-1 text-left">
+                                      <h4 className="text-sm font-medium line-clamp-1">
+                                        {enrollment.course.title}
+                                      </h4>
+                                      {enrollment.progress && enrollment.progress > 0 ? (
+                                        <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                                          <div
+                                            className="h-1.5 rounded-full bg-[#1dbe70]"
+                                            style={{ width: `${enrollment.progress}%` }}
+                                          ></div>
+                                        </div>
+                                      ) : (
+                                        <p className="text-xs text-[#1dbe70] font-medium">
+                                          Bắt đầu học
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              // Hiển thị thông báo khi không có khóa học
+                              <div className="py-4 text-center">
+                                <p className="text-gray-500 text-sm">
+                                  Bạn chưa đăng ký khóa học nào
+                                </p>
+                              </div>
+                            )}
+                          </div>
+
                           <Link
-                            href="#!"
-                            className="flex justify-center items-center tracking-[1px] border border-black text-white font-normal text-sm m-[3px] min-w-[80px] h-[40px] bg-black"
+                            href="/my-course/learning"
+                            className="mt-3 flex w-full justify-center items-center py-2 px-4 bg-[#1dbe70] text-white text-sm font-medium rounded hover:bg-[#18a862] transition-colors"
                           >
-                            Thử ngay
+                            Chuyển đến Quá trình học tập của tôi
                           </Link>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </li>
                   <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                    <Link href="/favorite-list">
+                    <Link href="/my-course/favorite-list">
                       <Image
                         src="/heart.svg"
                         alt="heart"

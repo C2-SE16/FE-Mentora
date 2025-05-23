@@ -58,31 +58,24 @@ const Login = () => {
 
       console.log('[Login] Attempting to login with:', { email: data.email });
 
-
       const response = await api.post('auth/login', loginData);
       console.log('[Login] Login response:', response.data ? 'success' : 'failed');
-
 
       if (response.data) {
         const accessToken = response.data.data.accessToken;
         console.log('[Login] Token received, storing in localStorage and cookies');
 
-
         // Lưu token vào cả hai vị trí trong localStorage
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('token', accessToken);
-
 
         // Lưu token vào cookies
         Cookies.set('accessToken', accessToken, { path: '/' });
         Cookies.set('token', accessToken, { path: '/' });
 
-
         console.log('[Login] Token saved to localStorage and cookies');
 
-
         setSuccess(true);
-
 
         // Cập nhật thông tin người dùng
         await refetchUser();
@@ -122,7 +115,7 @@ const Login = () => {
         <div className="hidden md:block md:w-1/2 lg:w-1/2">
           <div className="flex items-center justify-center h-full p-8">
             <Image
-              src="/authentication-picture.png"
+              src="/authentication.png"
               alt="Login"
               width={600}
               height={600}
@@ -216,7 +209,7 @@ const Login = () => {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <div className="mt-4 flex justify-center">
+            {/* <div className="mt-4 flex justify-center">
               <button
                 className="flex items-center justify-center p-2 border border-gray-300 rounded-md hover:bg-gray-50"
                 onClick={() => console.log('Google login')}
@@ -229,7 +222,7 @@ const Login = () => {
                   className="w-10 h-10"
                 />
               </button>
-            </div>
+            </div> */}
 
             <div className="mt-6 text-center text-sm text-gray-600">
               <p>

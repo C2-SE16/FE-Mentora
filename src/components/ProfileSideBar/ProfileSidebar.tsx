@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function ProfileSidebar() {
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
-
+  console.log('user::', user);
   const isActive = (path: string) => {
     return pathname === path;
   };

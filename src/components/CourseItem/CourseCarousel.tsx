@@ -24,6 +24,7 @@ interface Course {
   tbl_instructors?: Instructor;
   categoryType?: string;
   level?: string;
+  instructor?: Instructor;
 }
 
 // Tách carousel thành component riêng để tránh re-render khi các filter thay đổi
@@ -61,7 +62,9 @@ export const CourseCarousel = dynamic(
                           {course.title}
                         </h3>
                         <p className="text-sm text-gray-500 mb-1">
-                          {course.tbl_instructors?.instructorName || 'Bùi Minh Kha'}
+                          {course.tbl_instructors?.instructorName ||
+                            course.instructor?.instructorName ||
+                            'Bùi Minh Kha'}
                         </p>
                         <div className="flex items-center mb-1">
                           <span className="text-[#e59819] font-medium mr-1">

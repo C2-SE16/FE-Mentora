@@ -10,11 +10,10 @@ const SubHeader = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const categoriesContainerRef = useRef<HTMLDivElement>(null);
-  
+
   const fetchCategories = async () => {
     try {
       const response = await api.get('categories');
-      
 
       // Kiểm tra cấu trúc dữ liệu trả về
       if (response.data.data.data.data && response.data.data) {
@@ -118,10 +117,10 @@ const SubHeader = () => {
             categories.map((category: any) => (
               <Link
                 key={category.categoryId}
-                href={`/categories/${category.name.toLowerCase()}`}
+                href={`/categories/${category.name?.toLowerCase() || ''}`}
                 className="whitespace-nowrap text-base font-normal py-1 px-2 transition-colors duration-200 hover:text-[#1dbe70] text-gray-700 flex-shrink-0"
               >
-                {getCategoryDisplayName(category.name)}
+                {getCategoryDisplayName(category.name || '')}
               </Link>
             ))
           ) : (

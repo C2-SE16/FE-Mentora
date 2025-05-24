@@ -10,20 +10,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 // Define the form validation schema
 const formSchema = z.object({
-  code: z.string().min(6, 'Code must be at least 6 characters'),
+  code: z.string().min(6, 'Mã phải có ít nhất 6 ký tự'),
   description: z.string().optional(),
   discountType: z.enum(['Percentage', 'Fixed']),
-  discountValue: z.coerce.number().positive('Discount must be positive'),
+  discountValue: z.coerce.number().positive('Giá trị giảm giá phải là số dương'),
   maxDiscount: z.coerce.number().optional(),
   startDate: z.date({
-    required_error: 'Start date is required',
+    required_error: 'Ngày bắt đầu là bắt buộc',
   }),
   endDate: z
     .date({
-      required_error: 'End date is required',
+      required_error: 'Ngày kết thúc là bắt buộc',
     })
     .refine((date) => date > new Date(), {
-      message: 'End date must be in the future',
+      message: 'Ngày kết thúc phải trong tương lai',
     }),
   maxUsage: z.coerce.number().int().optional(),
   isActive: z.boolean().default(true),
@@ -73,14 +73,14 @@ const PromotionsPage = () => {
       const response = await axiosInstance.post('voucher/create-voucher', payload);
 
       if (response.data.data.success) {
-        toast.success('Voucher created successfully!');
+        toast.success('Tạo mã giảm giá thành công!');
         form.reset();
       } else {
-        toast.error('Failed to create voucher.');
+        toast.error('Không thể tạo mã giảm giá.');
       }
     } catch (error: any) {
-      console.error('Error creating voucher:', error);
-      toast.error(error.response?.data?.message || 'An error occurred while creating the voucher');
+      console.error('Lỗi khi tạo mã giảm giá:', error);
+      toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi tạo mã giảm giá');
     } finally {
       setIsLoading(false);
     }
@@ -88,20 +88,20 @@ const PromotionsPage = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Course Promotions</h1>
+      <h1 className="text-2xl font-bold mb-6">Khuyến Mãi Khóa Học</h1>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold">Create Discount Voucher</h2>
+          <h2 className="text-xl font-semibold">Tạo Mã Giảm Giá</h2>
           <p className="text-gray-600 text-sm mt-1">
-            Create a voucher for this course to offer discounts to your students
+            Tạo mã giảm giá cho khóa học này để dành cho học viên của bạn
           </p>
         </div>
         <div className="p-6">
           <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-6">
             <div className="flex items-end gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium mb-1">Voucher Code</label>
+                <label className="block text-sm font-medium mb-1">Mã Giảm Giá</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border rounded-md"
@@ -109,7 +109,7 @@ const PromotionsPage = () => {
                   {...form.register('code')}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Enter a unique code (minimum 6 characters, uppercase)
+                  Nhập mã duy nhất (tối thiểu 6 ký tự, chữ in hoa)
                 </p>
                 {form.formState.errors.code && (
                   <p className="text-red-500 text-xs mt-1">{form.formState.errors.code.message}</p>
@@ -120,38 +120,38 @@ const PromotionsPage = () => {
                 className="px-4 py-2 border rounded-md mb-6"
                 onClick={generateVoucherCode}
               >
-                Generate Code
+                Tạo Mã
               </button>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label className="block text-sm font-medium mb-1">Mô Tả</label>
               <textarea
                 className="w-full px-3 py-2 border rounded-md"
-                placeholder="Special discount for..."
+                placeholder="Giảm giá đặc biệt cho..."
                 rows={3}
                 {...form.register('description')}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Provide a brief description for this voucher
+                Cung cấp mô tả ngắn gọn cho mã giảm giá này
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium mb-1">Discount Type</label>
+                <label className="block text-sm font-medium mb-1">Loại Giảm Giá</label>
                 <select
                   className="w-full px-3 py-2 border rounded-md"
                   {...form.register('discountType')}
                 >
-                  <option value="Percentage">Percentage (%)</option>
-                  <option value="Fixed">Fixed Amount</option>
+                  <option value="Percentage">Phần Trăm (%)</option>
+                  <option value="Fixed">Số Tiền Cố Định</option>
                 </select>
-                <p className="text-xs text-gray-500 mt-1">Choose percentage or fixed amount</p>
+                <p className="text-xs text-gray-500 mt-1">Chọn phần trăm hoặc số tiền cố định</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Discount Value</label>
+                <label className="block text-sm font-medium mb-1">Giá Trị Giảm Giá</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 border rounded-md"
@@ -160,8 +160,8 @@ const PromotionsPage = () => {
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {form.watch('discountType') === 'Percentage'
-                    ? 'Enter percentage (1-100)'
-                    : 'Enter fixed amount'}
+                    ? 'Nhập phần trăm (1-100)'
+                    : 'Nhập số tiền cố định'}
                 </p>
                 {form.formState.errors.discountValue && (
                   <p className="text-red-500 text-xs mt-1">
@@ -173,9 +173,7 @@ const PromotionsPage = () => {
 
             {form.watch('discountType') === 'Percentage' && (
               <div>
-                <label className="block text-sm font-medium mb-1">
-                  Maximum Discount (Optional)
-                </label>
+                <label className="block text-sm font-medium mb-1">Giảm Giá Tối Đa (Tùy chọn)</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 border rounded-md"
@@ -183,14 +181,14 @@ const PromotionsPage = () => {
                   {...form.register('maxDiscount', { valueAsNumber: true })}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Maximum amount to discount (leave empty for no limit)
+                  Số tiền giảm giá tối đa (để trống nếu không giới hạn)
                 </p>
               </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium mb-1">Start Date</label>
+                <label className="block text-sm font-medium mb-1">Ngày Bắt Đầu</label>
                 <input
                   type="date"
                   className="w-full px-3 py-2 border rounded-md"
@@ -207,7 +205,7 @@ const PromotionsPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">End Date</label>
+                <label className="block text-sm font-medium mb-1">Ngày Kết Thúc</label>
                 <input
                   type="date"
                   className="w-full px-3 py-2 border rounded-md"
@@ -229,7 +227,9 @@ const PromotionsPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Maximum Usages (Optional)</label>
+              <label className="block text-sm font-medium mb-1">
+                Số Lần Sử Dụng Tối Đa (Tùy chọn)
+              </label>
               <input
                 type="number"
                 className="w-full px-3 py-2 border rounded-md"
@@ -237,14 +237,14 @@ const PromotionsPage = () => {
                 {...form.register('maxUsage', { valueAsNumber: true })}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Maximum number of times this voucher can be used (leave empty for unlimited)
+                Số lần tối đa mã này có thể được sử dụng (để trống nếu không giới hạn)
               </p>
             </div>
 
             <div className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div>
-                <label className="block text-base font-medium">Active Status</label>
-                <p className="text-xs text-gray-500">Activate or deactivate this voucher</p>
+                <label className="block text-base font-medium">Trạng Thái</label>
+                <p className="text-xs text-gray-500">Kích hoạt hoặc vô hiệu hóa mã giảm giá này</p>
               </div>
               <div className="flex items-center">
                 <input
@@ -261,7 +261,7 @@ const PromotionsPage = () => {
               className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating Voucher...' : 'Create Voucher'}
+              {isLoading ? 'Đang Tạo Mã...' : 'Tạo Mã Giảm Giá'}
             </button>
           </form>
         </div>

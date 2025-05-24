@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CategoryService from '@/apis/categoryService';
-import { Category, CategoryType, categoryTypeToVietnamese } from '@/types/categories';
+// import { Category, CategoryType, categoryTypeToVietnamese } from '@/types/categories';
 import { toast } from 'react-hot-toast';
+import { Category } from '@/types/categories';
 
 export default function Step2() {
   const router = useRouter();
@@ -22,11 +23,10 @@ export default function Step2() {
       try {
         setIsLoading(true);
         const data = await CategoryService.getAllCategories();
+        console.log('data categories' + data);
         setCategories(data);
         setError(null);
       } catch (err) {
-        console.error('Lỗi khi lấy danh sách categories:', err);
-        setError('Không thể tải danh sách thể loại. Vui lòng thử lại sau.');
         console.error('Lỗi khi lấy danh sách categories:', err);
         setError('Không thể tải danh sách thể loại. Vui lòng thử lại sau.');
       } finally {
@@ -45,11 +45,11 @@ export default function Step2() {
     fetchCategories();
   }, []);
 
-  const handleCategorySelect = (categoryId: string, categoryType: CategoryType) => {
+  const handleCategorySelect = (categoryId: string, categoryName: string | null) => {
     setSelectedCategoryId(categoryId);
-    setSelectedCategory(categoryTypeToVietnamese[categoryType]);
+    setSelectedCategory(categoryName);
     setIsDropdownOpen(false);
-    setValidationError(null); // Xóa lỗi khi người dùng đã chọn category
+    setValidationError(null);
   };
 
   return (
@@ -139,14 +139,12 @@ export default function Step2() {
                     <li
                       key={category.categoryId}
                       onClick={() =>
-                        category.categoryType &&
-                        handleCategorySelect(category.categoryId, category.categoryType)
+                        category.categoryId &&
+                        handleCategorySelect(category.categoryId, category.name)
                       }
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     >
-                      {category.categoryType
-                        ? categoryTypeToVietnamese[category.categoryType]
-                        : 'Không xác định'}
+                      {category.name ? category.name : 'Không xác định'}
                     </li>
                   ))}
                 </ul>

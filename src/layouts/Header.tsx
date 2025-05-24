@@ -46,7 +46,7 @@ const Header = () => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [enrolledCourses, setEnrolledCourses] = useState<Enrollment[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(false);
-
+  const [categories, setCategories] = useState<any[]>([]);
   const checkActiveSiteWideVoucher = async () => {
     try {
       const response = await api.get('voucher/active-site-voucher');
@@ -59,7 +59,34 @@ const Header = () => {
       console.log('Error checking active voucher', error);
     }
   };
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('categories');
 
+      // Kiểm tra cấu trúc dữ liệu trả về
+      if (response.data.data.data.data && response.data.data) {
+        // Kiểm tra xem data.data có phải là mảng không
+        const categoriesData = response.data.data.data.data || response.data.data;
+
+        if (Array.isArray(categoriesData)) {
+          setCategories(categoriesData);
+        } else {
+          console.error('Dữ liệu categories không phải mảng:', categoriesData);
+          setCategories([]);
+        }
+      } else {
+        console.error('Cấu trúc dữ liệu không hợp lệ:', response.data);
+        setCategories([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh mục:', error);
+      setCategories([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
   useEffect(() => {
     checkActiveSiteWideVoucher();
   }, []);
@@ -450,107 +477,32 @@ const Header = () => {
                 Danh mục
               </span>
               <div className="absolute left-0 top-6 md:left-[-20px] pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full md:w-auto">
-                <ul className="bg-white border border-gray-200 shadow-custom w-full rounded-md">
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex justify-between items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
+                <ul className="bg-white border border-gray-200 shadow-custom w-full rounded-md overflow-hidden">
+                  {categories.map((category) => (
+                    <li
+                      key={category.categoryId}
+                      className="border-b border-gray-100 last:border-b-0"
                     >
-                      <span>CNTT</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                      <Link
+                        href={`/categories/${category.name}`}
+                        className="flex justify-between items-center px-5 py-3 min-w-[250px] tracking-[0.5px] hover:text-[#1dbe70] hover:bg-[#c5f3dd] transition-all duration-200"
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex justify-between items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
-                    >
-                      <span>Kế toán</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex justify-between items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
-                    >
-                      <span>Thể thao</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex justify-between items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
-                    >
-                      <span>Thiết kế đồ họa</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#!"
-                      className="flex justify-between items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd]"
-                    >
-                      <span>AI</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </Link>
-                  </li>
+                        <span>{category.name}</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 transform group-hover:translate-x-1 transition-transform"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>

@@ -139,7 +139,9 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                                   <span className="text-green-600 text-xs ml-2">Miễn phí</span>
                                 )}
                               </div>
-                              <span className="text-black">{formatDurationToMinutesSeconds(lecture.duration)}</span>
+                              <span className="text-black">
+                                {formatDurationToMinutesSeconds(lecture.duration)}
+                              </span>
                             </div>
                           ))}
 
@@ -148,7 +150,7 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                           (curriculum.quizzes ?? []).map((quiz) => (
                             <div
                               key={quiz.quizId}
-                              className="flex justify-between items-center text-sm text-blue-700 pl-4"
+                              className="flex justify-between items-center text-sm text-green-600 pl-4"
                             >
                               <div className="flex items-center gap-2">
                                 {hasAccess() ? (
@@ -168,12 +170,12 @@ const CourseSectionMenu: React.FC<CourseSectionMenuProps> = ({ modules = [], cou
                                 {hasAccess() ? (
                                   <Link
                                     href={`/courses/${courseId}/curricula/quiz/${quiz.quizId}`}
-                                    className="hover:text-blue-800 transition-colors duration-200"
+                                    className="hover:text-green-600 transition-colors duration-200"
                                   >
                                     {quiz.title || 'Quiz'}
                                   </Link>
                                 ) : (
-                                  <span className="text-gray-700">{quiz.title || 'Quiz'}</span>
+                                  <span className="text-green-600">{quiz.title || 'Quiz'}</span>
                                 )}
                               </div>
                               <div className="flex items-center gap-2">

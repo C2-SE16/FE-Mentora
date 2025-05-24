@@ -307,14 +307,14 @@ export default function InstructorCourses() {
                       </span>
                     ))}
                   </div>
-                  <div className="mt-4">
+                  {/* <div className="mt-4">
                     <span className="text-sm font-medium text-gray-700">Hoàn thành khóa học</span>
                     <div className="mt-1 w-full bg-gray-200 rounded-full h-2.5">
                       <div
                         className={`h-2.5 rounded-full ${getProgressBarColor(course.approved)} ${getProgressBarWidth(course.approved)}`}
                       ></div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

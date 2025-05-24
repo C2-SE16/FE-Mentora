@@ -11,6 +11,7 @@ import { checkCourseAccess } from '@/apis/courseAccessService';
 import { Course } from '@/types/courses';
 import { CourseService } from '@/apis/courseService';
 import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
+import Link from 'next/link';
 
 interface QuizAttempt {
   id: string;
@@ -93,7 +94,7 @@ export default function QuizPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requireAuth = searchParams?.get('requireAuth') === 'true';
-  
+
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -133,23 +134,22 @@ export default function QuizPage() {
       setAccessLoading(true);
       try {
         if (!courseId) return;
-        
+
         // Kiểm tra xem người dùng có quyền truy cập vào khóa học không
         const accessResponse = await checkCourseAccess(courseId);
         console.log('Access response:', accessResponse);
-        
+
         if (accessResponse && accessResponse.data) {
           const { hasAccess: canAccess, isEnrolled, isInstructor } = accessResponse.data;
-          
+
           // Trong trường hợp là instructor hoặc đã đăng ký
           if (isInstructor || isEnrolled) {
             setHasAccess(true);
-          } 
+          }
           // Hoặc có quyền khác
           else if (canAccess) {
             setHasAccess(true);
-          }
-          else {
+          } else {
             console.log('No access to course:', { canAccess, isEnrolled, isInstructor });
             setHasAccess(false);
             // Không chuyển hướng ngay ở đây, để hiển thị thông báo lỗi trước
@@ -164,7 +164,7 @@ export default function QuizPage() {
         setAccessLoading(false);
       }
     };
-    
+
     checkAccess();
   }, [courseId]);
 
@@ -198,10 +198,13 @@ export default function QuizPage() {
         if (alternativeTimeLimit !== undefined && !isNaN(Number(alternativeTimeLimit))) {
           console.log('Tìm thấy timeLimit ở vị trí khác:', alternativeTimeLimit);
           setTimeLeft(Number(alternativeTimeLimit) * 60);
-          setQuizMeta({ timeLimit: Number(alternativeTimeLimit), title: response?.data?.title || '' });
+          setQuizMeta({
+            timeLimit: Number(alternativeTimeLimit),
+            title: response?.data?.title || '',
+          });
           return;
         }
-        
+
         // Nếu không tìm thấy, sử dụng giá trị mặc định
         setTimeLeft(15 * 60); // 15 phút mặc định
         setQuizMeta({ timeLimit: 15, title: response?.data?.title || '' });
@@ -298,21 +301,21 @@ export default function QuizPage() {
     try {
       console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
       console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
-      
+
       // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
       setIsStarted(true);
-      
+
       // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
       let timeLimit = 15;
-      
+
       // Nếu có quizMeta và timeLimit là 0 hoặc số dương
       if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
         timeLimit = quizMeta.timeLimit;
       }
-      
+
       console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
       setTimeLeft(timeLimit * 60);
-      
+
       // Tải dữ liệu bài quiz
       console.log('Bắt đầu tải dữ liệu quiz...');
       await loadQuizData();
@@ -320,7 +323,7 @@ export default function QuizPage() {
     } catch (error: any) {
       console.error('Lỗi khi bắt đầu quiz:', error);
       setError(error.response?.data?.message || 'Có lỗi xảy ra khi bắt đầu bài quiz');
-      
+
       // Đặt lại trạng thái nếu có lỗi
       setIsStarted(false);
     }
@@ -473,7 +476,7 @@ export default function QuizPage() {
     );
   }
 
-  // Nếu chưa bắt đầu làm bài (chưa nhấn nút), hiển thị màn hình bắt đầu 
+  // Nếu chưa bắt đầu làm bài (chưa nhấn nút), hiển thị màn hình bắt đầu
   if (!isStarted) {
     return (
       <div className="flex flex-col md:flex-row w-full">
@@ -497,21 +500,21 @@ export default function QuizPage() {
                   try {
                     console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
                     console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
-                    
+
                     // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
                     setIsStarted(true);
-                    
+
                     // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
                     let timeLimit = 15;
-                    
+
                     // Nếu có quizMeta và timeLimit là 0 hoặc số dương
                     if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
                       timeLimit = quizMeta.timeLimit;
                     }
-                    
+
                     console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
                     setTimeLeft(timeLimit * 60);
-                    
+
                     // Tải dữ liệu bài quiz
                     console.log('Bắt đầu tải dữ liệu quiz...');
                     loadQuizData();
@@ -547,7 +550,9 @@ export default function QuizPage() {
             <div className="p-3 bg-gray-50 border-b">
               <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
               <p className="text-sm text-gray-600">
-                {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
+                {course?.modules?.length} phần -{' '}
+                {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)}{' '}
+                bài giảng
               </p>
             </div>
 
@@ -562,16 +567,16 @@ export default function QuizPage() {
             <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                {course?.tbl_instructors?.user?.avatar && (
+                {course?.instructor?.user?.avatar && (
                   <img
-                    src={course.tbl_instructors.user.avatar}
-                    alt={course.tbl_instructors.user.fullName}
+                    src={course.instructor.user.avatar}
+                    alt={course.instructor.user.fullName}
                     className="w-full h-full rounded-full object-cover"
                   />
                 )}
               </div>
               <div>
-                <p className="font-medium">{course?.tbl_instructors?.user?.fullName}</p>
+                <p className="font-medium">{course?.instructor?.user?.fullName}</p>
                 <p className="text-sm text-gray-600">Giảng viên</p>
               </div>
             </div>
@@ -614,6 +619,14 @@ export default function QuizPage() {
                 >
                   {result.isPassed ? 'Đạt' : 'Không đạt'}
                 </p>
+              </div>
+              <div>
+                <button
+                  onClick={() => router.push(`/courses/${courseId}`)}
+                  className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-lg flex items-center justify-center gap-2"
+                >
+                  <span>Quay lại khóa học</span>
+                </button>
               </div>
             </div>
           )}
@@ -691,7 +704,9 @@ export default function QuizPage() {
           <div className="p-3 bg-gray-50 border-b">
             <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
             <p className="text-sm text-gray-600">
-              {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
+              {course?.modules?.length} phần -{' '}
+              {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)}{' '}
+              bài giảng
             </p>
           </div>
 

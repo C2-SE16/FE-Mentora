@@ -37,7 +37,7 @@ export default function DetailCourse() {
         }
 
         const response = await CourseService.getCourseInDetail(courseId);
-        console.log('response:::', response);
+        console.log('response course:::', response);
         if (response) {
           setCourse(response);
         }
@@ -70,18 +70,11 @@ export default function DetailCourse() {
                 </AlertDescription>
               </Alert>
             )}
-            
+
             <nav className="flex text-[#00FF84] font-oswald text-[20px] font-medium space-x-2 pt-4">
-              <Link href="/development" className="hover:underline ">
-                Development
-              </Link>
-              <span className="text-white">{'>'}</span>
-              <Link href="/software-testing" className="hover:underline">
-                Software Testing
-              </Link>
-              <span className="text-white">{'>'}</span>
-              <Link href="/automation-test" className="hover:underline">
-                Automation Test
+              <span className="text-[#00FF84]">{'>'}</span>
+              <Link href="" className="hover:underline ">
+                {course?.categories.map((category) => category.name)}
               </Link>
             </nav>
             <h1 className="text-[40px] text-[#FFF] font-medium font-oswald">{course?.title}</h1>

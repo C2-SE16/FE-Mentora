@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import api from '@/apis/api';
+import axiosInstance from '@/lib/api/axios';
 import { mockCourses } from '@/data/courses';
 import { CourseCarousel } from '@/components/CourseItem/CourseCarousel';
 import { Pagination } from '@/components/Pagination';
@@ -84,7 +85,14 @@ export default function CategoryPage() {
   const [totalCourses, setTotalCourses] = useState(0);
   const [sortBy, setSortBy] = useState('newest');
   const [error, setError] = useState<string | null>(null);
-  console.log('courses:::', courses);
+
+  // Thêm states mới cho course discover API
+  const [popularCourses, setPopularCourses] = useState<Course[]>([]);
+  const [newCourses, setNewCourses] = useState<Course[]>([]);
+  const [trendingCourses, setTrendingCourses] = useState<Course[]>([]);
+  const [activeTab, setActiveTab] = useState('popular');
+  const [carouselLoading, setCarouselLoading] = useState(true);
+
   // New filter states
   const [durationFilters, setDurationFilters] = useState({
     '0-1': false,
@@ -109,14 +117,6 @@ export default function CategoryPage() {
     features: false,
     subtitle: false,
   });
-
-  // Toggle duration filter checkboxes
-  const toggleDurationFilter = (key: keyof typeof durationFilters) => {
-    setDurationFilters({
-      ...durationFilters,
-      [key]: !durationFilters[key],
-    });
-  };
 
   // Toggle section expansion
   const toggleSection = (section: string) => {
@@ -179,6 +179,49 @@ export default function CategoryPage() {
     '3.0': 0,
   });
 
+  // Thêm hàm để lấy khóa học từ API course-discover
+  const fetchCourseDiscover = async (categoryId: string) => {
+    setCarouselLoading(true);
+    try {
+      // Fetch popular courses
+      const popularResponse = await api.get(`courses-discover/popular`, {
+        params: {
+          categoryName: categoryType,
+        },
+      });
+      console.log('popularResponse', popularResponse);
+      if (popularResponse.data && popularResponse.data.data) {
+        setPopularCourses(popularResponse.data.data);
+      }
+
+      // Fetch new courses
+      const newResponse = await api.get(`courses-discover/new`, {
+        params: {
+          categoryName: categoryType,
+        },
+      });
+
+      if (newResponse.data && newResponse.data.data) {
+        setNewCourses(newResponse.data.data);
+      }
+
+      // Fetch trending courses
+      const trendingResponse = await api.get(`courses-discover/trending`, {
+        params: {
+          categoryName: categoryType,
+        },
+      });
+
+      if (trendingResponse.data && trendingResponse.data.data) {
+        setTrendingCourses(trendingResponse.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching discover courses:', error);
+    } finally {
+      setCarouselLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -200,6 +243,7 @@ export default function CategoryPage() {
       const category = categories.find((cat: Category) => cat.name === categoryType);
       if (category) {
         fetchRatingCounts(category.categoryId);
+        fetchCourseDiscover(category.categoryId);
       }
     }
   }, [categories, categoryType]);
@@ -323,7 +367,24 @@ export default function CategoryPage() {
     fetchCourses();
   }, [categories, categoryType, sortBy, currentPage, itemsPerPage, ratingFilter]);
 
-  const coursesForCarousel = useMemo(() => mockCourses, []);
+  // Thay thế useMemo với state thực tế từ API
+  const getActiveTabCourses = () => {
+    switch (activeTab) {
+      case 'popular':
+        return popularCourses;
+      case 'new':
+        return newCourses;
+      case 'trending':
+        return trendingCourses;
+      default:
+        return popularCourses;
+    }
+  };
+
+  // Cập nhật hàm xử lý tab change
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   // Thêm hàm để lấy số lượng khóa học theo rating
   const fetchRatingCounts = async (categoryId: string) => {
@@ -373,19 +434,55 @@ export default function CategoryPage() {
           {/* Tab navigation */}
           <div className="border-b border-gray-200 mb-6">
             <div className="flex -mb-px space-x-8">
-              <button className="text-gray-900 py-4 px-1 border-b-2 border-[#1dbe70] font-medium">
+              <button
+                className={`py-4 px-1 border-b-2 ${activeTab === 'popular' ? 'text-gray-900 border-[#1dbe70] font-medium' : 'text-gray-500 hover:text-gray-700 border-transparent'}`}
+                onClick={() => handleTabChange('popular')}
+              >
                 Phổ biến nhất
               </button>
-              <button className="text-gray-500 hover:text-gray-700 py-4 px-1 border-b-2 border-transparent">
+              <button
+                className={`py-4 px-1 border-b-2 ${activeTab === 'new' ? 'text-gray-900 border-[#1dbe70] font-medium' : 'text-gray-500 hover:text-gray-700 border-transparent'}`}
+                onClick={() => handleTabChange('new')}
+              >
                 Mới
               </button>
-              <button className="text-gray-500 hover:text-gray-700 py-4 px-1 border-b-2 border-transparent">
+              <button
+                className={`py-4 px-1 border-b-2 ${activeTab === 'trending' ? 'text-gray-900 border-[#1dbe70] font-medium' : 'text-gray-500 hover:text-gray-700 border-transparent'}`}
+                onClick={() => handleTabChange('trending')}
+              >
                 Thịnh hành
               </button>
             </div>
           </div>
-          <CourseCarousel courses={coursesForCarousel} formatPrice={formatPrice} />
+
+          {carouselLoading ? (
+            <div className="py-8 flex justify-center">
+              <svg
+                className="animate-spin h-8 w-8 text-[#1dbe70]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          ) : (
+            <CourseCarousel courses={getActiveTabCourses()} formatPrice={formatPrice} />
+          )}
         </div>
+
         {/* Thêm phần Các chủ đề phổ biến */}
         <div className="mb-10">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Các chủ đề phổ biến</h2>
@@ -653,7 +750,7 @@ export default function CategoryPage() {
             </div>
 
             {/* Duration Filter */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('duration')}
@@ -750,10 +847,10 @@ export default function CategoryPage() {
                   </button>
                 </>
               )}
-            </div>
+            </div> */}
 
             {/* Topic Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('topic')}
@@ -775,14 +872,13 @@ export default function CategoryPage() {
               </div>
               {expandedSections.topic && (
                 <div className="space-y-2">
-                  {/* Topic checkboxes would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Subcategory Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('subcategory')}
@@ -804,14 +900,13 @@ export default function CategoryPage() {
               </div>
               {expandedSections.subcategory && (
                 <div className="space-y-2">
-                  {/* Subcategory checkboxes would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Level Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('level')}
@@ -833,14 +928,13 @@ export default function CategoryPage() {
               </div>
               {expandedSections.level && (
                 <div className="space-y-2">
-                  {/* Level checkboxes would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Language Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('language')}
@@ -862,14 +956,13 @@ export default function CategoryPage() {
               </div>
               {expandedSections.language && (
                 <div className="space-y-2">
-                  {/* Language checkboxes would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Price Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('price')}
@@ -891,14 +984,13 @@ export default function CategoryPage() {
               </div>
               {expandedSections.price && (
                 <div className="space-y-2">
-                  {/* Price range options would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Features Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('features')}
@@ -920,14 +1012,13 @@ export default function CategoryPage() {
               </div>
               {expandedSections.features && (
                 <div className="space-y-2">
-                  {/* Features checkboxes would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Subtitle Filter */}
-            <div className="mb-6 border-t pt-4">
+            {/* <div className="mb-6 border-t pt-4">
               <div
                 className="flex justify-between items-center mb-4 cursor-pointer"
                 onClick={() => toggleSection('subtitle')}
@@ -949,11 +1040,10 @@ export default function CategoryPage() {
               </div>
               {expandedSections.subtitle && (
                 <div className="space-y-2">
-                  {/* Subtitle language checkboxes would go here */}
                   <div className="text-gray-500 text-sm">Chưa có dữ liệu</div>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Right Content - Course Listings */}

@@ -300,7 +300,6 @@ export default function CourseAnalyticsDetail() {
                         <div className="text-sm font-medium text-gray-900">
                           {enrollment.user?.fullName || 'Không xác định'}
                         </div>
-                        <div className="text-sm text-gray-500">{enrollment.userId}</div>
                       </div>
                     </div>
                   </td>

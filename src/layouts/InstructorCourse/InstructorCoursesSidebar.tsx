@@ -124,7 +124,7 @@ const InstructorCoursesSidebar = ({ currentTab = 'dashboard' }: InstructorCourse
           <line x1="6" y1="20" x2="6" y2="14" />
         </svg>
       ),
-      path: `/instructor/course/${courseId}/analytics`,
+      path: `/instructor/manage/analytics`,
     },
     // {
     //   id: 'settings',

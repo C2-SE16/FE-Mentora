@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { InstructorService } from '@/apis/instructorService';
 import SubHeader from '@/components/Header/SubHeader';
 import axiosInstance from '@/lib/api/axios';
+import { getCategoryDisplayName } from '@/utils/changeCategoryName';
 
 // Định nghĩa interface cho dữ liệu từ API
 interface Instructor {
@@ -484,10 +485,10 @@ const Header = () => {
                       className="border-b border-gray-100 last:border-b-0"
                     >
                       <Link
-                        href={`/categories/${category.name}`}
+                        href={`/categories/${category.name.toLowerCase()}`}
                         className="flex justify-between items-center px-5 py-3 min-w-[250px] tracking-[0.5px] hover:text-[#1dbe70] hover:bg-[#c5f3dd] transition-all duration-200"
                       >
-                        <span>{category.name}</span>
+                        <span>{getCategoryDisplayName(category.name || '')}</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-4 w-4 transform group-hover:translate-x-1 transition-transform"

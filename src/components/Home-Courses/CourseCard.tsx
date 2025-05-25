@@ -13,71 +13,55 @@ interface CourseCardProps {
   onAddToCart: (courseId: string, e: React.MouseEvent) => void;
 }
 
-// Tách hàm useClientRouter thành một hook riêng biệt
-const UseClientRouter = () => {
-  const [router, setRouter] = useState<any>(null);
-  
-  useEffect(() => {
-    console.log('Đang import useRouter');
-    // Chỉ import useRouter khi ở phía client
-    import('next/router').then((mod) => {
-      const { useRouter } = mod;
-      console.log('useRouter đã được import thành công');
-      setRouter(useRouter());
-    }).catch(err => {
-      console.error('Lỗi khi import useRouter:', err);
-    });
-  }, []);
-  
-  return router;
-};
-
 // Ảnh mặc định khi không có ảnh khóa học
 const DEFAULT_COURSE_IMAGE = '/images/default-course-image.jpg';
 
 // Sử dụng dynamic import với ssr: false để tránh lỗi NextRouter not mounted
 const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) => {
-  console.log('CourseCard render:', { courseId: course.id || course.courseId, title: course.title });
-  
+  console.log('CourseCard render:', {
+    courseId: course.id || course.courseId,
+    title: course.title,
+  });
+
   const isLastInRow = (index + 1) % 4 === 0;
   const popupPosition = isLastInRow ? 'right-full mr-4' : 'left-full ml-4';
   const [courseAccess, setCourseAccess] = useState<CourseAccessResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Đảm bảo course.id hoặc course.courseId không undefined
   const courseId = ensureString(course.id || course.courseId);
-  
+
   // Xác định ảnh khóa học, sử dụng ảnh mặc định nếu không có
   const courseImage: string = course.image || course.thumbnail || DEFAULT_COURSE_IMAGE;
 
   // Logic kiểm tra quyền truy cập khóa học
   useEffect(() => {
     console.log('useEffect chạy với courseId:', courseId);
-    
+
     let isMounted = true;
     const controller = new AbortController();
-    
+
     const fetchCourseAccess = async () => {
       if (!courseId) {
         console.log('courseId không hợp lệ, không gọi API');
         return;
       }
-      
+
       console.log('Bắt đầu gọi API kiểm tra quyền truy cập');
       try {
         setLoading(true);
         setError(null);
-        
+
         // Gọi API
         console.log('Gọi API checkCourseAccess với courseId:', courseId);
         const result = await checkCourseAccess(courseId);
         console.log('Kết quả từ API checkCourseAccess:', result);
-        
+
         if (result.success && isMounted) {
           console.log('API trả về thành công, cập nhật state:', result.data);
           setCourseAccess(result.data);
-          
+
           // Kiểm tra rõ ràng quyền truy cập
           if (result.data.isInstructor) {
             console.log('Người dùng là instructor của khóa học này');
@@ -103,7 +87,7 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
     };
 
     fetchCourseAccess();
-    
+
     // Cleanup khi component unmount
     return () => {
       console.log('Cleanup useEffect - courseId:', courseId);
@@ -120,9 +104,9 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
 
   const handleCourseAction = (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     console.log('handleCourseAction called:', { courseAccess });
-    
+
     if (!courseAccess) {
       console.log('Thêm vào giỏ hàng vì không có thông tin truy cập');
       onAddToCart(courseId, e);
@@ -143,7 +127,7 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
 
   const getActionButton = () => {
     console.log('getActionButton called:', { loading, courseAccess, error });
-    
+
     if (loading) {
       return (
         <button
@@ -221,7 +205,7 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
           <Link href={`/courses/${courseId}`}>
             <Image
               src={courseImage}
-              alt={course.title || "Khóa học"}
+              alt={course.title || 'Khóa học'}
               width={330}
               height={200}
               className="object-cover transition-transform duration-500 group-hover:scale-110 w-full h-full"
@@ -247,7 +231,7 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
             <span className="">{course.currentPrice || course.price}</span>
             <span className="line-through">{course.originalPrice}</span>
           </div>
-          {course.isBestSeller && (
+          {course.isBestSeller ? (
             <Button
               href={`/courses/${courseId}`}
               backgroundColor="#29cc60"
@@ -255,9 +239,22 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
               minWidth={90}
               className="mt-3 text-sm sm:text-base"
             >
-              bán chạy
+              Bán chạy
             </Button>
-          )}
+          ) : //  course.isNew ||
+          course.createdAt &&
+            new Date(course.createdAt).getTime() >
+              new Date().getTime() - 7 * 24 * 60 * 60 * 1000 ? (
+            <Button
+              href={`/courses/${courseId}`}
+              backgroundColor="#807be1"
+              textColor="#ffffff"
+              minWidth={90}
+              className="mt-3 text-sm sm:text-base"
+            >
+              Mới
+            </Button>
+          ) : null}
         </div>
       </div>
 
@@ -306,9 +303,7 @@ const CourseCardComponent = ({ course, index, onAddToCart }: CourseCardProps) =>
                 ))}
             </div>
 
-            <div className="mt-4">
-              {getActionButton()}
-            </div>
+            <div className="mt-4">{getActionButton()}</div>
           </div>
         </div>
       </div>

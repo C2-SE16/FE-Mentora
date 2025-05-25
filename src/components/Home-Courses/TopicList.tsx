@@ -22,6 +22,7 @@ const TopicList = ({ topics, isLoading }: TopicListProps) => {
                 minWidth={310}
                 backgroundColor="#fff"
                 textColor="black"
+                textSize='16'
                 className="w-full border border-black shadow-custom transition-all duration-300 hover:bg-[#171100] hover:text-white hover:border-[#3A10E5] hover:shadow-lg"
               >
                 {topic}

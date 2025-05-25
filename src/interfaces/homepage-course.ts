@@ -25,6 +25,7 @@ export interface Course {
   hasDiscount?: boolean;
   discountPercentage?: number;
   voucherCode?: string;
+  createdAt?: string;
 }
 
 export interface Topic {

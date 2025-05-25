@@ -22,6 +22,17 @@ interface InstructorCourse {
     avatar: string | null;
   };
   reviewCount: number;
+  enrollments: {
+    userId: string;
+    courseEnrollmentId: string;
+    enrolledAt: string;
+    courseId: string;
+    user: {
+      userId: string;
+      fullName: string;
+      avatar: string | null;
+    } | null;
+  }[];
 }
 
 interface InstructorCoursesResponse {
@@ -45,26 +56,27 @@ export const InstructorCourseService = {
    */
   async getInstructorCourses(): Promise<InstructorCourse[]> {
     try {
-      const response = await axiosInstance.get<InstructorCoursesResponse>('/courses/instructor/my-courses');
-      
+      const response = await axiosInstance.get<InstructorCoursesResponse>(
+        '/courses/instructor/my-courses'
+      );
+
       if (response.data.data.success) {
         return response.data.data.data;
       }
-      
+
       console.warn('API trả về thất bại:', response.data.data.message);
       throw new Error(response.data.data.message || 'Không thể lấy danh sách khóa học');
-      
     } catch (error: any) {
       console.error('Lỗi khi lấy danh sách khóa học của instructor:', error);
-      
+
       if (error.response?.data) {
         const errorData = error.response.data as ErrorResponse;
         throw new Error(errorData.message || 'Không thể lấy danh sách khóa học');
       }
-      
+
       throw new Error('Không thể kết nối đến server');
     }
-  }
+  },
 };
 
-export default InstructorCourseService; 
+export default InstructorCourseService;

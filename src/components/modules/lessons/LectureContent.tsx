@@ -55,9 +55,7 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
               </div>
               <p className="text-sm text-gray-500 mt-1">
                 Thời lượng:{' '}
-                {lecture?.duration
-                  ? formatDurationToMinutesSeconds(lecture.duration)
-                  : 'N/A'}
+                {lecture?.duration ? formatDurationToMinutesSeconds(lecture.duration) : 'N/A'}
               </p>
             </div>
 
@@ -126,8 +124,9 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
           <div className="p-3 bg-gray-50 border-b">
             <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
             <p className="text-sm text-gray-600">
-              {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng -{' '}
-              {course?.durationTime ? formatDuration(course.durationTime) : 'N/A'}
+              {course?.modules?.length} phần -{' '}
+              {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)}{' '}
+              bài giảng - {course?.durationTime ? formatDuration(course.durationTime) : 'N/A'}
             </p>
           </div>
 
@@ -142,16 +141,16 @@ export default function LectureContent({ lecture, course }: LectureContentProps)
           <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-              {course?.tbl_instructors?.user?.avatar && (
+              {course?.instructor?.user?.avatar && (
                 <img
-                  src={course.tbl_instructors.user.avatar}
-                  alt={course.tbl_instructors.user.fullName}
+                  src={course.instructor.user.avatar}
+                  alt={course.instructor.user.fullName}
                   className="w-full h-full rounded-full object-cover"
                 />
               )}
             </div>
             <div>
-              <p className="font-medium">{course?.tbl_instructors?.user?.fullName}</p>
+              <p className="font-medium">{course?.instructor?.user?.fullName}</p>
               <p className="text-sm text-gray-600">Giảng viên</p>
             </div>
           </div>

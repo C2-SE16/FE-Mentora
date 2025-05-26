@@ -16,6 +16,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { AllReviewsComponent } from '@/components/modules/course-detail/components/ReviewsComponent';
 import { StarRating } from '@/components/Home-Courses/StarRating';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { slugify } from '@/utils/slugify';
 
 export default function DetailCourse() {
   const [course, setCourse] = useState<Course | null>(null);
@@ -37,7 +38,6 @@ export default function DetailCourse() {
         }
 
         const response = await CourseService.getCourseInDetail(courseId);
-        console.log('response course:::', response);
         if (response) {
           setCourse(response);
         }
@@ -100,7 +100,7 @@ export default function DetailCourse() {
             <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed py-3">
               Tạo bởi :{' '}
               <Link
-                href={`/instructor/${(course as any)?.instructor?.instructorId}`}
+                href={`/user/${slugify((course as any)?.instructor?.user?.fullName || '')}/${(course as any)?.instructor?.instructorId}`}
                 className="text-[#00FF84] hover:underline cursor-pointer"
               >
                 {(course as any)?.instructor?.user?.fullName}

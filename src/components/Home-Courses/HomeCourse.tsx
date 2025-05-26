@@ -162,6 +162,7 @@ const HomeCourse = () => {
         window.innerHeight + document.documentElement.scrollTop >=
           document.documentElement.offsetHeight - 2000
       ) {
+        // Tự động set isExpanded = true khi scroll để load thêm
         if (!isExpanded) {
           setIsExpanded(true);
         }
@@ -171,7 +172,7 @@ const HomeCourse = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [offset, hasMore, isLoadingMore]);
+  }, [offset, hasMore, isLoadingMore, isExpanded]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -251,7 +252,6 @@ const HomeCourse = () => {
     if (isExpanded) {
       // Thu gọn về 4 course đầu tiên nhưng không reset data đã tải
       setIsExpanded(false);
-      // Không cần set lại offset vì chúng ta vẫn muốn giữ lại dữ liệu đã tải
     } else {
       // Mở rộng hiển thị tất cả khóa học đã tải
       setIsExpanded(true);

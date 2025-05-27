@@ -83,6 +83,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
     let isMounted = true;
     const controller = new AbortController();
 
+
     const fetchInitialData = async () => {
       if (!courseId) {
         return;

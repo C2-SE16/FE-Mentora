@@ -78,7 +78,9 @@ export default function DetailCourse() {
             <nav className="flex text-[#00FF84] font-oswald text-[20px] font-medium space-x-2 pt-4">
               <span className="text-[#00FF84]">{'>'}</span>
               <Link href="" className="hover:underline ">
-                {course?.categories.map((category) => category.name)}
+                {course?.categories && course.categories.length > 0
+                  ? course.categories.map((category) => category.name)
+                  : 'Chưa phân loại'}
               </Link>
             </nav>
             <h1 className="text-[40px] text-[#FFF] font-medium font-oswald">{course?.title}</h1>

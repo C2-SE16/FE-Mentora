@@ -10,42 +10,9 @@ interface ApiResponse<T> {
   statusCode: number;
 }
 
-interface UpdateCourseBasicInfoResponse {
-  success: boolean;
-  data: Course;
-  message: string;
-}
-
 interface UpdateCourseBasicInfoRequest {
   title: string;
   description?: string;
-}
-
-interface UploadThumbnailResponse {
-  success: boolean;
-  message: string;
-  data: {
-    thumbnailUrl: string;
-    publicId: string;
-    width: number;
-    height: number;
-  };
-}
-
-interface UploadCourseImageResponse {
-  success: boolean;
-  message: string;
-  data: {
-    imageUrl: string;
-    publicId: string;
-    width: number;
-    height: number;
-  };
-}
-
-interface DeleteImageResponse {
-  success: boolean;
-  message: string;
 }
 
 /**

@@ -1,11 +1,21 @@
-import { Category, CategoryType, CourseWithCategories } from '@/types/categories';
+import { Category, CourseCategory } from '@/types/categories';
 import axiosInstance from '@/lib/api/axios';
+
+interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 interface ApiResponse<T> {
   data: {
     success: boolean;
-    data: T;
     message: string;
+    data: PaginatedResponse<T>;
   };
   statusCode: number;
 }
@@ -19,18 +29,15 @@ export const CategoryService = {
    */
   async getAllCategories(): Promise<Category[]> {
     try {
-      // Sử dụng đường dẫn tương đối thay vì URL đầy đủ
-      const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories');
+      const response = await axiosInstance.get<ApiResponse<Category>>('/categories');
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
-        return response.data.data.data;
+        return response.data.data.data.data;
       }
-
-      console.warn('API trả về thành công nhưng dữ liệu không hợp lệ, sử dụng dữ liệu mẫu');
-      return this.getMockCategories();
+      return []; // Trả về mảng rỗng nếu không có dữ liệu
     } catch (error) {
-      console.warn('Sử dụng dữ liệu mẫu do lỗi API');
-      return this.getMockCategories();
+      console.error('Lỗi khi lấy tất cả danh mục:', error);
+      return []; // Trả về mảng rỗng trong trường hợp lỗi
     }
   },
 
@@ -42,7 +49,7 @@ export const CategoryService = {
       const response = await axiosInstance.get<ApiResponse<Category>>(`/categories/${categoryId}`);
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
-        return response.data.data.data;
+        return response.data.data.data.data[0];
       }
 
       throw new Error(response.data.data.message || `Lỗi khi lấy danh mục ID ${categoryId}`);
@@ -55,14 +62,14 @@ export const CategoryService = {
   /**
    * Lấy các khóa học theo danh mục
    */
-  async getCoursesByCategory(categoryId: string): Promise<CourseWithCategories[]> {
+  async getCoursesByCategory(categoryId: string): Promise<CourseCategory[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<CourseWithCategories[]>>(
+      const response = await axiosInstance.get<ApiResponse<CourseCategory>>(
         `/categories/${categoryId}/courses`
       );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
-        return response.data.data.data;
+        return response.data.data.data.data;
       }
 
       throw new Error(
@@ -79,12 +86,12 @@ export const CategoryService = {
    */
   async getCategoriesByCourse(courseId: string): Promise<Category[]> {
     try {
-      const response = await axiosInstance.get<ApiResponse<CourseWithCategories>>(
+      const response = await axiosInstance.get<ApiResponse<Category>>(
         `/courses/${courseId}/categories`
       );
 
       if (response.data && response.data.statusCode === 200 && response.data.data.success) {
-        return response.data.data.data.categories || [];
+        return response.data.data.data.data;
       }
 
       throw new Error(
@@ -99,22 +106,6 @@ export const CategoryService = {
   /**
    * Dữ liệu mẫu cho categories
    */
-  getMockCategories(): Category[] {
-    return [
-      {
-        categoryId: 'f0134fd0-e5aa-4d5d-86cb-a82111e39254',
-        categoryType: CategoryType.INFORMATION_TECHNOLOGY,
-      },
-      {
-        categoryId: 'f16dc2b2-7e8b-4006-b736-ad1f83c073a2',
-        categoryType: CategoryType.MARKETING,
-      },
-      {
-        categoryId: '3',
-        categoryType: CategoryType.FINANCE,
-      },
-    ];
-  },
 };
 
 export default CategoryService;

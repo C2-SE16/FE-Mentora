@@ -1,6 +1,7 @@
 'use client';
 
 import api from '@/apis/api';
+import { getCategoryDisplayName } from '@/utils/changeCategoryName';
 import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -10,11 +11,10 @@ const SubHeader = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const categoriesContainerRef = useRef<HTMLDivElement>(null);
-  
+
   const fetchCategories = async () => {
     try {
       const response = await api.get('categories');
-      
 
       // Kiểm tra cấu trúc dữ liệu trả về
       if (response.data.data.data.data && response.data.data) {
@@ -75,25 +75,6 @@ const SubHeader = () => {
     }
   };
 
-  // Hàm chuyển đổi categoryType sang tên hiển thị tiếng Việt
-  const getCategoryDisplayName = (name: string) => {
-    const categoryMap: Record<string, string> = {
-      INFORMATION_TECHNOLOGY: 'Công nghệ thông tin',
-      MARKETING: 'Marketing',
-      FINANCE: 'Tài chính',
-      BUSSINESS: 'Kinh doanh',
-      DESIGN: 'Thiết kế',
-      LIFESTYLE: 'Phong cách sống',
-      PERSONAL_DEVELOPMENT: 'Phát triển cá nhân',
-      HEALTH: 'Sức khỏe',
-      MUSIC: 'Âm nhạc',
-      LANGUAGE: 'Ngôn ngữ',
-      SCIENCE: 'Khoa học',
-      MATH: 'Toán học',
-    };
-
-    return categoryMap[name as keyof typeof categoryMap] || name;
-  };
 
   return (
     <div className="w-full border-b border-t border-gray-200 bg-white shadow-md hidden md:block relative">
@@ -118,10 +99,10 @@ const SubHeader = () => {
             categories.map((category: any) => (
               <Link
                 key={category.categoryId}
-                href={`/categories/${category.name.toLowerCase()}`}
+                href={`/categories/${category.name?.toLowerCase() || ''}`}
                 className="whitespace-nowrap text-base font-normal py-1 px-2 transition-colors duration-200 hover:text-[#1dbe70] text-gray-700 flex-shrink-0"
               >
-                {getCategoryDisplayName(category.name)}
+                {getCategoryDisplayName(category.name || '')}
               </Link>
             ))
           ) : (

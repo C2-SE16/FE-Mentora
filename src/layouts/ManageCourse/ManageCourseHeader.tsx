@@ -9,16 +9,23 @@ import { ArrowLeft, Menu } from 'lucide-react';
 interface ManageCourseHeaderProps {
   title?: string;
   courseId: string;
-  status?: 'DRAFT' | 'PUBLISHED' | 'PENDING';
+  status?: 'REJECTED' | 'PUBLISHED' | 'PENDING';
   onBack?: () => void;
   onMenuToggle?: () => void;
   isMobile?: boolean;
 }
 
 interface CourseDetails {
+  courseId: string;
   title: string;
-  approved: 'DRAFT' | 'PUBLISHED' | 'PENDING';
+  description: string | null;
+  overview: string | null;
+  durationTime: string | null;
+  price: number | null;
+  approved: 'REJECTED' | 'APPROVED' | 'PENDING';
 }
+
+type CourseStatus = 'REJECTED' | 'APPROVED' | 'PENDING';
 
 const ManageCourseHeader = ({
   title,
@@ -40,19 +47,29 @@ const ManageCourseHeader = ({
       try {
         setIsLoading(true);
         const courseData = await CreateCourseService.getCourseDetails(courseId);
-        const validStatus = ['DRAFT', 'PUBLISHED', 'PENDING'].includes(courseData.approved)
-          ? (courseData.approved as 'DRAFT' | 'PUBLISHED' | 'PENDING')
-          : 'DRAFT';
-
+        const validStatus = ['REJECTED', 'APPROVED', 'PENDING'].includes(courseData.approved)
+          ? (courseData.approved as CourseStatus)
+          : 'PENDING';
+        console.log('courseData' + courseData);
         setCourseDetails({
+          courseId: courseData.courseId,
           title: courseData.title || 'Khóa học không có tiêu đề',
+          description: courseData.description,
+          overview: courseData.overview,
+          durationTime: courseData.durationTime,
+          price: courseData.price,
           approved: validStatus,
         });
       } catch (error: any) {
         console.error('Lỗi khi lấy thông tin khóa học:', error);
         setCourseDetails({
+          courseId: '',
           title: 'Không thể tải thông tin khóa học',
-          approved: 'DRAFT',
+          description: null,
+          overview: null,
+          durationTime: null,
+          price: 0,
+          approved: 'REJECTED',
         });
       } finally {
         setIsLoading(false);
@@ -70,22 +87,35 @@ const ManageCourseHeader = ({
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return 'Đã duyệt';
+      case 'PENDING':
+        return 'Đang chờ duyệt';
+      case 'REJECTED':
+        return 'Đã từ chối';
+      default:
+        return 'Không xác định';
+    }
+  };
+
   const getStatusColor = () => {
     const currentStatus = status || courseDetails?.approved || 'DRAFT';
 
     switch (currentStatus) {
-      case 'PUBLISHED':
+      case 'APPROVED':
         return 'bg-green-100 text-green-800';
       case 'PENDING':
         return 'bg-yellow-100 text-yellow-800';
-      case 'DRAFT':
+      case 'REJECTED':
       default:
         return 'bg-gray-200 text-gray-800';
     }
   };
 
   const displayTitle = title || courseDetails?.title || 'Đang tải...';
-  const displayStatus = status || courseDetails?.approved || 'DRAFT';
+  const displayStatus = status || courseDetails?.approved || 'REJECTED';
 
   return (
     <header className="bg-[#1e1e2d] text-white flex justify-between items-center py-3 px-4 sm:px-6 md:px-8 h-[60px]">
@@ -129,10 +159,10 @@ const ManageCourseHeader = ({
 
       <div className="flex items-center">
         <span className={`text-xs px-2 py-1 rounded-md font-medium mr-4 ${getStatusColor()}`}>
-          {displayStatus}
+          {getStatusText(displayStatus)}
         </span>
 
-        <button
+        {/* <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="relative p-1 rounded-full hover:bg-gray-700 transition-colors"
           aria-label="Cài đặt"
@@ -182,7 +212,7 @@ const ManageCourseHeader = ({
               </div>
             </div>
           )}
-        </button>
+        </button> */}
       </div>
     </header>
   );

@@ -101,8 +101,8 @@ export const CourseCarousel = dynamic(
                         </div>
                         {Math.random() > 0.5 && (
                           <div className="mt-2">
-                            <span className="inline-block bg-[#d1e7dd] text-[#0f5132] text-xs px-2 py-0.5 rounded">
-                              Bán chạy nhất
+                            <span className="inline-block bg-[#29cc60] text-white text-xs px-2 py-0.5 rounded">
+                              Bán chạy
                             </span>
                           </div>
                         )}

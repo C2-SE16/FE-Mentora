@@ -50,7 +50,7 @@ export default function LearningPage() {
         if (response.data.data.success) {
           const enrollmentsWithProgress = response.data.data.data.map((enrollment: Enrollment) => ({
             ...enrollment,
-            progress: Math.floor(Math.random() * 100), 
+            progress: Math.floor(Math.random() * 100),
           }));
 
           setEnrollments(enrollmentsWithProgress);
@@ -366,10 +366,7 @@ export default function LearningPage() {
                 </div>
               </div>
 
-              <Link
-                href={`/course/${enrollment.course.courseId}/learn`}
-                className="absolute inset-0"
-              >
+              <Link href={`/courses/${enrollment.course.courseId}`} className="absolute inset-0">
                 <span className="sr-only">Học khóa học</span>
               </Link>
 

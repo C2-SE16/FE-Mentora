@@ -47,10 +47,7 @@ export interface CourseCategory {
   courseCategoryId: string;
   categoryId: string;
   courseId: string;
-  tbl_categories: {
-    categoryId: string;
-    categoryType: string;
-  };
+  category?: Category;
 }
 
 export interface Course {
@@ -70,13 +67,12 @@ export interface Course {
   isRecommended: boolean;
   thumbnail: string;
   publicId?: string;
-  tbl_course_categories: CourseCategory[];
-  tbl_instructors: Instructor;
+  categories: Category[];
+  instructor: Instructor;
 
   // Relationships
   modules?: ImportedModule[];
   courseCategories?: CourseCategory[];
-  categories?: Category[];
   reviews?: ImportedCourseReview[];
   enrollments?: ImportedCourseEnrollment[];
   cartItems?: CartItem[];

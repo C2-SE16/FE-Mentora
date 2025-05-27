@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { use } from 'react';
@@ -26,6 +26,11 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
   const router = useRouter();
   const pathname = usePathname();
 
+  // Hàm kiểm tra xem đường dẫn hiện tại có khớp với path của item không
+  const isCurrentPath = (path: string) => {
+    return pathname === path;
+  };
+
   // Danh sách các bước cần hoàn thành
   const checklistSections: ChecklistSection[] = [
     {
@@ -37,49 +42,49 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/goals`,
         },
-        {
-          id: 'course-structure',
-          title: 'Cấu trúc khóa học',
-          isCompleted: true,
-          path: `/instructor/course/${courseId}/manage/structure`,
-        },
-        {
-          id: 'setup-test',
-          title: 'Thiết lập & kiểm tra video',
-          isCompleted: true,
-          path: `/instructor/course/${courseId}/manage/setup-test`,
-        },
+        // {
+        //   id: 'course-structure',
+        //   title: 'Cấu trúc khóa học',
+        //   isCompleted: true,
+        //   path: `/instructor/course/${courseId}/manage/structure`,
+        // },
+        // {
+        //   id: 'setup-test',
+        //   title: 'Thiết lập & kiểm tra video',
+        //   isCompleted: true,
+        //   path: `/instructor/course/${courseId}/manage/setup-test`,
+        // },
       ],
     },
     {
       title: 'Tạo nội dung',
       items: [
-        {
-          id: 'film-edit',
-          title: 'Quay & chỉnh sửa',
-          isCompleted: true,
-          path: `/instructor/course/${courseId}/manage/film-edit`,
-        },
+        // {
+        //   id: 'film-edit',
+        //   title: 'Quay & chỉnh sửa',
+        //   isCompleted: true,
+        //   path: `/instructor/course/${courseId}/manage/film-edit`,
+        // },
         {
           id: 'curriculum',
-          title: 'Giáo trình',
+          title: 'Nội dung khóa học',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/curriculum`,
         },
-        {
-          id: 'captions',
-          title: 'Phụ đề',
-          isCompleted: false,
-          isOptional: true,
-          path: `/instructor/course/${courseId}/manage/captions`,
-        },
-        {
-          id: 'accessibility',
-          title: 'Khả năng tiếp cận',
-          isCompleted: true,
-          isOptional: true,
-          path: `/instructor/course/${courseId}/manage/accessibility`,
-        },
+        // {
+        //   id: 'captions',
+        //   title: 'Phụ đề',
+        //   isCompleted: false,
+        //   isOptional: true,
+        //   path: `/instructor/course/${courseId}/manage/captions`,
+        // },
+        // {
+        //   id: 'accessibility',
+        //   title: 'Khả năng tiếp cận',
+        //   isCompleted: true,
+        //   isOptional: true,
+        //   path: `/instructor/course/${courseId}/manage/accessibility`,
+        // },
       ],
     },
     {
@@ -87,7 +92,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
       items: [
         {
           id: 'course-landing-page',
-          title: 'Trang đích khóa học',
+          title: 'Thông tin khóa học',
           isCompleted: false,
           path: `/instructor/course/${courseId}/manage/basics`,
         },
@@ -100,15 +105,15 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
         {
           id: 'promotions',
           title: 'Khuyến mãi',
-          isCompleted: true,
+          isCompleted: false,
           path: `/instructor/course/${courseId}/manage/promotions`,
         },
-        {
-          id: 'course-messages',
-          title: 'Tin nhắn khóa học',
-          isCompleted: false,
-          path: `/instructor/course/${courseId}/manage/messages`,
-        },
+        // {
+        //   id: 'course-messages',
+        //   title: 'Tin nhắn khóa học',
+        //   isCompleted: false,
+        //   path: `/instructor/course/${courseId}/manage/messages`,
+        // },
       ],
     },
   ];
@@ -136,7 +141,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
             <h2 className="text-gray-500 font-medium mb-2">{section.title}</h2>
             <ul className="space-y-1">
               {section.items.map((item) => {
-                const isActive = currentStep === item.id;
+                const isActive = isCurrentPath(item.path);
 
                 return (
                   <li key={item.id} className="relative">
@@ -148,12 +153,8 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
                           : 'text-gray-700 hover:text-green-600'
                       } transition-colors`}
                     >
-                      <div
-                        className={`w-5 h-5 rounded-full mr-2 flex items-center justify-center ${
-                          item.isCompleted ? 'bg-green-500 text-white' : 'border border-gray-300'
-                        }`}
-                      >
-                        {item.isCompleted && (
+                      <div className={`w-5 h-5 rounded-full mr-2 flex items-center justify-center`}>
+                        {item.isCompleted && isActive && (
                           <svg
                             className="w-3 h-3"
                             fill="currentColor"
@@ -170,7 +171,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
                       </div>
                       {item.title}
                       {item.isOptional && (
-                        <span className="text-gray-500 text-sm ml-1">(optional)</span>
+                        <span className="text-gray-500 text-sm ml-1">(tùy chọn)</span>
                       )}
                     </Link>
                     {isActive && (
@@ -184,7 +185,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
         ))}
 
         <div className="mt-8">
-          <button
+          {/* <button
             onClick={handleSubmitForReview}
             disabled={!canSubmitForReview}
             className={`w-full py-3 px-4 rounded-md text-white font-medium transition-colors ${
@@ -194,7 +195,7 @@ const ManageCourseSidebar = ({ courseId, currentStep }: ManageCourseSidebarProps
             }`}
           >
             Gửi để xét duyệt
-          </button>
+          </button> */}
         </div>
       </div>
     </aside>

@@ -16,6 +16,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { AllReviewsComponent } from '@/components/modules/course-detail/components/ReviewsComponent';
 import { StarRating } from '@/components/Home-Courses/StarRating';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { slugify } from '@/utils/slugify';
 
 export default function DetailCourse() {
   const [course, setCourse] = useState<Course | null>(null);
@@ -37,7 +38,6 @@ export default function DetailCourse() {
         }
 
         const response = await CourseService.getCourseInDetail(courseId);
-        console.log('response:::', response);
         if (response) {
           setCourse(response);
         }
@@ -70,18 +70,11 @@ export default function DetailCourse() {
                 </AlertDescription>
               </Alert>
             )}
-            
+
             <nav className="flex text-[#00FF84] font-oswald text-[20px] font-medium space-x-2 pt-4">
-              <Link href="/development" className="hover:underline ">
-                Development
-              </Link>
-              <span className="text-white">{'>'}</span>
-              <Link href="/software-testing" className="hover:underline">
-                Software Testing
-              </Link>
-              <span className="text-white">{'>'}</span>
-              <Link href="/automation-test" className="hover:underline">
-                Automation Test
+              <span className="text-[#00FF84]">{'>'}</span>
+              <Link href="" className="hover:underline ">
+                {course?.categories.map((category) => category.name)}
               </Link>
             </nav>
             <h1 className="text-[40px] text-[#FFF] font-medium font-oswald">{course?.title}</h1>
@@ -107,7 +100,7 @@ export default function DetailCourse() {
             <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed py-3">
               Tạo bởi :{' '}
               <Link
-                href={`/instructor/${(course as any)?.instructor?.instructorId}`}
+                href={`/user/${slugify((course as any)?.instructor?.user?.fullName || '')}/${(course as any)?.instructor?.instructorId}`}
                 className="text-[#00FF84] hover:underline cursor-pointer"
               >
                 {(course as any)?.instructor?.user?.fullName}

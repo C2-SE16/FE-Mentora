@@ -83,9 +83,8 @@ export default function DetailCourse() {
             </h2>
             <div className="flex flex-row items-center space-x-2 pt-3">
               <h2 className="text-[15px] text-[#FFF] font-normal font-robotoCondensed">
-                {/* {typeof course?.rating === 'number' ? course.rating : ''} */}
                 <div className="flex items-center gap-2">
-                  {course?.rating}
+                  {course?.rating?.toFixed(1)}
                   <StarRating rating={course?.rating || 0} />
                 </div>
               </h2>
@@ -122,6 +121,7 @@ export default function DetailCourse() {
             courseId={course?.courseId || ''}
             learningObject={course?.learningObjectives || []}
             image={course?.thumbnail || ''}
+            course={course as Course}
           />
         </div>
       </div>

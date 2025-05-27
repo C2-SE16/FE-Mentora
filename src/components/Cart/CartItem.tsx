@@ -14,63 +14,72 @@ interface CartItemProps {
 
 export function CartItem({ course, onRemove, isSelected, onSelectChange }: CartItemProps) {
   // Xử lý hiển thị giá
-  const displayPrice = () => {
-    // Log ra để debug
-    console.log(`Displaying price for ${course.title}:`, course.price);
-    
-    // Kiểm tra price là chuỗi (ví dụ: "129.99")
-    if (typeof course.price === 'string') {
-      return formatCurrency(parseFloat(course.price) || 0);
+  const getFinalPrice = () => {
+    // Kiểm tra nếu có currentPrice trực tiếp
+    if (course.finalPrice !== undefined) {
+      return Number(course.finalPrice) || 0;
     }
-    
-    // Kiểm tra price là số trực tiếp
-    if (typeof course.price === 'number') {
-      return formatCurrency(course.price);
+
+    // Fallback về price logic cũ
+    if (typeof course.originalPrice === 'string') {
+      return parseFloat(course.originalPrice) || 0;
     }
-    
-    // Kiểm tra cấu trúc price.d là mảng (trường hợp course.price là kiểu Price)
-    if (course.price && typeof course.price === 'object' && 'd' in course.price && Array.isArray(course.price.d) && course.price.d.length > 0) {
-      return formatCurrency(course.price.d[0] || 0);
+
+    if (typeof course.originalPrice === 'number') {
+      return course.originalPrice;
     }
-    
-    // Trường hợp price là đối tượng nhưng không phải kiểu Price đã định nghĩa
+
+    if (
+      course.price &&
+      typeof course.price === 'object' &&
+      'd' in course.price &&
+      Array.isArray(course.price.d) &&
+      course.price.d.length > 0
+    ) {
+      return course.price.d[0] || 0;
+    }
+
     if (course.price && typeof course.price === 'object') {
-      // Sử dụng ký hiệu chỉ mục để truy cập các thuộc tính có thể có
       const priceObj = course.price as Record<string, any>;
-      const possiblePrice = 
-        priceObj['price'] || 
-        priceObj['amount'] || 
-        priceObj['value'] || 
-        0;
-        
-      return formatCurrency(possiblePrice);
+      return priceObj['price'] || priceObj['amount'] || priceObj['value'] || 0;
     }
-    
-    // Mặc định hiển thị 0
-    return formatCurrency(0);
+
+    return 0;
   };
+
+  const getOriginalPrice = () => {
+    // Kiểm tra nếu có originalPrice trực tiếp
+    if (course.originalPrice !== undefined) {
+      return Number(course.originalPrice) || 0;
+    }
+
+    // Nếu không có originalPrice, return finalPrice (không có discount)
+    return getFinalPrice();
+  };
+
+  const finalPrice = getFinalPrice();
+  const originalPrice = getOriginalPrice();
+  const hasDiscount = finalPrice < originalPrice;
 
   // Lấy tên instructor
   const getInstructorName = (): string => {
     if (!course.tbl_instructors) return 'Chưa có thông tin';
-    
-    // Kiểm tra nếu có instructorName trực tiếp
+
     if ('instructorName' in course.tbl_instructors && course.tbl_instructors.instructorName) {
       return course.tbl_instructors.instructorName as string;
     }
-    
-    // Kiểm tra nếu có user.fullName
+
     if (course.tbl_instructors.user?.fullName) {
       return course.tbl_instructors.user.fullName;
     }
-    
+
     return 'Chưa có thông tin';
   };
 
   return (
     <div className="flex gap-4 border-b py-4">
       <div className="flex items-center">
-        <Checkbox 
+        <Checkbox
           checked={isSelected}
           onCheckedChange={(checked) => onSelectChange(course.courseId, !!checked)}
           id={`select-${course.courseId}`}
@@ -87,10 +96,15 @@ export function CartItem({ course, onRemove, isSelected, onSelectChange }: CartI
       </div>
       <div className="flex-1">
         <h3 className="font-semibold">{course.title}</h3>
-        <p className="text-sm text-gray-600">
-          Giảng viên: {getInstructorName()}
-        </p>
-        <p className="text-primary font-semibold">{displayPrice()}</p>
+        <p className="text-sm text-gray-600">Giảng viên: {getInstructorName()}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-primary font-semibold text-lg">{formatCurrency(finalPrice)}</p>
+          {hasDiscount && (
+            <>
+              <p className="text-gray-500 line-through text-sm">{formatCurrency(originalPrice)}</p>
+            </>
+          )}
+        </div>
       </div>
       <Button
         variant="ghost"

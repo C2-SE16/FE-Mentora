@@ -9,6 +9,7 @@ import { CourseReview as ImportedCourseReview } from './course_review';
 import { CourseEnrollment as ImportedCourseEnrollment } from '@/types/course_enrollment';
 import { CartItem } from '@/types/cart_item';
 import { OrderDetail } from '@/types/order_detail';
+import { Voucher } from './vouchers';
 
 export interface Price {
   s: number;
@@ -69,7 +70,13 @@ export interface Course {
   publicId?: string;
   categories: Category[];
   instructor: Instructor;
-
+  currentPrice: number;
+  originalPrice: number;
+  hasDiscount: boolean;
+  appliedVoucher: Voucher | null;
+  availableVouchers: Voucher[];
+  tbl_instructors: Instructor;
+  finalPrice: number;
   // Relationships
   modules?: ImportedModule[];
   courseCategories?: CourseCategory[];

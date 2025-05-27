@@ -614,78 +614,82 @@ const Header = () => {
                     </div>
                   </li>
                   <li className="relative w-full md:w-auto text-center mx-0 my-3 cursor-pointer group">
-                    <Link href="/my-course/learning">
-                      <span className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                        Khoá học của tôi
-                      </span>
-                      <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
-                        <div className="bg-white min-w-[300px] p-4 shadow-custom rounded-md">
-                          <div className="divide-y divide-gray-100">
-                            {loadingCourses ? (
-                              // Hiển thị skeleton loading khi đang tải
-                              Array(4)
-                                .fill(0)
-                                .map((_, index) => (
-                                  <div key={index} className="py-2 animate-pulse">
-                                    <div className="flex items-center gap-3">
-                                      <div className="h-12 w-12 flex-shrink-0 bg-gray-200 rounded"></div>
-                                      <div className="flex-1">
-                                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                                        <div className="h-2 bg-gray-200 rounded w-1/2"></div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                            ) : enrolledCourses.length > 0 ? (
-                              // Hiển thị danh sách khóa học từ API
-                              enrolledCourses.map((enrollment) => (
-                                <div key={enrollment.enrollmentId} className="py-2">
+                    <span
+                      onClick={() => router.push('/my-course/learning')}
+                      className="block py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md cursor-pointer"
+                    >
+                      Khoá học của tôi
+                    </span>
+                    <div className="absolute right-0 md:right-0 pt-[30px] pb-[30px] z-10 hidden group-hover:block w-full">
+                      <div className="bg-white min-w-[300px] p-4 shadow-custom rounded-md">
+                        <div className="divide-y divide-gray-100">
+                          {loadingCourses ? (
+                            // Hiển thị skeleton loading khi đang tải
+                            Array(4)
+                              .fill(0)
+                              .map((_, index) => (
+                                <div key={index} className="py-2 animate-pulse">
                                   <div className="flex items-center gap-3">
-                                    <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-100">
-                                      <Image
-                                        src={enrollment.course.thumbnail || ''}
-                                        alt={enrollment.course.title}
-                                        width={48}
-                                        height={48}
-                                        className="object-cover"
-                                      />
-                                    </div>
-                                    <div className="flex-1 text-left">
-                                      <h4 className="text-sm font-medium line-clamp-1">
-                                        {enrollment.course.title}
-                                      </h4>
-                                      {enrollment.progress && enrollment.progress > 0 ? (
-                                        <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
-                                          <div
-                                            className="h-1.5 rounded-full bg-[#1dbe70]"
-                                            style={{ width: `${enrollment.progress}%` }}
-                                          ></div>
-                                        </div>
-                                      ) : (
-                                        <p className="text-xs text-[#1dbe70] font-medium">
-                                          Bắt đầu học
-                                        </p>
-                                      )}
+                                    <div className="h-12 w-12 flex-shrink-0 bg-gray-200 rounded"></div>
+                                    <div className="flex-1">
+                                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                      <div className="h-2 bg-gray-200 rounded w-1/2"></div>
                                     </div>
                                   </div>
                                 </div>
                               ))
-                            ) : (
-                              // Hiển thị thông báo khi không có khóa học
-                              <div className="py-4 text-center">
-                                <p className="text-gray-500 text-sm">
-                                  Bạn chưa đăng ký khóa học nào
-                                </p>
+                          ) : enrolledCourses.length > 0 ? (
+                            // Hiển thị danh sách khóa học từ API
+                            enrolledCourses.map((enrollment) => (
+                              <div key={enrollment.enrollmentId} className="py-2">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-100">
+                                    <Image
+                                      src={enrollment.course.thumbnail || ''}
+                                      alt={enrollment.course.title}
+                                      width={48}
+                                      height={48}
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <div className="flex-1 text-left">
+                                    <h4 className="text-sm font-medium line-clamp-1">
+                                      {enrollment.course.title}
+                                    </h4>
+                                    {enrollment.progress && enrollment.progress > 0 ? (
+                                      <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                                        <div
+                                          className="h-1.5 rounded-full bg-[#1dbe70]"
+                                          style={{ width: `${enrollment.progress}%` }}
+                                        ></div>
+                                      </div>
+                                    ) : (
+                                      <p className="text-xs text-[#1dbe70] font-medium">
+                                        Bắt đầu học
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                            )}
-                          </div>
+                            ))
+                          ) : (
+                            // Hiển thị thông báo khi không có khóa học
+                            <div className="py-4 text-center">
+                              <p className="text-gray-500 text-sm">
+                                Bạn chưa đăng ký khóa học nào
+                              </p>
+                            </div>
+                          )}
+                        </div>
 
-                          <div className="mt-3 flex w-full justify-center items-center py-2 px-4 bg-[#1dbe70] text-white text-sm font-medium rounded hover:bg-[#18a862] transition-colors">
-                            Chuyển đến Quá trình học tập của tôi
-                          </div>
+                        <div
+                          onClick={() => router.push('/my-course/learning')}
+                          className="mt-3 flex w-full justify-center items-center py-2 px-4 bg-[#1dbe70] text-white text-sm font-medium rounded hover:bg-[#18a862] transition-colors cursor-pointer"
+                        >
+                          Chuyển đến Quá trình học tập của tôi
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </li>
                   <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
                     <Link href="/my-course/favorite-list">
@@ -699,14 +703,15 @@ const Header = () => {
                     </Link>
                   </li>
                   <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                    <Link href="/cart" className="cursor-pointer">
+                    <Link href="/cart">
                       <Image
                         src="/shopping-cart.svg"
                         alt="shopping-cart"
                         width={24}
                         height={24}
-                        className="cursor-pointer"
+                        className="inline"
                       />
+                      <span className="md:hidden ml-2">Giỏ hàng</span>
                     </Link>
                   </li>
                   <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
@@ -764,7 +769,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="#!"
+                            href="/my-course/learning"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Khóa học của tôi
@@ -781,7 +786,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="#!"
+                            href="/cart"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Giỏ hàng
@@ -789,7 +794,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="#!"
+                            href="/my-course/favorite-list"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Danh sách yêu thích
@@ -800,7 +805,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="#!"
+                            href="/profile"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Hồ sơ
@@ -808,7 +813,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="#!"
+                            href="/profile/photos"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Ảnh
@@ -816,7 +821,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            href="#!"
+                            href="/profile/public"
                             className="flex items-center px-5 py-2.5 min-w-[250px] tracking-[0.5px] text-black hover:text-[#1dbe70] hover:bg-[#c5f3dd] text-left"
                           >
                             Xem hồ sơ công khai
@@ -891,7 +896,7 @@ const Header = () => {
                     </div>
                   </li>
                   <li className="w-full md:w-auto text-center mx-0 my-3 cursor-pointer py-2 px-3 transition-all duration-200 hover:text-[#1dbe70] hover:bg-[#c6f1dd] hover:rounded-md">
-                    <Link href="#!">
+                    <Link href="/cart">
                       <Image
                         src="/shopping-cart.svg"
                         alt="shopping-cart"

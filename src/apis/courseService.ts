@@ -25,7 +25,7 @@ export const CourseService = {
 
       if (response.data && response.data.statusCode === 200) {
         console.log('Response data:', response.data); // Kiểm tra cấu trúc dữ liệu
-        
+
         // Trả về dữ liệu từ đúng cấu trúc
         return response.data.data.data;
       }
@@ -38,7 +38,7 @@ export const CourseService = {
   },
 
   async updateCourseBasicInfo(
-    courseId: string, 
+    courseId: string,
     data: UpdateCourseBasicInfoRequest
   ): Promise<Course | null> {
     try {
@@ -140,11 +140,11 @@ export const CourseService = {
   ): Promise<boolean> {
     try {
       console.log('Deleting image with publicId:', publicId);
-      
+
       // publicId từ kết quả upload có dạng: "mentora/courses/7f75d0c2-5ca1-471b-ba8f-87ed618d0761/thumbnail/njjsmn949wuvt9oikwlp"
       // Nhưng API cần format: publicId từ sau /thumbnail/ (chỉ lấy phần cuối)
       let actualPublicId = publicId;
-      
+
       if (publicId.includes('/thumbnail/')) {
         const publicIdParts = publicId.split('/thumbnail/');
         if (publicIdParts.length > 1) {
@@ -154,19 +154,19 @@ export const CourseService = {
         const publicIdParts = publicId.split('/');
         actualPublicId = publicIdParts[publicIdParts.length - 1];
       }
-      
+
       console.log('Extracted publicId for API call:', actualPublicId);
-      
+
       const endpoint = `/upload-image/course/${courseId}/thumbnail/${actualPublicId}`;
       console.log('Delete endpoint:', endpoint);
-      
+
       const response = await axiosInstance.delete<ApiResponse<{
         success: boolean;
         message: string;
       }>>(endpoint);
 
       console.log('Delete response:', response.data);
-      
+
       if (response.data && response.data.statusCode === 200) {
         return true;
       }

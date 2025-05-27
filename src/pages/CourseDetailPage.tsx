@@ -17,6 +17,8 @@ import { AllReviewsComponent } from '@/components/modules/course-detail/componen
 import { StarRating } from '@/components/Home-Courses/StarRating';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { slugify } from '@/utils/slugify';
+import { useProgressTracking } from '@/hooks/useProgress';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function DetailCourse() {
   const [course, setCourse] = useState<Course | null>(null);
@@ -27,6 +29,8 @@ export default function DetailCourse() {
   const searchParams = useSearchParams();
   const accessDenied = searchParams?.get('accessDenied') === 'true';
   const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
+  const { calculateCourseProgress } = useProgressTracking();
+  const { isLoggedIn } = useAuth();
 
   console.log(courseId); // Kiểm tra giá trị courseId
   useEffect(() => {
@@ -131,10 +135,6 @@ export default function DetailCourse() {
         <div className="col-span-6 col-start-1 grid grid-cols-1 px-6 lg:grid-cols-3 lg:col-span-4 lg:col-start-2 lg:px-0 w-full">
           <div className="col-span-3">
             <h2 className="text-xl font-bold text-gray-900 pt-5">Nội dung khóa học</h2>
-            <p className="text-sm text-gray-600">
-              {course?.modules?.length} phần - {course?.modules?.length} bài giảng -{' '}
-              {course?.durationTime ? formatDuration(course.durationTime) : 'N/A'}
-            </p>
           </div>
         </div>
         <div />

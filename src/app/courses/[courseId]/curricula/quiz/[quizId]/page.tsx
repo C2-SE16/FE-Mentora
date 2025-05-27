@@ -14,6 +14,8 @@ import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavi
 import Link from 'next/link';
 import CourseProgressService, { CourseProgressResponse } from '@/apis/courseProgressService';
 import { useAuth } from '@/contexts/AuthContext';
+import CourseProgressService, { CourseProgressResponse } from '@/apis/courseProgressService';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface QuizAttempt {
   id: string;

@@ -173,11 +173,10 @@ const InstructorCoursesSidebar = ({ currentTab = 'dashboard' }: InstructorCourse
               <li key={item.id}>
                 <Link
                   href={item.path}
-                  className={`flex items-center px-4 py-3 text-sm ${
-                    isActive
-                      ? 'bg-[#3e4143] border-l-4 border-['
-                      : 'hover:bg-[#3e4143] border-l-4 border-transparent'
-                  }`}
+                  className={`flex items-center px-4 py-3 text-sm ${isActive
+                    ? 'bg-[#3e4143] border-l-4 border-['
+                    : 'hover:bg-[#3e4143] border-l-4 border-transparent'
+                    }`}
                 >
                   <span className={`mr-3 ${isActive ? 'text-[#2cbb78]' : 'text-gray-400'}`}>
                     {item.icon}

@@ -21,18 +21,18 @@ export default function LecturePage() {
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [currentLecture, setCurrentLecture] = useState<Lecture | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
-  
+
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const requireAuth = searchParams?.get('requireAuth') === 'true';
-  
+
   const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
   const { user } = useAuth();
   const lectureId = Array.isArray(params?.lectureId)
     ? params?.lectureId[0]
     : params?.lectureId || '';
-    
+
   // Log thông tin ban đầu
   useEffect(() => {
     console.log('[LECTURE PAGE] Initializing with params:', {
@@ -42,7 +42,7 @@ export default function LecturePage() {
       user: user ? 'logged in' : 'not logged in',
       searchParams: Object.fromEntries(searchParams?.entries() || []),
     });
-    
+
     // Kiểm tra token
     const accessToken = localStorage.getItem('accessToken');
     const token = localStorage.getItem('token');
@@ -51,14 +51,14 @@ export default function LecturePage() {
       tokenExists: !!token,
     });
   }, []);
-  
+
   // Cập nhật lecture khi course thay đổi
   useEffect(() => {
     if (!course || !lectureId) {
       console.log('[LECTURE PAGE] No course or lectureId yet, waiting...', { course: !!course, lectureId });
       return;
     }
-    
+
     console.log('[LECTURE PAGE] Looking for lecture in course data...');
     const foundLecture = course.modules?.flatMap(
       (module) =>
@@ -67,16 +67,16 @@ export default function LecturePage() {
             curriculum.lectures?.filter((lecture) => lecture.lectureId === lectureId) || []
         ) || []
     )?.[0] || null;
-    
+
     console.log('[LECTURE PAGE] Found lecture:', foundLecture ? {
       id: foundLecture.lectureId,
       title: foundLecture.title,
       isFree: foundLecture.isFree
     } : 'NOT FOUND');
-    
+
     setCurrentLecture(foundLecture);
   }, [course, lectureId]);
-  
+
   // Tải thông tin khóa học
   useEffect(() => {
     const fetchCourse = async () => {
@@ -102,7 +102,7 @@ export default function LecturePage() {
 
     fetchCourse();
   }, [courseId]);
-  
+
   // Kiểm tra quyền truy cập vào bài giảng
   useEffect(() => {
     const checkAccess = async () => {
@@ -113,27 +113,27 @@ export default function LecturePage() {
           console.log('[LECTURE PAGE] No courseId for access check.');
           return;
         }
-        
+
         // Kiểm tra xem người dùng có quyền truy cập vào khóa học không
         console.log('[LECTURE PAGE] Calling courseAccessService.checkCourseAccess()');
         const accessResponse = await checkCourseAccess(courseId);
         console.log('[LECTURE PAGE] Access response:', accessResponse);
-        
+
         if (accessResponse && accessResponse.data) {
           const { hasAccess: canAccess, isEnrolled, isInstructor } = accessResponse.data;
-          
+
           // Kiểm tra xem bài giảng có miễn phí không
           const isFree = currentLecture?.isFree === true;
           console.log('[LECTURE PAGE] Access check details:', {
-            canAccess, isEnrolled, isInstructor, isFree, 
+            canAccess, isEnrolled, isInstructor, isFree,
             lectureId: currentLecture?.lectureId
           });
-          
+
           // Trong trường hợp là instructor hoặc đã đăng ký
           if (isInstructor || isEnrolled) {
             console.log('[LECTURE PAGE] Access granted: User is instructor or enrolled.');
             setHasAccess(true);
-          } 
+          }
           // Hoặc bài giảng miễn phí
           else if (isFree) {
             console.log('[LECTURE PAGE] Access granted: Lecture is free.');
@@ -159,7 +159,7 @@ export default function LecturePage() {
         setAccessLoading(false);
       }
     };
-    
+
     // Chỉ kiểm tra khi đã có thông tin bài giảng
     if (course && currentLecture) {
       console.log('[LECTURE PAGE] Course and lecture data available, checking access...');
@@ -286,7 +286,7 @@ export default function LecturePage() {
     lectureId: currentLecture.lectureId,
     title: currentLecture.title
   });
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <LectureHeader

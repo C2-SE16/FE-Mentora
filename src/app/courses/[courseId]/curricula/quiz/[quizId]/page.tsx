@@ -12,6 +12,8 @@ import { Course } from '@/types/courses';
 import { CourseService } from '@/apis/courseService';
 import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
 import Link from 'next/link';
+import CourseProgressService, { CourseProgressResponse } from '@/apis/courseProgressService';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface QuizAttempt {
   id: string;
@@ -93,7 +95,9 @@ export default function QuizPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isLoggedIn } = useAuth();
   const requireAuth = searchParams?.get('requireAuth') === 'true';
+
 
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
@@ -109,6 +113,7 @@ export default function QuizPage() {
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
   const [course, setCourse] = useState<Course | null>(null);
+  const [courseProgress, setCourseProgress] = useState<CourseProgressResponse | null>(null);
 
   const courseId = Array.isArray(params?.courseId) ? params?.courseId[0] : params?.courseId || '';
   const quizId = Array.isArray(params?.quizId) ? params?.quizId[0] : params?.quizId || '';
@@ -135,12 +140,15 @@ export default function QuizPage() {
       try {
         if (!courseId) return;
 
+
         // Kiểm tra xem người dùng có quyền truy cập vào khóa học không
         const accessResponse = await checkCourseAccess(courseId);
         console.log('Access response:', accessResponse);
 
+
         if (accessResponse && accessResponse.data) {
           const { hasAccess: canAccess, isEnrolled, isInstructor } = accessResponse.data;
+
 
           // Trong trường hợp là instructor hoặc đã đăng ký
           if (isInstructor || isEnrolled) {
@@ -164,6 +172,7 @@ export default function QuizPage() {
         setAccessLoading(false);
       }
     };
+
 
     checkAccess();
   }, [courseId]);
@@ -204,6 +213,7 @@ export default function QuizPage() {
           });
           return;
         }
+
 
         // Nếu không tìm thấy, sử dụng giá trị mặc định
         setTimeLeft(15 * 60); // 15 phút mặc định
@@ -302,19 +312,24 @@ export default function QuizPage() {
       console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
       console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
 
+
       // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
       setIsStarted(true);
 
+
       // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
       let timeLimit = 15;
+
 
       // Nếu có quizMeta và timeLimit là 0 hoặc số dương
       if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
         timeLimit = quizMeta.timeLimit;
       }
 
+
       console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
       setTimeLeft(timeLimit * 60);
+
 
       // Tải dữ liệu bài quiz
       console.log('Bắt đầu tải dữ liệu quiz...');
@@ -323,6 +338,7 @@ export default function QuizPage() {
     } catch (error: any) {
       console.error('Lỗi khi bắt đầu quiz:', error);
       setError(error.response?.data?.message || 'Có lỗi xảy ra khi bắt đầu bài quiz');
+
 
       // Đặt lại trạng thái nếu có lỗi
       setIsStarted(false);
@@ -422,6 +438,60 @@ export default function QuizPage() {
     console.log('Current quizMeta:', quizMeta);
   }, [timeLeft, quizMeta]);
 
+  // Thêm effect để lấy dữ liệu tiến độ khóa học từ API mới
+  useEffect(() => {
+    const fetchCourseProgress = async () => {
+      if (!courseId || !isLoggedIn) return;
+
+      try {
+        const progress = await CourseProgressService.getCourseProgress(courseId);
+        console.log('Course progress data for quiz page:', progress);
+        if (progress && progress.modules) {
+          setCourseProgress(progress);
+        } else {
+          console.warn('Received invalid course progress data:', progress);
+        }
+      } catch (error) {
+        console.error('Error fetching course progress for quiz:', error);
+      }
+    };
+
+    fetchCourseProgress();
+  }, [courseId, isLoggedIn]);
+
+  // Hàm kiểm tra xem quiz đã hoàn thành chưa từ dữ liệu API mới
+  const isQuizCompletedFromAPI = (quizId: string) => {
+    if (!courseProgress || !courseProgress.modules || !Array.isArray(courseProgress.modules)) return false;
+
+    for (const module of courseProgress.modules) {
+      if (!module || !module.curricula || !Array.isArray(module.curricula)) continue;
+
+      for (const curriculum of module.curricula) {
+        if (
+          curriculum.type === 'QUIZ' &&
+          curriculum.quiz?.quizId === quizId &&
+          curriculum.progress?.status === 'COMPLETED'
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  // Thêm useEffect để đánh dấu quiz đã hoàn thành nếu là trạng thái hiển thị kết quả
+  useEffect(() => {
+    const markQuizCompleted = async () => {
+      if (isSubmitted && result && quizId) {
+        // TODO: Thêm API gọi để đánh dấu quiz đã hoàn thành nếu chưa hoàn thành trong courseProgress
+        console.log('Quiz has been completed with result:', result);
+      }
+    };
+
+    markQuizCompleted();
+  }, [isSubmitted, result, quizId]);
+
   // Thêm loading state
   if (accessLoading) {
     return (
@@ -501,19 +571,24 @@ export default function QuizPage() {
                     console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
                     console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
 
+
                     // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
                     setIsStarted(true);
 
+
                     // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
                     let timeLimit = 15;
+
 
                     // Nếu có quizMeta và timeLimit là 0 hoặc số dương
                     if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
                       timeLimit = quizMeta.timeLimit;
                     }
 
+
                     console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
                     setTimeLeft(timeLimit * 60);
+
 
                     // Tải dữ liệu bài quiz
                     console.log('Bắt đầu tải dữ liệu quiz...');
@@ -591,34 +666,115 @@ export default function QuizPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-2xl p-8 bg-white rounded-lg shadow-md">
-          <h1 className="text-3xl font-bold mb-8 text-center">Kết quả bài quiz</h1>
-          {result && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="p-6 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Điểm số</p>
-                  <p className="text-3xl font-bold text-blue-500">{result.score}/100</p>
+      <div className="flex flex-col md:flex-row w-full">
+        {/* Main content */}
+        <div className="w-full md:w-3/4 p-4">
+          <div className="bg-white shadow-md rounded-md overflow-hidden">
+            <div className="p-6">
+              <h1 className="text-3xl font-bold mb-8 text-center">Kết quả bài quiz</h1>
+              {result && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="p-6 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-gray-500 mb-1">Điểm số</p>
+                      <p className="text-3xl font-bold text-blue-500">{result.score}/100</p>
+                    </div>
+                    <div className="p-6 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-gray-500 mb-1">Số câu đúng</p>
+                      <p className="text-3xl font-bold text-green-500">
+                        {result.correctAnswers}/{result.totalQuestions}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="p-6 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500 mb-1">Thời gian làm bài</p>
+                    <p className="text-3xl font-bold">{result.timeSpent} phút</p>
+                  </div>
+                  <div className="p-6 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500 mb-1">Kết quả</p>
+                    <p
+                      className={`text-3xl font-bold ${result.isPassed ? 'text-green-500' : 'text-red-500'}`}
+                    >
+                      {result.isPassed ? 'Đạt' : 'Không đạt'}
+                    </p>
+                  </div>
+
+                  <div className="mt-8 flex justify-center">
+                    <button
+                      onClick={() => router.push(`/courses/${courseId}`)}
+                      className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-lg"
+                    >
+                      Quay lại khóa học
+                    </button>
+                  </div>
                 </div>
-                <div className="p-6 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Số câu đúng</p>
-                  <p className="text-3xl font-bold text-green-500">
-                    {result.correctAnswers}/{result.totalQuestions}
-                  </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-full md:w-1/4 bg-gray-100 p-4">
+          <div className="bg-white shadow-md rounded-md overflow-hidden">
+            <div className="p-3 bg-gray-50 border-b">
+              <h2 className="text-xl font-bold text-gray-900">Nội dung khóa học</h2>
+              <p className="text-sm text-gray-600">
+                {course?.modules?.length} phần - {course?.modules?.reduce((acc, module) => acc + (module.curricula?.length || 0), 0)} bài giảng
+              </p>
+            </div>
+
+            <ModuleNavigation
+              courseId={courseId}
+              modules={course?.modules || []}
+              currentLessonId={quizId}
+            />
+          </div>
+
+          <div className="mt-4 bg-white shadow-md rounded-md p-4">
+            <h3 className="text-lg font-semibold mb-2">Giảng viên</h3>
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
+                {course?.instructor?.user?.avatar && (
+                  <img
+                    src={course.instructor.user.avatar}
+                    alt={course.instructor.user.fullName}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                )}
+              </div>
+              <div>
+                <p className="font-medium">{course?.instructor?.user?.fullName}</p>
+                <p className="text-sm text-gray-600">Giảng viên</p>
+              </div>
+            </div>
+            <button className="mt-3 w-full border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50">
+              Xem thông tin
+            </button>
+          </div>
+
+          {/* Hiển thị tiến độ khóa học */}
+          {courseProgress && courseProgress.modules && (
+            <div className="mt-4 bg-white shadow-md rounded-md p-4">
+              <h3 className="text-lg font-semibold mb-2">Tiến độ khóa học</h3>
+              <div className="relative pt-1">
+                <div className="flex mb-2 items-center justify-between">
+                  <div>
+                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">
+                      {courseProgress.overallProgressPercentage || 0}%
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs font-semibold inline-block text-green-600">
+                      {courseProgress.completedCurricula || 0}/{courseProgress.totalCurricula || 0} hoàn thành
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="p-6 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-500 mb-1">Thời gian làm bài</p>
-                <p className="text-3xl font-bold">{result.timeSpent} phút</p>
-              </div>
-              <div className="p-6 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-500 mb-1">Kết quả</p>
-                <p
-                  className={`text-3xl font-bold ${result.isPassed ? 'text-green-500' : 'text-red-500'}`}
-                >
-                  {result.isPassed ? 'Đạt' : 'Không đạt'}
-                </p>
+                <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-gray-200">
+                  <div
+                    style={{ width: `${courseProgress.overallProgressPercentage || 0}%` }}
+                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"
+                  ></div>
+                </div>
               </div>
               <div>
                 <button
@@ -726,13 +882,12 @@ export default function QuizPage() {
                   <button
                     key={index}
                     onClick={() => handleQuestionChange(index)}
-                    className={`p-2 text-center border rounded ${
-                      currentQuestionIndex === index
-                        ? 'bg-blue-500 text-white'
-                        : selectedAnswers[question.id]
-                          ? 'bg-gray-100'
-                          : ''
-                    }`}
+                    className={`p-2 text-center border rounded ${currentQuestionIndex === index
+                      ? 'bg-blue-500 text-white'
+                      : selectedAnswers[question.id]
+                        ? 'bg-gray-100'
+                        : ''
+                      }`}
                   >
                     {index + 1}
                   </button>

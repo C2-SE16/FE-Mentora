@@ -49,16 +49,16 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
-    
+
     const fetchInitialData = async () => {
       if (!courseId) {
         return;
       }
-      
+
       try {
         setLoading(true);
         setError(null);
-        
+
         // Kiểm tra quyền truy cập
         const accessResult = await checkCourseAccess(courseId);
         if (accessResult.success && isMounted) {
@@ -82,7 +82,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
     };
 
     fetchInitialData();
-    
+
     return () => {
       isMounted = false;
       controller.abort();
@@ -226,7 +226,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
         />
       </div>
       <div className="pt-5 grid grid-cols-3 gap-4">
-        <Button 
+        <Button
           onClick={handleAddToCart}
           className="col-span-2 h-14 bg-[rgba(0,255,132,0.85)] text-[16px] font-oswald text-black font-normal hover:bg-[#00CC6E]"
           disabled={loading}
@@ -240,15 +240,15 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId, learningObject 
           <Heart className="w-8 h-8 text-[rgba(0,255,132,0.85)]" />
         </Button>
 
-        <Button 
+        <Button
           onClick={handleBuyNow}
           className="col-span-3 h-14 text-[16px] font-oswald text-black font-normal border border-[#00ff84d9] bg-white hover:bg-slate-100"
           disabled={loading}
         >
-          {loading ? 'Đang tải...' : 
-           courseAccess?.isInstructor ? 'Quản lý khóa học' :
-           courseAccess?.isEnrolled ? 'Vào học ngay' :
-           isInCart ? 'Đến giỏ hàng' : 'Mua ngay'}
+          {loading ? 'Đang tải...' :
+            courseAccess?.isInstructor ? 'Quản lý khóa học' :
+              courseAccess?.isEnrolled ? 'Vào học ngay' :
+                isInCart ? 'Đến giỏ hàng' : 'Mua ngay'}
         </Button>
       </div>
       <h2 className="text-[16px] font-normal font-oswald pt-3">Nội dung khóa học</h2>

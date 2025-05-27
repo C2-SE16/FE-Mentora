@@ -366,7 +366,7 @@ export default function GoalsPage() {
                   <Link href="#" className="text-blue-600 hover:underline">
                     đối tượng học viên
                   </Link>{' '}
-                  cho khóa học của bạn, những người sẽ thấy nội dung khóa học của bạn có giá trị.
+                  cho khóa học của bạn, những người sẽ thấy Nội dung khóa học của bạn có giá trị.
                   Điều này sẽ giúp bạn thu hút đúng học viên đến với khóa học của bạn.
                 </p>
 

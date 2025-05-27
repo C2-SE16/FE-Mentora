@@ -14,6 +14,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Course } from '@/types/courses';
 import { CourseService } from '@/apis/courseService';
 import ModuleNavigation from '@/components/modules/lessons/components/ModuleNavigation';
+import Link from 'next/link';
+import CourseProgressService, { CourseProgressResponse } from '@/apis/courseProgressService';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface QuizAttempt {
   id: string;
@@ -214,6 +217,7 @@ export default function QuizPage() {
           return;
         }
 
+
         // Nếu không tìm thấy, sử dụng giá trị mặc định
         setTimeLeft(15 * 60); // 15 phút mặc định
         setQuizMeta({ timeLimit: 15, title: response?.data?.title || '' });
@@ -311,19 +315,24 @@ export default function QuizPage() {
       console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
       console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
 
+
       // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
       setIsStarted(true);
 
+
       // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
       let timeLimit = 15;
+
 
       // Nếu có quizMeta và timeLimit là 0 hoặc số dương
       if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
         timeLimit = quizMeta.timeLimit;
       }
 
+
       console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
       setTimeLeft(timeLimit * 60);
+
 
       // Tải dữ liệu bài quiz
       console.log('Bắt đầu tải dữ liệu quiz...');
@@ -566,19 +575,24 @@ export default function QuizPage() {
                     console.log('=== NGƯỜI DÙNG ĐÃ NHẤN NÚT BẮT ĐẦU LÀM BÀI ===');
                     console.log('Trạng thái quizMeta trước khi bắt đầu:', quizMeta);
 
+
                     // Khởi tạo trạng thái bắt đầu dù có quizMeta hay không
                     setIsStarted(true);
 
+
                     // Thời gian mặc định là 15 phút nếu không có timeLimit từ server
                     let timeLimit = 15;
+
 
                     // Nếu có quizMeta và timeLimit là 0 hoặc số dương
                     if (quizMeta && (quizMeta.timeLimit === 0 || quizMeta.timeLimit > 0)) {
                       timeLimit = quizMeta.timeLimit;
                     }
 
+
                     console.log('Thiết lập timeLeft với timeLimit:', timeLimit);
                     setTimeLeft(timeLimit * 60);
+
 
                     // Tải dữ liệu bài quiz
                     console.log('Bắt đầu tải dữ liệu quiz...');

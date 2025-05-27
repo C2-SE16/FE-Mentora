@@ -139,26 +139,27 @@ export default function CartPage() {
 
   // Hàm lấy giá của một khóa học
   const getCoursePrice = (course: Course): number => {
+    console.log('course price', course);
     // Kiểm tra price là chuỗi (ví dụ: "129.99")
-    if (typeof course.price === 'string') {
-      return parseFloat(course.price) || 0;
+    if (typeof course.finalPrice === 'string') {
+      return parseFloat(course.finalPrice) || 0;
     }
 
     // Kiểm tra price là số trực tiếp
-    if (typeof course.price === 'number') {
-      return course.price;
+    if (typeof course.finalPrice === 'number') {
+      return course.finalPrice;
     }
     
     // Kiểm tra cấu trúc price.d là mảng
-    if (course.price?.d && Array.isArray(course.price.d) && course.price.d.length > 0) {
-      return course.price.d[0] || 0;
+      if (course.finalPrice && Array.isArray(course.finalPrice) && course.finalPrice > 0) {
+      return course.finalPrice[0] || 0;
     }
     
     // Trường hợp price là đối tượng nhưng không có d hoặc d không phải mảng
-    if (course.price && typeof course.price === 'object') {
+    if (course.finalPrice && typeof course.finalPrice === 'object') {
       // Thử tìm giá trị trong các trường thông thường
       // @ts-ignore - Bỏ qua kiểm tra type, vì chúng ta đang xử lý các trường hợp đặc biệt
-      const possiblePrice = course.price.price || course.price.amount || course.price.value || 0;     
+      const possiblePrice = course.finalPrice.price || course.finalPrice.amount || course.finalPrice.value || 0;     
       return possiblePrice;
     }
     

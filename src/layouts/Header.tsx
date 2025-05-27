@@ -680,12 +680,9 @@ const Header = () => {
                             )}
                           </div>
 
-                          <Link
-                            href="/my-course/learning"
-                            className="mt-3 flex w-full justify-center items-center py-2 px-4 bg-[#1dbe70] text-white text-sm font-medium rounded hover:bg-[#18a862] transition-colors"
-                          >
+                          <div className="mt-3 flex w-full justify-center items-center py-2 px-4 bg-[#1dbe70] text-white text-sm font-medium rounded hover:bg-[#18a862] transition-colors">
                             Chuyển đến Quá trình học tập của tôi
-                          </Link>
+                          </div>
                         </div>
                       </div>
                     </Link>

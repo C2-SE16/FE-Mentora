@@ -1,5 +1,3 @@
-import Link from 'next/link';
-import Image from 'next/image';
 import Button from '../Button/Button';
 import { TopicSkeleton } from './HomeCourseLoading';
 

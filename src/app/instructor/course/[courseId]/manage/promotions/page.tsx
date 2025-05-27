@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import axiosInstance from '@/lib/api/axios';
 import { toast } from 'react-hot-toast';
@@ -31,10 +31,33 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+interface AppliedVoucherData {
+  voucher: {
+    code: string;
+    discountType: string;
+    discountValue: number;
+  };
+  discountedCourses: Array<{
+    courseId: string;
+    title: string;
+    originalPrice: number;
+    discountAmount: number;
+    finalPrice: number;
+  }>;
+  totalDiscount: number;
+  totalFinalPrice: number;
+}
+
 const PromotionsPage = () => {
   const params = useParams();
   const courseId = typeof params?.courseId === 'string' ? params?.courseId : '';
   const [isLoading, setIsLoading] = useState(false);
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucherData | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
@@ -60,20 +83,57 @@ const PromotionsPage = () => {
     form.setValue('code', code);
   };
 
+  // Function to apply voucher and save to database
+  const applyVoucherAndSaveToDB = async (voucherCode: string) => {
+    try {
+      const response = await axiosInstance.post('voucher/apply-and-save-db', {
+        code: voucherCode,
+        courseIds: courseId, // Gửi như string vì backend expect string
+      });
+      console.log('response applyVoucherAndSaveToDB:::', response);
+      if (response.data.statusCode === 201) {
+        setAppliedVoucher(response.data.data.data);
+        toast.success('Áp dụng mã giảm giá thành công và đã lưu vào database!');
+        return response.data.data.data;
+      } else {
+        toast.error('Không thể áp dụng mã giảm giá');
+        return null;
+      }
+    } catch (error: any) {
+      console.error('Lỗi khi áp dụng mã giảm giá:', error);
+      toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi áp dụng mã giảm giá');
+      return null;
+    }
+  };
+
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
       const payload = {
         ...values,
         scope: 'SPECIFIC_COURSES',
-        courseIds: [courseId],
+        courseIds: courseId, // Gửi như string vì backend expect string
       };
 
-      // Make the API call
+      // Step 1: Create voucher
       const response = await axiosInstance.post('voucher/create-voucher', payload);
 
-      if (response.data.data.success) {
+      if (response.data.statusCode === 201) {
         toast.success('Tạo mã giảm giá thành công!');
+
+        // Step 2: Apply voucher and save to database
+        const appliedData = await applyVoucherAndSaveToDB(values.code);
+
+        if (appliedData) {
+          const discountedCourse = appliedData.discountedCourses[0];
+          if (discountedCourse) {
+            toast.success(
+              `Mã giảm giá đã được áp dụng! Giảm ${discountedCourse.discountAmount.toLocaleString('vi-VN')}₫`,
+              { duration: 5000 }
+            );
+          }
+        }
+
         form.reset();
       } else {
         toast.error('Không thể tạo mã giảm giá.');
@@ -86,18 +146,78 @@ const PromotionsPage = () => {
     }
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6" suppressHydrationWarning>
       <h1 className="text-2xl font-bold mb-6">Khuyến Mãi Khóa Học</h1>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      {/* Applied Voucher Information */}
+      {appliedVoucher && (
+        <div
+          className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6"
+          suppressHydrationWarning
+        >
+          <h3 className="text-lg font-semibold text-green-800 mb-3">
+            ✅ Mã Giảm Giá Đã Được Áp Dụng
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-600">Mã voucher:</p>
+              <p className="font-semibold text-green-700">{appliedVoucher.voucher.code}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Loại giảm giá:</p>
+              <p className="font-semibold">
+                {appliedVoucher.voucher.discountType === 'Percentage'
+                  ? 'Phần trăm'
+                  : 'Số tiền cố định'}
+              </p>
+            </div>
+          </div>
+
+          {appliedVoucher.discountedCourses.map((course) => (
+            <div key={course.courseId} className="mt-4 p-4 bg-white rounded border">
+              <h4 className="font-semibold mb-2">{course.title}</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-600">Giá gốc:</p>
+                  <p className="font-semibold">{course.originalPrice.toLocaleString('vi-VN')}₫</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Giảm giá:</p>
+                  <p className="font-semibold text-red-600">
+                    -{course.discountAmount.toLocaleString('vi-VN')}₫
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Giá cuối:</p>
+                  <p className="font-semibold text-green-600">
+                    {course.finalPrice.toLocaleString('vi-VN')}₫
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Tiết kiệm:</p>
+                  <p className="font-semibold text-blue-600">
+                    {course.discountAmount.toLocaleString('vi-VN')}₫
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow-md overflow-hidden" suppressHydrationWarning>
         <div className="p-6 border-b">
           <h2 className="text-xl font-semibold">Tạo Mã Giảm Giá</h2>
           <p className="text-gray-600 text-sm mt-1">
             Tạo mã giảm giá cho khóa học này để dành cho học viên của bạn
           </p>
         </div>
-        <div className="p-6">
+        <div className="p-6" suppressHydrationWarning>
           <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-6">
             <div className="flex items-end gap-4">
               <div className="flex-1">
@@ -112,7 +232,11 @@ const PromotionsPage = () => {
                   Nhập mã duy nhất (tối thiểu 6 ký tự, chữ in hoa)
                 </p>
                 {form.formState.errors.code && (
-                  <p className="text-red-500 text-xs mt-1">{form.formState.errors.code.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {typeof form.formState.errors.code.message === 'string'
+                      ? form.formState.errors.code.message
+                      : 'Mã không hợp lệ'}
+                  </p>
                 )}
               </div>
               <button
@@ -165,7 +289,9 @@ const PromotionsPage = () => {
                 </p>
                 {form.formState.errors.discountValue && (
                   <p className="text-red-500 text-xs mt-1">
-                    {form.formState.errors.discountValue.message}
+                    {typeof form.formState.errors.discountValue.message === 'string'
+                      ? form.formState.errors.discountValue.message
+                      : 'Giá trị không hợp lệ'}
                   </p>
                 )}
               </div>
@@ -261,7 +387,7 @@ const PromotionsPage = () => {
               className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
               disabled={isLoading}
             >
-              {isLoading ? 'Đang Tạo Mã...' : 'Tạo Mã Giảm Giá'}
+              {isLoading ? 'Đang Tạo Mã...' : 'Tạo & Áp Dụng Mã Giảm Giá'}
             </button>
           </form>
         </div>

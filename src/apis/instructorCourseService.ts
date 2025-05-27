@@ -7,6 +7,9 @@ interface InstructorCourse {
   overview: string | null;
   durationTime: number | null;
   price: number;
+  currentPrice: number;
+  originalPrice: number;
+  hasDiscount: boolean;
   approved: string;
   rating: number;
   thumbnail: string | null;
@@ -22,6 +25,12 @@ interface InstructorCourse {
     avatar: string | null;
   };
   reviewCount: number;
+  appliedVoucher?: {
+    code: string;
+    discountAmount: number;
+    discountType: string;
+    finalPrice: number;
+  } | null;
   enrollments: {
     userId: string;
     courseEnrollmentId: string;

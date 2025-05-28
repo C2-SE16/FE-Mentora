@@ -1,9 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function Step1() {
-  const router = useRouter();
   const [title, setTitle] = useState('');
   const [charCount, setCharCount] = useState(0);
   const maxChars = 60;

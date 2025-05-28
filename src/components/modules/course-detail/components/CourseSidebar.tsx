@@ -57,6 +57,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
   originalPrice,
   hasDiscount = false,
 }) => {
+  console.log('course::',course);
   const router = useRouter();
   const [courseAccess, setCourseAccess] = useState<CourseAccessResponse | null>(null);
   const [loading, setLoading] = useState(false);

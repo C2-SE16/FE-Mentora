@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CategoryService from '@/apis/categoryService';
-// import { Category, CategoryType, categoryTypeToVietnamese } from '@/types/categories';
-import { toast } from 'react-hot-toast';
 import { Category } from '@/types/categories';
 
 export default function Step2() {
@@ -23,7 +21,6 @@ export default function Step2() {
       try {
         setIsLoading(true);
         const data = await CategoryService.getAllCategories();
-        console.log('data categories' + data);
         setCategories(data);
         setError(null);
       } catch (err) {

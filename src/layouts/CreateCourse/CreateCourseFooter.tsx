@@ -59,19 +59,6 @@ const CreateCourseFooter = ({ onNext, onBack, nextDisabled = false }: CreateCour
     };
   }, [currentStep, pathname]);
 
-  // Xác định đường dẫn cho nút "Trước" và "Tiếp"
-  const getPreviousPath = () => {
-    if (currentStep === 1) return '/'; // Quay về trang chủ nếu đang ở bước 1
-    if (currentStep === 2) return '/courses/create/step1';
-    return '/';
-  };
-
-  const getNextPath = () => {
-    if (currentStep === 1) return '/courses/create/step2';
-    if (currentStep === 2) return '/courses'; // Giả sử hoàn thành và chuyển đến trang khóa học
-    return '/courses';
-  };
-
   // Xác định nhãn cho nút "Tiếp"
   const getNextButtonLabel = () => {
     return currentStep === totalSteps ? 'Hoàn thành' : 'Tiếp';
